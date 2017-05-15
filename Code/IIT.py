@@ -17,8 +17,8 @@ temp = sp.io.loadmat(filepath+'tpm_matrix_M1_K0.10_0.10_0.10_P0.50_0.02.mat');
 TPM = temp['tpm'];
 tpm = convert_tpm(TPM);
 
-target_partition = set([1]);
-known_partition = set([1]);
+target_partition = set([0]);
+known_partition = set([0,1,2]);
 
 known_state = np.array([1,0,0]);
 
@@ -100,28 +100,50 @@ def partial_probability(target_partition, known_partition, known_state, TPM):
         #temp = np.array([ 2**i for i in known_compl_list], dtype = int);
         target_perturbations = np.array([np.sum([pows_2[target_compl_list[i]] * bitget(j,i) for i in range(target_compl_nnodes)]) for j in range(target_compl_nstates)])
         
-    
+        
     #calculate the 'prob' vector.
     prob = np.zeros([2**target_size]);
+    
+    #Loop through all states in the target partition
     for i in xrange(2**target_size):
         prob[i] = 1;
-        var1 = np.sum([pows_2[target_compl_list[j]] * bitget(i,j) for j in range(target_compl_nnodes)]) 
         
-        for k in xrange(known_size):
-            var2 = known_state[known_list[k]];
-            p_k = 0;
+        # assign to par_state the integer which describes a particular state of 
+        # the target partition. During the course of the loop, all such states
+        # will be considered.
+        par_state = np.sum([pows_2[target_list[j]] * bitget(i,j) for j in range(target_size)]) 
+
+        #Look through all nodes of the known partition.
+        for k in xrange(known_size): 
+            #Assign the known_node the value (on or off) of the kth node in the 
+            #known partition. We know the value of this node as this information
+            #is contained within the input known_state.
+            known_node = known_state[known_list[k]];
             
+            #initialize
+            p_k = 0;
+            #Loop through all states in in the compliment of the target partition.
             for j in xrange(target_compl_nstates):
-                var3 = target_perturbations[j];
-                var4 = 1 + var1 + var3;
                 
-                if var2 ==1:
-                    p_k+= TPM[var4, known_partition[k]];
+                #Add the integers corresponding to the state of the target partition
+                # and the perturbation of the target partitions compliment. By
+                # looping through such values, we examine all possible ....
+                var4 = par_state + target_perturbations[j]; #In Matlab there was an additional +1, I assumed for indexing purposes.
+                
+                
+                if known_node ==1:
+                    p_k+= TPM[var4, known_list[k]];
                 else:
-                    p_k += (1-TPM[var4, known_partition[k]]);
-            prob[i]+=p_k;
+                    p_k += (1-TPM[var4, known_list[k]]);
+            prob[i]*=p_k;
+            
     
+    #Normalise;
+    if np.sum(prob) != 0:
+        prob = np.divide(prob, np.sum(prob));
         
+    return prob;
+    
     
         #temp2 = np.array([bitget()])
         
@@ -141,7 +163,9 @@ def partial_probability(target_partition, known_partition, known_state, TPM):
     
 #%% Trial the function
 
+
+
 ex = partial_probability(target_partition, known_partition, known_state, tpm);
-    
+ex
     
     
