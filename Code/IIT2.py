@@ -6,6 +6,8 @@ Created on Tue May 16 10:23:45 2017
 @author: jonathan
 """
 import numpy as np
+import scipy.optimize as so
+import sys
 
 def convert_to_subset( num , subset ,base=2):
     '''
@@ -58,7 +60,6 @@ def hamming(int1, int2, base = 2):
     if base==2:
         diff = (int1|int2) - (int1^int2);
         
-        print(diff)
         count = 0;
         while diff>0:
             diff-= 1<<int(np.floor(np.log2(diff)));
@@ -104,7 +105,7 @@ def uncon_cause_repertoire( n, base = 2 ):
     This function returns the unconstrained cause repertoire for a system of n nodes;   
     This will be the uniform distribution across all possible states.
     '''
-    return np.repeat(1.0/n, n);
+    return np.repeat(1.0/(2**n), 2**n);
 
 def cause_repertoire( current, past, state, tpm, base=2):
     '''
@@ -125,20 +126,19 @@ def cause_repertoire( current, past, state, tpm, base=2):
     #current_subset_nodes = np.array(sorted(current),dtype = int)
     
     full_set_size = np.size(tpm,1);
-    
+
     con_tpm = condense_tpm(set(range(full_set_size)), past, tpm, base);
-    
-    vec = np.array([np.prod([i[j] if bitget(state, j) else 1-i[j] for j in cols]) for i in con_tpm]);
-    
+
+    vec = np.array([np.prod([i[cols[j]] if bitget(state, j) else 1-i[cols[j]] for j in xrange(len(cols))]) for i in con_tpm]);
+
     if sum(vec)!=0:
         return np.divide(vec, sum(vec));
     
-def uncon_effect_repertoire( n, tpm , base = 2 ):
+def uncon_effect_repertoire( tpm , base = 2 ):
     '''
     This function returns the unconstrained future repertoire for a system of 
     n nodes
     '''
-    
     nnodes = np.size(tpm, 1);
     nstates = base**nnodes;
     
@@ -187,6 +187,7 @@ def condense_tpm( full_set, denominator , tpm , base = 2 ):
 
     nodes = np.array(sorted(denominator), dtype = int);
     nnodes = len(nodes);
+    print(nnodes)
     
     
     total_nnodes = len(full_set);
@@ -204,18 +205,71 @@ def condense_tpm( full_set, denominator , tpm , base = 2 ):
         condensed_tpm[i] = np.multiply(np.sum((tpm[j]) for j in temp2), scaling);
         
     return condensed_tpm;
+   
+     
+def EMD1(distr1, distr2, base=2):
+    '''
+    This function calculates the earth mover distance between two distributions
+    of states which correspond to the same set of nodes.
+    
+    Given n nodes, there should be base**n different states, and this should be 
+    the length of both input vectors. 
+    
+    The distance between each state is taken to be the hamming distance.
+    '''
+    
+    #this should always apply
+    if len(distr1) == len(distr2):
+        nstates = len(distr1);
+        #nnodes = int(np.log2(nstates)/np.log2(base));
         
+        #define the distance matrix
+        D = np.array([hamming(i,j,base) for i in range(nstates) for j in xrange(nstates)]);
+        D = D.flatten();
         
+        constraint = np.zeros([2*nstates, nstates**2])
+        for i in xrange(nstates): 
+            constraint[i, nstates*i:nstates*(i+1)] = np.ones(nstates);
+            constraint[nstates:2*nstates, nstates*i:nstates*(i+1)] = np.eye(nstates);
+        
+        eq =np.concatenate([distr1, distr2]);
+        
+        ans = so.linprog(D, A_eq = constraint, b_eq = eq);
+        
+        #This should always be the case
+        if ans.success:
+            return ans.fun
+        else:
+            sys.exit('The earth mover distance failed to compute. This shouldn\'t happen!')
+        
+     
 #%%
- 
+'''
+
 tpm = np.array([[0,0,0],[1,0,0],[1,0,1],[1,0,1],[0,0,1], [1,1,1], [1,0,0],[1,1,0]]);
 
-holder = cause_repertoire(set([0]), set([0,2]), 1, tpm)
+print cause_repertoire(set([0]), set([0,1,2]), 1, tpm)
 
-print(holder);
+print cause_repertoire(set([1]), set([0,1,2]), 1, tpm)
+
+print cause_repertoire(set([2]), set([0,1,2]), 1, tpm)
+
+'''
 
 #%%
- 
+
+'''
+tpm = np.array([[0,0,0],[1,0,0],[1,0,1],[1,0,1],[0,0,1], [1,1,1], [1,0,0],[1,1,0]]);
+
+distr1 = uncon_cause_repertoire(3);
+distr2 = uncon_effect_repertoire(tpm);
+print(distr1);
+print(distr2);
+
+print(EMD1(distr1, distr2));
+'''
+#%%
+'''
 tpm2 = condense_tpm( set([0,1,2]), set([0,2]), tpm )       
 print(tpm2)
     
@@ -224,3 +278,4 @@ print(tpm2)
 
 tmp = set([2,1]);
 perturb(tmp)
+'''
