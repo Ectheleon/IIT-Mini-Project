@@ -58,13 +58,13 @@ def hamming(int1, int2, base = 2):
     integers as arrase of base 'base' numbers
     '''
     if base==2:
-        diff = (int1|int2) - (int1^int2);
+        diff =  (int1^int2);
         
         count = 0;
         while diff>0:
-            diff-= 1<<int(np.floor(np.log2(diff)));
-            count+=1;
-    
+            if diff&1:
+                count+=1;
+            diff>>=1
     return count;
         
     #This code is only equipped for base 2 at the moment
@@ -97,7 +97,7 @@ def perturb( subset , base = 2):
     nnodes = len(subset);
         
     locations = np.array([np.sum([bitget(i,j)*base**nodes[j] for j in xrange(nnodes)]) for i in xrange(base**nnodes)],dtype = int)
-    
+
     return locations, 1.0/(base**nnodes);
         
 def uncon_cause_repertoire( n, base = 2 ):
@@ -106,6 +106,23 @@ def uncon_cause_repertoire( n, base = 2 ):
     This will be the uniform distribution across all possible states.
     '''
     return np.repeat(1.0/(2**n), 2**n);
+
+def uncon_effect_repertoire( tpm , base = 2 ):
+    '''
+    This function returns the unconstrained future repertoire for a system of 
+    n nodes
+    '''
+    nnodes = np.size(tpm, 1);
+    nstates = base**nnodes;
+    
+    #Store in the vector probs the unconstrained probability that the ith node
+    #will be in state 1 after one step into the future.
+    probs = np.array([np.divide(np.sum(tpm[:,i]), 1.0*nstates) for i in xrange(nnodes)]);
+    
+    #Use probs to calculate the unconstrained future repertoire.
+    return np.array([np.prod([probs[i] if bitget(j,i) else 1-probs[i] for i in xrange(nnodes)]) for j in xrange(nstates)])
+
+
 
 def cause_repertoire( current, past, state, tpm, base=2):
     '''
@@ -134,20 +151,6 @@ def cause_repertoire( current, past, state, tpm, base=2):
     if sum(vec)!=0:
         return np.divide(vec, sum(vec));
     
-def uncon_effect_repertoire( tpm , base = 2 ):
-    '''
-    This function returns the unconstrained future repertoire for a system of 
-    n nodes
-    '''
-    nnodes = np.size(tpm, 1);
-    nstates = base**nnodes;
-    
-    #Store in the vector probs the unconstrained probability that the ith node
-    #will be in state 1 after one step into the future.
-    probs = np.array([np.divide(np.sum(tpm[:,i]), 1.0*nstates) for i in xrange(nnodes)]);
-    
-    #Use probs to calculate the unconstrained future repertoire.
-    return np.array([np.prod([probs[i] if bitget(j,i) else 1-probs[i] for i in xrange(nnodes)]) for j in xrange(nstates)])
         
 def effect_repertoire( current , future , state , tpm , base = 2 ):
     '''
@@ -187,7 +190,6 @@ def condense_tpm( full_set, denominator , tpm , base = 2 ):
 
     nodes = np.array(sorted(denominator), dtype = int);
     nnodes = len(nodes);
-    print(nnodes)
     
     
     total_nnodes = len(full_set);
@@ -241,13 +243,24 @@ def EMD1(distr1, distr2, base=2):
             return ans.fun
         else:
             sys.exit('The earth mover distance failed to compute. This shouldn\'t happen!')
-        
+
+def EMD2(distr1, distr2, base=2):
+    '''
+    A second implementation of the EMD using a algorithm from wikipedia.
+    '''       
+    EMD = np.zeros(len(distr1))
+    EMD[0] = distr1[0]-distr2[0];
+    
+    for i in xrange(1, len(distr1)):
+        EMD[i] = EMD[i-1] + distr1[i]-distr2[i];
+    
+    return np.sum(np.fabs(EMD));
+    
      
 #%%
+
+tpm = np.array([[0,0,0],[0,0,1],[1,0,1],[1,0,0],[1,0,0], [1,1,1], [1,0,1],[1,1,0]]);
 '''
-
-tpm = np.array([[0,0,0],[1,0,0],[1,0,1],[1,0,1],[0,0,1], [1,1,1], [1,0,0],[1,1,0]]);
-
 print cause_repertoire(set([0]), set([0,1,2]), 1, tpm)
 
 print cause_repertoire(set([1]), set([0,1,2]), 1, tpm)
