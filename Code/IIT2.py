@@ -8,6 +8,11 @@ Created on Tue May 16 10:23:45 2017
 import numpy as np
 import scipy.optimize as so
 import sys
+import itertools 
+
+def powerset(ofset):
+    #returns the powerset of inputted set
+    return [set(z) for z in itertools.chain.from_iterable(itertools.combinations(ofset, r) for r in range(len(ofset)+1))]
 
 def convert_to_subset( num , subset ,base=2):
     '''
@@ -32,7 +37,7 @@ def convert_to_subset( num , subset ,base=2):
     subset_size = np.size(subset_nodes);
     
     return np.sum(bitget(num,subset_nodes[j])*base**j for j in xrange(subset_size));
-    
+
 
 def convert_from_subset( num, subset, base=2):
     '''
@@ -141,7 +146,7 @@ def cause_repertoire( current, past, state, tpm, base=2):
     cols = np.array(sorted(current), dtype = int);
     
     #current_subset_nodes = np.array(sorted(current),dtype = int)
-    
+
     full_set_size = np.size(tpm,1);
 
     con_tpm = condense_tpm(set(range(full_set_size)), past, tpm, base);
@@ -166,6 +171,7 @@ def effect_repertoire( current , future , state , tpm , base = 2 ):
         
     future_nnodes = len(future);
     future_nstates = base**future_nnodes;
+    future_nodes = np.array(sorted(future),dtype = int)
     
     total_nnodes = np.size(tpm,1);
     
@@ -174,8 +180,8 @@ def effect_repertoire( current , future , state , tpm , base = 2 ):
     con_tpm = condense_tpm(set(range(total_nnodes)), current, tpm, base);
     
     probs = con_tpm[state];
-        
-    return np.array([np.prod([probs[i] if bitget(j,i) else 1-probs[i] for i in xrange(future_nnodes)]) for j in xrange(future_nstates)])
+    
+    return np.array([np.prod([probs[future_nodes[i]] if bitget(j,i) else 1-probs[future_nodes[i]] for i in xrange(future_nnodes)]) for j in xrange(future_nstates)])
     
     
     
@@ -207,7 +213,11 @@ def condense_tpm( full_set, denominator , tpm , base = 2 ):
         condensed_tpm[i] = np.multiply(np.sum((tpm[j]) for j in temp2), scaling);
         
     return condensed_tpm;
-   
+
+#%% This function is unused, as it seems to have an error in it. It does not 
+# return values of the EMD consistent with results from Tononi's paper. Moreover
+# an external implementation of the EMD does agree. Hence the external softare
+# is used.    
      
 def EMD1(distr1, distr2, base=2):
     '''
@@ -244,23 +254,54 @@ def EMD1(distr1, distr2, base=2):
         else:
             sys.exit('The earth mover distance failed to compute. This shouldn\'t happen!')
 
-def EMD2(distr1, distr2, base=2):
+def multiply_repertoires(set1, set2, distr1, distr2,base=2):
     '''
-    A second implementation of the EMD using a algorithm from wikipedia.
-    '''       
-    EMD = np.zeros(len(distr1))
-    EMD[0] = distr1[0]-distr2[0];
+    Suppose distr1 (which appllies to set 1) is a distribution over the states
+    of n nodes, and distr2 applies to m nodes where m+n = N = total number of 
+    nodes in the system. This function multiplies these distributions together
+    and returns a distribution for the entire system.
+    '''    
     
-    for i in xrange(1, len(distr1)):
-        EMD[i] = EMD[i-1] + distr1[i]-distr2[i];
+    total = set1|set2
     
-    return np.sum(np.fabs(EMD));
+    set1_nodes = np.array(sorted(set1),dtype = int)
+    set2_nodes = np.array(sorted(set2),dtype = int)
     
-     
+    set1_nnodes = np.size(set1_nodes);
+    set2_nnodes = np.size(set2_nodes);
+    
+    total_nnodes = set1_nnodes + set2_nnodes;
+    
+    temp = np.array([[convert_to_subset(convert_from_subset(i, set1,base)+convert_from_subset(j, set2, base),total) for i in xrange(2**set1_nnodes)] for j in xrange(2**set2_nnodes)])
+
+    new_distr = np.ones(2**total_nnodes);
+    for i in xrange(2**set1_nnodes):
+        for j in xrange(2**set2_nnodes):
+            new_distr[temp[j,i]] = distr1[i]*distr2[j]
+    
+    return new_distr
+    
+    
+
+    
 #%%
 
-tpm = np.array([[0,0,0],[0,0,1],[1,0,1],[1,0,0],[1,0,0], [1,1,1], [1,0,1],[1,1,0]]);
 '''
+tpm = np.array([[0,0,0],[0,0,1],[1,0,1],[1,0,0],[1,0,0], [1,1,1], [1,0,1],[1,1,0]]);
+
+a = cause_repertoire(set([0,1]), set([2]), 1, tpm)
+b = cause_repertoire(set([2]), set([0,1]), 0, tpm)
+
+aset = set([2])
+bset = set([0,1])
+
+multiply_repertoires(aset,bset,a,b)
+'''
+     
+#%%
+'''
+tpm = np.array([[0,0,0],[0,0,1],[1,0,1],[1,0,0],[1,0,0], [1,1,1], [1,0,1],[1,1,0]]);
+
 print cause_repertoire(set([0]), set([0,1,2]), 1, tpm)
 
 print cause_repertoire(set([1]), set([0,1,2]), 1, tpm)
