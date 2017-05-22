@@ -1,0 +1,231 @@
+
+\section{Integrated Information Theory}
+
+In this section, we present a summary of Integrated Information Theory as presented by Tononi et all \cite{main}.
+
+\subsection{Definitions and Notation}
+We take the term \textit{mechanism} to mean a non-empty set of nodes, connected in some way to each other, such that the current state of a node depends on the previous state of nodes which it is connected to. We show examples where nodes are AND, OR, XOR, and COPY gates. The \textit{order} of a mechanisms refers the number of nodes within the mechanism. A mechanism is called \textit{elementary} if it is of order one.
+
+
+Let $G$ refer to a mechanism. We denote the current, past and future states of $G$ by $G^c$, $G^p$ and $G^f$ respectively. 
+
+Suppose the current state, or part of it is known (i.e. we know the values of one or more nodes) and we call this information $X$. Then we define the \textit{cause repertoire} to be the distribution of past states that could have caused $G^c = X$. We abuse probability notation by writing this as: $p(G^p | G^c = X)$. Similarly the \textit{effect repertoire} is the distribution of future states which may have been caused by $G^c = X$. Again, we write this as $p(G^f|G^c=X)$. 
+
+Finally, we define the \textit{unconstrained past repertoire} of a mechanism $G$ to be the distribution of states of $G^p$ with unconstrained outputs. In practice, this distribution is uniform. We denote this distribution by: $p^{uc}(G^p)$. The \textit{unconstrained future repertoire} is a distribution of future states of $G$ with unconstrained \textit{inputs}, similarly denoted by $p^{uc}(G^f)$. That the inputs instead of the outputs are constrained results in this distribution not being uniform.
+
+\subsection{The earth mover's distance (EMD)}
+In the context of this document, we will frequently calculate the distance between two probability distributions $p1$ and $p1$. For this we will use the mathematical notation $D(p1,p2)$, where $D$ is referring to the earth mover's distance.
+
+To use this distance measure, we require the existence of another metric which measures the distance between any pair of states. Here we use the Hamming distance for this purpose, that is the number of individual bytes which disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
+
+In simple terms, if we think of each distribution as piles of dirt on top of each given state. The earth mover's distance is the product of how much dirt needs to moved by how far this dirt needs to go. 
+
+\begin{description}
+	\item[EMD between Probability Distributions] Let $S$ be a set of $n$ states, $\mathbf{D} = \left[ D_{ij}\right]$ where $D_{ij}$ is the distance between $s_i$ and $s_j$, $P$ and $Q$ be two probability distributions over $S$ such that $P(X = s_i) = p_i$ and $Q(X=s_j) = q_j$, $\forall i,j$. 
+	
+	Calculate $\mathbf{F} = \left[F_{ij}\right]$ matrix which optimises the following problem:
+	
+	\begin{align}
+	\label{eq:EMD1}
+	\min \limits_{\mathbf{F}}\sum \limits_{i,j=1}^n &F_{ij} D_{ij}\quad \text{subject to}\\
+	&F_{ij}\geq 0,\quad \forall 1 \leq i,j \leq n\\
+	\sum \limits_{j=1}^n &F_{ij} = p_i,\quad 1 \leq i \leq n\\
+	\sum \limits_{i=1}^n &F_{ij} = q_j,\quad 1 \leq j \leq n
+	\end{align}
+	
+	Finally, we say: 
+	
+	\begin{equation}
+	\label{def:EMD}
+	\text{EMD}(P, Q) = \sum \limits_{i,j=1}^{n} F_{ij} D_{ij}
+	\end{equation}
+\end{description}
+
+From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance instead of bothering with $\text{EMD}(P,Q)$ each time.
+
+\subsection{Calculations for mechanisms}\label{sec:little_phi}
+
+\subsubsection{cause-effect information}
+The cause-effect information ($cei$) is a measure of the significance a piece of information has. It is calculated in 2 parts. First the cause information ($ci$) is defined by:
+
+\begin{equation}
+\label{def:ci}
+ci(G^p|G^c = X) = D\left(p(G^p|G^c = X)||p^{uc}(G^p)\right)
+\end{equation}
+
+
+Next the effect information ($ei$) is defined as:
+\begin{equation}
+\label{def:ei}
+ci(G^f|G^c = X) = D\left(p(G^f|G^c = X)||p^{uc}(G^f)\right)
+\end{equation}
+
+Finally, the $cei$ is calculated as:
+
+\begin{equation}
+\label{def:cei}
+cei(G^c = X) = \min\left(ci(G^p|G^c = X), ei(G^f|G^c = X \right)
+\end{equation}
+
+Intuitively we understand the $ei$ as how the knowledge of $G^c = X$ effect our expectation for the future. Similarly $ci$ measures how much this present knowledge specifies the past. Together, the $cei$ measures how much information beyond the present does the piece of present information give.
+
+\subsubsection{integrated information}
+IIT assumes that only information which is irreducible can contribute to consciousness. This motivates the calculation of $\varphi$, which calculates the distance between the cause-effect repertoires of an entire mechanism, and the cause-effect repertoires of the partitioned mechanism. 
+
+Intuitively, if a mechanism can be split into parts and these smaller mechanism generate the same result, then the mechanism is reducible and $\varphi=0$. In contrast, the larger $\varphi$ is, the more information the mechanism has beyond the sum of its parts.
+
+Let $G$ be a mechanism, $X$ a state of $G$ such that $G^c = X$, and $P(G)$ be the power set of $G$; that is the set of all subsets of $G$. Let $N, M \in P(g)$, then we define the following notation:
+
+\begin{equation}
+\label{def:preMIP}
+p(A|B /M, N)= p(M|N) p(A \backslash M |B \backslash N)
+\end{equation}
+
+Then
+
+\begin{equation}
+\label{def:phi2}
+\varphi_{cause}(G^p|G^c=X/ M, N) = D \left( p(G^p|G^c=X) ,p(G^p|G^c=X/M,N)  \right)
+\end{equation}.
+
+With the benefit of this notation, we now introduce the notion of the minimum information partition (MIP). Specifically, the MIP refers to the sets $M'$ and $N'$ which minimise $\varphi_{cause}$. We then have:
+
+\begin{equation}
+\label{def:phi3}
+\varphi^{\text{MIP}}_{cause}(G^p|G^c=X) = \varphi_{cause}(G^p|G^c=X/ M', N')
+\end{equation}
+
+$\varphi_{effect}$ is defined similarly. One need only swap the $p$ superscript with a $f$ superscript. 
+
+Finally we can define integrated information $\varphi$:
+\begin{equation}
+\label{def:phi}
+\varphi^{\text{MIP}}(G^{p,f}|G^c = X) = \min \left( \varphi^{\text{MIP}}_{cause}(G^p|G^c=X), \varphi^{\text{MIP}}_{effect}(G^f|G^c=X)  \right) 
+\end{equation}
+
+
+
+If $M'$ and $N'$ give rise to the cause MIP, we write the following:
+\begin{equation}
+\label{def:notation1}
+G^c/G^p \rightarrow (M'/N') \times (G^c \backslash M'/ G^p\backslash N')
+\end{equation}
+
+\begin{description}
+	\item[Note] In this section, we demonstrate how to find the MIP for $G^c/G^p$ or $G^c/G^f$. However, this calculation does not require us to be working with the entire mechanism $G$. We can also compute the MIP for $A^c/B^p, \quad \forall A,B \in P(G)$. Once we have the MIP, we can also compute $\varphi^{\text{MIP}}(B|A)$ as before.
+\end{description}
+
+\subsubsection{maximally integrated information}
+It follows from the assumptions of IIT that a mechanism has a unique cause and effect. We identify these as the maximally irreducible causes and effects respectively. 
+
+Let $G^c = X$. We now ask the question: what is the cause of $X$? Any element in $P(G)$ is a candidate, so we need to conduct an exhaustive search. For each $S \in P(G)$, we calculate $\varphi^{\text{MIP}}_{\text{cause}}(S^p|G^c=X)$. We call the set $S'$ which maximised $\varphi^{\text{MIP}}$ the \textit{core cause}, and define 
+\begin{equation}
+\label{def:core_cause}
+\varphi^{\text{Max}}_{\text{cause}}(X):=\varphi^{\text{MIP}}_{\text{cause}}(G^p = S'^p|G^c = X)
+\end{equation}
+
+We identify the \textit{core effect} and calculate $\varphi^{\text{Max}}_{\text{effect}}$ in the equivalent fashion, and finish with setting $\varphi^{\text{Max}}$ to be the minimum of the two as before.
+
+Let $S$ and $R$ be the sets which maximise $\varphi^{\text{MIP}}_{\text{cause}}(G^p = S|G^c = X)$ and $\varphi^{\text{MIP}}_{\text{effect}}(G^f = R|G^c = X)$ respectively. Then if $\varphi^{\text{Max}}(X)\neq 0$, we call $X/S^p,R^f$ a \textit{concept}. Given a state $X$, a concept has a maximally irreducible cause-effect repertoire (MICE). This refers to the combination of the maximally irreducible cause repertoire: $p(S^p|G^c=X)$ and the maximally irreducible effect repertoire $p(R^f|G^c=X)$.
+
+\subsection{Calculations for systems of mechanisms}
+Thus far calculations have been restricted to a single mechanism, whether 1st, 2nd, or $n$th order. However, a network of more than one node may contain multiply mechanisms, and these may share nodes. For example, a network of 3 node could potentially contain 7 mechanisms (all possible subsets of nodes less the empty set).
+
+Now we turn our attention to a system of mechanisms, i.e. all mechanisms contained within a set of nodes. 
+
+\subsubsection{conceptual information}
+To calculate the conceptual information (CI) given a current state ($X$) for a system of mechanisms, first calculate $\varphi^{\text{Max}}(X)$ for each individual mechanism in the system as well as the corresponding MICE. Any mechanism for which $\varphi^{\text{Max}}(X)=0$ we neglect, as it contributed no conceptual information.
+
+Denote $M_i$ for the MICE for the $i$th mechanism with a concept, and $\varphi^{\text{Max}}_i(X)$ for the integrate information of the $i$th concept. Then the conceptual information of a sate $X$ is given by:
+
+\begin{equation}
+\label{def:CI}
+CI(X) = \sum \limits_i \varphi^{\text{Max}}_i(X) D(M_i, M^{uc})
+\end{equation}
+
+where $M^{uc}$ refers to the `null' concept, i.e. a combination of the unconstrained past and future repertoires. $D$ again refers to the earth mover's distance, although in a more generalised form from that originally 
+described. 
+
+Thus, the conceptual information of a system is affected by how many concepts exist within the system, and by how much information each of these concepts possess.
+\subsubsection{integrated conceptual information}
+Denoted by $\Phi$, integrated conceptual information is the value which we seek to compute.
+
+
+\subsubsection{maximally irreducible conceptual structure}
+
+
+\subsection{Computational cost}
+Previously in section \ref{sec:little_phi}, we presented the functions $cei$, $\varphi$ and $\varphi^{MAX}$. Now we examine these more closely in or to estimate the cost of computing these functions. 
+
+First, we note that each term of the form $p(G^p|G^c)$ is probability distribution over the states of $G$. We represent this as a vector of length $2^n$ (where $|G| = n$). The computational time required by the EMD is $O(N^3 \log N)$, where $N$ is the size of the distribution. Hence, computing $cei$ is $O(n2^{6n})$.
+
+Next for computing $\varphi$ and $\varphi^{MAX}$, we make the assumption that no calculation is repeated. In other words, we have a perfect memory for what we have calculated. In the process to find $\varphi^{MAX}$, we will need to compute $p(A|B= X), \quad \forall A\in P(G^p), B\in P(G^c)$. Since $P(G^p)$ and $P(G^c)$ have a size $O(2^n)$, it follows that if no computations are repeated, $O(2^{2n})$ will be required. For each of these computations, a distance computation will also be required. Thus we have $O(n2^{8n})$. 
+
+Finally, this computes $\varphi^{MAX}$ given one particular initial state (out of $2^n$). To compute $\varphi^{MAX}$ for all possible starting state, the cost would be $O(n2^{9n})$.
+
+\section{A model for organisation behaviour}
+
+In this chapter, we seek to model an organisation which seeks to maximise its profits. In particular, we interest ourselves in the case where revenue is gained by the completion of `projects' which are assigned at random points in time. The organisation has a set of teams at its disposal, to whom it assigns each project as it appears. We assume the following factors which influence how we assign teams to projects:
+
+\begin{enumerate}
+	\item Each project requires a particular set of `skills' in order to be completed. Each team possesses one or more of these `skills'. A project will be completed only when sufficiently many teams are assigned to it that possess all of the `skills' required by the project.
+
+	\item The existence of each team has a `cost', which depends on number and type of skills possessed by the team. However, this `cost' is significantly less than the `cost' of recruiting a new team.
+
+	\item When two teams are assigned to a single project they must collaborate with each other. We assume this to have a `cost'. 
+	\begin{enumerate}
+		\item There is a considerable `cost' invoked when a collaboration is first established (i.e. when two teams are assigned to a common project for the first time). 
+		\item As teams work together on projects, they become better at communicating, resulting in the `cost' of collaboration decreasing. 
+	\end{enumerate}
+	
+
+\end{enumerate}
+
+We list these assumption in order of significance. For our simplest model, we will employ only the first assumption. After which we will complicate the model by moving down the list.
+
+These assumptions give rise to the following values:
+
+\begin{enumerate}
+	\item Number of `skill' types. This value we select in advance and is constant.
+	\item Number of teams. This value could either be constant or a variable, depending on what we are interested in. If we want to optimise the connections between teams, we should leave it to be constant. Else if we wish to have the optimal number of teams in the optimal arrangement, we would need this to be a variable. 
+	\item Number of projects. Again we have two options: this could be a fixed number, in which we identify the optimal way to arrange project teams to solve a set of projects on a small time scale. Alternatively, we could have this value dynamically changing, so that we had to optimize teams to handle a range of project types which arrive, and are completed over random time intervals.
+\end{enumerate}
+
+
+\subsection{A basic model}
+In our first model, we consider 3 teams to exist which we label as teams `A', `B', and `C'. Each of these teams, we represent as a node, equipped with 2 states (`on' and `off') within a network. By saying that node `A' is `on', we mean that team `A' is actively working on a project. Hence if `A' is idyll, the state of `A' is `off'. We represent `on' with a 1, and `off' with a 0.
+
+With each time-step, a node might transition from a state of idyllness to one of activity, or vice versa. For the simplest possible approach, we assume that a team will finish its task after a time-step with a fixed probability; we label these probabilities as $k_A, k_B$, and $k_C$. In other works, node `A' will transition from state 1 to state 0 with probability $k_A$.
+
+Next we need to determine the mechanism by which teams get assigned to projects, and hence transitioning to a state of 1. Here we need to be careful, as we need our model to be consistent with the assumptions of IIT. In particular we need each of `teams' to transition independently of each other, else the calculation of $\Phi$ to be incorrect. 
+
+
+
+\iffalse
+\subsection{Two Directions}
+As I'm trying to put together a model, it seems to me that there are two separate things which I might try to calculate the consciousness of. 
+
+The first option, is the mechanism of assignment. For this case, I would come up with a model which would recruit, merge, split, sack and assign teams (to projects). In this model, important pieces of information would be: do all projects have sufficient teams assigned to them, when a project appears how should available teams be selected to work on it, under what circumstances should a new team be recruited. 
+
+If I pursue this model, in the best case scenario I might be able to simulate such allocation mechanisms to determine the expected profits and compare this to the system's consciousness. Hence it may be possible to relate monetary effectiveness of the mechanism to its consciousness. However, this approach does not give attention to in information flow between teams as they work on a project. 
+
+Alternatively, I could focus less on the larger macro level decisions, and more on how groups should interact with each other. I'm not sure how I would make this relate to integrated information theory though. I could potentially use the connections as the features which switch on and off depending on the inputs, but if that were done, I'm not sure how feedback would work, as that structure seems to have a one directional chain of communication.
+
+\subsection{Model 1}
+For our simplest model, we let there be 3 distinct `skills', which we label merely as $A$, $B$ and $C$. For each time-step (we choose time to be discrete), a project will appear with a particular `skill' requirement based on a multinomial distribution. That is we select 3 probabilities: $p_A$, $p_B$ and $p_C$ such that the project will require `skill' set $A$ with probability $p_A$, and so on. It follows that no new project might appear at all, and this happens with probability $p_A p_B p_C$.
+
+When a project appears, we represent it as a node on a graph. By default this node is turned off. Once a project is connected to a number of teams which account for all of its required skills, then it turns on. Once on, with each time-step the project is completed with a fixed probability. 
+
+We begin with there being no teams in existence. With each time-step, at most one team may be recruited, as we are assuming that it is costly in both time and resources to recruit a new team. Also we are more interested in the long term amount of teams deployed, so we wish our system to respond slowly when teams are lacking/plentiful.
+\fi
+
+\section{Applying IIT}
+In this section I intend to talk about observing how $\Phi$ actually behaves when I use it to measure consciousness. What type of shape it has, what type of optimal values can be achieved in practice. This section should include a detailed look at simple cases.
+
+\subsection{2 nodes}
+Examine how $\Phi$ behaves on networks with 2 nodes. As this case is small, try to conduct exhaustive searches in pursuit of some intuition as to how $\Phi$ behaves.
+\subsection{3 nodes}
+Attempt to generalise ideas from previous section here. Can I find an optimum with manageable computational effort? Can I apply principles from the 2 nodes case to anticipate what an optimum might be?
+
+\subsection{Alternative Measures of $\Phi$}
+Compare measurements of $\Phi$ using IIT 3.0 with results using alternative measures which have been proposed. Are they correlated. Are they measuring the same thing?
