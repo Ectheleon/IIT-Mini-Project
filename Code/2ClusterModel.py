@@ -110,7 +110,7 @@ def buildTPM(cm, probs, k):
             elif (project == [0,1,0]).all():
                 A = 0;
                 B = ns[1]
-                C = ~(s_off[2,1]&s_off[2,4])&ns[2]
+                C = ~(s_off[2,1]|s_off[2,4])&ns[2]
                 D = 0;
                 E = ~(s_off[4,1])&ns[4]
         
@@ -186,12 +186,12 @@ def buildTPM(cm, probs, k):
             
             
             TPM[row+32*project_index, 0:5] = A,B,C,D,E
-            print(i, row+32*project_index,s, project, A,B,C,D,E, np.round(TPM[row+32*project_index, :5],3))
+            TPM = np.round(TPM, 3)
+            print(i,s, project, np.round(TPM[row+32*project_index, :5],3))
             i+=1
             
     
     
-    print(TPM[100])
     return TPM,CM
     
                                                  
@@ -201,7 +201,17 @@ cm[3,4] = 1
 cm[4,3]=1
 k = [.2, .2, .1, .05, .05]
 
+#%%
+def classical(TPM, state, costs):
+    #computes the cost of waste when the system transitions out of 'state'.
+    
+    old = state;
+    ind = np.sum([2**i * old[i] for i in range(8)]);
 
+    new = np.ceil(TPM[ind]);
+    new_workers = new[:5]-old[:5];
+    print(new_workers)
+    
 #%%
 states = np.array(list(itertools.product([0,1], repeat = 8)))
 
