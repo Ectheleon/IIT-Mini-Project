@@ -1,0 +1,88 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage[english]{babel}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\usepackage[margin=1.in]{geometry}
+
+\title{A method to speed up the computation of distance between repertoires exponentially}
+\date{}
+
+\begin{document}
+	\maketitle 
+	
+	\section{Introduction}
+	In IIT, we define a mechanism with a network $G$ where $|G|=n$, each node has 2 possible states: `on' or `off', and a $2^n\times n$ state by node transition probability matrix $\mathbf{T}$, such that the probability of node $G_j$ being in a state of `on' following an iteration is precisely $\mathbf{T}_{ij}$, where $i$ is the current state of the system.
+	
+	When we say the \textbf{effect repertoire} of a mechanism being in a particular state $X$, we refer to the vector of length $2^n$:
+	\[\mathbf{p}_{X,j} = p(G^f = j|G^c=X)\]
+	
+	Computation of $\varphi$ requires us to determine such effect repertoires for both the system and partitions of the system, which we than calculate the distance between. For this purpose, we use the Earth Movers Distance. 
+	
+	The time taken by the EMD measuring the distance between 2 distributions scales in polynomial time w.r.t the distributions size. In this case, each repertoire is of length $2^n$. Hence the time required by the EMD is at best $2^n$.
+	
+	\section{Insight}
+	We now take a step back and ask exactly how these repertoires are constructed. Let $J$ be an index set, referring to a subset of nodes in the system. Further suppose that $G_J^c= X$. Now how to we compute the effect repertoire of $G_J^c = X$?
+	
+	An important assumption of IIT is that each node activates independently of the others. Hence:
+	
+	\[p(ABC^f = 101|AC = 11) = p(A^f=1|AC^c=11)p(B^f=0|AC^c=11)p(C^f=1|AC^c=11)\]
+	
+	So, when we compute the $ p(G^f=j|G_J^c=X) $, we break the problem into finding $P(G^f_j = 1|G^c_J=X)$ for each $j$. Hence we focus our attention of the $j$th column of $\mathbf{T}_{ij}$.
+	
+	From $\mathbf{T}_{ij}$ we have the probabilities that the future state of node $G_j$ will be on, for all possible current states $i$. However, we are not interested in all current states. We are only interested in current states where $G^c_J =  X$ as given.
+	
+	Thus we calculate: 
+	
+	\[\mathbf{T}_{X, j} = \sum \limits_{S:S_J=X} T_{S, j} \]
+	
+	where we are summing over all possible current state of the network, such that the subset indexed by $J$ is indeed in state $X$.
+	
+	Here is how repertoires are constructed from these values:
+	
+	\[p(ABC^f = 000|AC^c = 10) = (1-\mathbf{T}_{10,0})(1-\mathbf{T}_{10,1})(1-\mathbf{T}_{10,1})\]
+	\[p(ABC^f = 100|AC^c = 10) = (\mathbf{T}_{10,0})(1-\mathbf{T}_{10,1})(1-\mathbf{T}_{10,1})\]
+	\[p(ABC^f = 010|AC^c = 10) = (1-\mathbf{T}_{10,0})(\mathbf{T}_{10,1})(1-\mathbf{T}_{10,1})\]
+	\[p(ABC^f = 110|AC^c = 10) = (\mathbf{T}_{10,0})(\mathbf{T}_{10,1})(1-\mathbf{T}_{10,1})\]
+	\[p(ABC^f = 001|AC^c = 10) = (1-\mathbf{T}_{10,0})(1-\mathbf{T}_{10,1})(\mathbf{T}_{10,1})\]
+	etc...
+	
+	Therefore, determining a repertoire is equivalent to computing $\mathbf{T}_{X,j}$, for $j = 1, 2, \ldots, n$. In short, there is an isomorphism between the set of repertoires (length $2^n$ vectors) and the set of probabilities that each individual node is on (a vector of length $n$). The question is, do we really need to compute emd between repertoires having already computed these from our probabilities: $\mathbf{T}_{X,j}$, or can we compute the distance from these probability values directly. 
+	
+
+	
+	\section{Improvement}
+	The answer I believe is yes. Suppose we have 2 repertoires, which have generating probabilities:
+	
+	\[ \left(\begin{array}{cccc} A_{1} &A_{2} &\ldots& A_{n} \end{array} \right) \]
+	
+	and
+	
+	\[ \left(\begin{array}{cccc} B_{1} &B_{2} &\ldots& B_{n} \end{array} \right) \]
+	
+	These are two row vectors of length $n$, each of which generates a repertoire. Call these vectors $A$ and $B$, and the corresponding repertoires $p_A$ and $p_B$.
+	
+	\begin{lemma}
+		$EMD(p_A, p_B) = ||A-B||_1$
+	\end{lemma}
+	
+	\begin{proof}
+		Consider $A_1$. This is the probability that node $G_1$ will be `on' after an iteration based on repertoire $p_A$. Similarly for $p_B$. 
+		
+		In order to `move' the distribution $p_A$ into being $p_B$, we need the probability that $G_!$ will be `on' after an iteration to be the same for both distributions. Thus we need to move a total of $|A_1-B_1|$ `dirt'. Next we need the probabilities for $G_2$ to match. This involves moving the following amount of `dirt': $|A_2 - B_2|$.
+		
+		We repeat this process to the end. However, the total amount of dirt moved by this procedure is exactly $||A-B||_1$. 
+		
+		I think this statement is true, and that the rational works. It certainly holds with small examples. Do you think this is worth trying to prove rigorously?
+		
+	\end{proof}
+	
+\end{document}

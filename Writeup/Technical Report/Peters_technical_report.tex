@@ -17,6 +17,17 @@
 \usepackage[colorlinks=true,linkcolor=black,urlcolor=black,citecolor=black,anchorcolor=black]{hyperref} % Colour links. [OPTIONAL]
 \usepackage[numbers, sort&compress]{natbib} % Nice references.
 \usepackage{babel}
+\usepackage{array}   % for \newcolumntype macro
+\usepackage{tabu}
+\usepackage{enumitem}
+
+
+\newlist{steps}{enumerate}{1}
+\setlist[steps, 1]{label = Step \arabic*:}
+
+
+
+\newcolumntype{L}{>{$}l<{$}} % math-mode version of "l" column type
 
 
 \bibliographystyle{unsrtnat}
