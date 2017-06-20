@@ -50,7 +50,7 @@ def transform_tpm(tpm):
     
     elif np.log2(nrows) == ncols:
         
-        options = np.array(list(itertools.product([0,1], repeat = 5)))
+        options = np.array(list(itertools.product([0,1], repeat = ncols)))
 
         new = np.ones([nrows, nrows]);
         
@@ -306,27 +306,33 @@ def classical(TPM,skill_map, state, costs):
 
 def quantify_network(cm, probs, k):
     TPM, CM = buildTPM(cm,probs, k);
-    net = phi.Network(TPM, CM)
     
-    dat = np.zeros([2**8, 2])
-
-    j= 0;
-    for state in states:
-        state = state[::-1]
-        waste = (classical(TPM, team_skill_map, state,costs))
-        cmplxs = phi.compute.condensed(net,state);
+    #check that TPM is valid!
+    
+    if (np.sum(transform_tpm(TPM),1)==1).all():
         
-        phis = []
-        for i in range(len(cmplxs)):
-            phis.append(cmplxs[i].phi)
-        dat[j,:] = np.array([waste, np.sum(phis)])
-        #print(j,waste, phis)
-        j+=1
+        net = phi.Network(TPM, CM)
         
-    dist = np.real(stat_dist(transform_tpm(TPM)));
+        dat = np.zeros([2**8, 2])
     
-    return dist.dot(dat)
-    
+        j= 0;
+        for state in states:
+            state = state[::-1]
+            waste = (classical(TPM, team_skill_map, state,costs))
+            cmplxs = phi.compute.condensed(net,state);
+            
+            phis = []
+            for i in range(len(cmplxs)):
+                phis.append(cmplxs[i].phi)
+            dat[j,:] = np.array([waste, np.sum(phis)])
+            #print(j,waste, phis)
+            j+=1
+            
+        dist = np.real(stat_dist(transform_tpm(TPM)));
+        
+        return dist.dot(dat)
+    else:
+        
 #%%
 nedges = 10;
 cms = connection_options(nedges);
@@ -340,7 +346,7 @@ for i in range(10):
 
 
 
-
+dat = np.array(dat)
 
 
 
@@ -350,9 +356,9 @@ for i in range(10):
 
 
 #%%
-TPM, CM = buildTPM(cm, probs, k)
+TPM, CM = buildTPM(cms[1005], probs, k)
 net = phi.Network(TPM, CM);
-
+#%%
 dat = np.zeros([2**8, 2])
 
 j= 0;
