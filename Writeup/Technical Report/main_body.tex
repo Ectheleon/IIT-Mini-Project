@@ -163,61 +163,274 @@ Next for computing $\varphi$ and $\varphi^{MAX}$, we make the assumption that no
 
 Finally, this computes $\varphi^{MAX}$ given one particular initial state (out of $2^n$). To compute $\varphi^{MAX}$ for all possible starting state, the cost would be $O(n2^{9n})$.
 
-\section{A model for organisation behaviour}
+\section{Modelling an Organisation}
 
 In this chapter, we seek to model an organisation which seeks to maximise its profits. In particular, we interest ourselves in the case where revenue is gained by the completion of `projects' which are assigned at random points in time. The organisation has a set of teams at its disposal, to whom it assigns each project as it appears. We assume the following factors which influence how we assign teams to projects:
 
 \begin{enumerate}
-	\item Each project requires a particular set of `skills' in order to be completed. Each team possesses one or more of these `skills'. A project will be completed only when sufficiently many teams are assigned to it that possess all of the `skills' required by the project.
+	\item Each project requires a particular set of `skills' in order to be completed. 
+	
+	\item Each team possesses one or more of these `skills'. 
+	
+	\item A project can be completed only when sufficiently many teams are assigned to it that possess all of the `skills' required by the project.
 
-	\item The existence of each team has a `cost', which depends on number and type of skills possessed by the team. However, this `cost' is significantly less than the `cost' of recruiting a new team.
 
-	\item When two teams are assigned to a single project they must collaborate with each other. We assume this to have a `cost'. 
-	\begin{enumerate}
-		\item There is a considerable `cost' invoked when a collaboration is first established (i.e. when two teams are assigned to a common project for the first time). 
-		\item As teams work together on projects, they become better at communicating, resulting in the `cost' of collaboration decreasing. 
-	\end{enumerate}
+\end{enumerate}
+
+Within these assumptions, there are many variations of models we can build. This follows from the different ways we can choose the following:
+
+\begin{enumerate}
+	\item Progression of time. We take our model to be a discrete iterative process. Each iteration marks the passage of a fixed time period. 
+
+	\item Number of `skill' types. This value we select in advance and is constant.
+	\item Number of teams. We take this to be constant for each version of our model.
+
+	\item Number of Projects. We assume the likelihood that a project will require one particular skill to be independent of whether or requires any other skill. Hence we take the arrival of Projects to be based on a multivariate Bernoulli distribution. 
+	
+	\item How projects are completed. We arbitrarily decide that the duration of a project will be distributed exponentially. This is equivalent to saying that each project has an identical chance of completion following each iteration.
 	
 
 \end{enumerate}
 
-We list these assumption in order of significance. For our simplest model, we will employ only the first assumption. After which we will complicate the model by moving down the list.
 
-These assumptions give rise to the following values:
+\subsection{A single-cluster model}
+In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. We take the assignment of skills to teams as fixed, deciding arbitrarily that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
+
+\begin{figure}[h]
+	\centering
+
+	\includegraphics[]{ModelDiagram.png}
+	\caption{We have 3 types of nodes: skill types ($\alpha$ and $\beta$), teams ($A$, $B$ and $C$), and incoming project alerts ($P_\alpha$ and $P_\beta$). If a team node is joined to a skill node by an edge, then the team possesses that skill. All of the teams have one way connections with the incoming project alerts nodes because the teams respective state do not effect incoming projects' state, but are effected by them.}
+	\label{fig:diagram1}
+\end{figure}
+
+With the teams, skills and assignment of these defined, all that remains to be specified for this model is the following:
 
 \begin{enumerate}
-	\item Number of `skill' types. This value we select in advance and is constant.
-	\item Number of teams. This value could either be constant or a variable, depending on what we are interested in. If we want to optimise the connections between teams, we should leave it to be constant. Else if we wish to have the optimal number of teams in the optimal arrangement, we would need this to be a variable. 
-	\item Number of projects. Again we have two options: this could be a fixed number, in which we identify the optimal way to arrange project teams to solve a set of projects on a small time scale. Alternatively, we could have this value dynamically changing, so that we had to optimize teams to handle a range of project types which arrive, and are completed over random time intervals.
+	\item The probabilities affecting arrival of projects.
+	\item The process by which projects are assigned to teams.
+	\item The probabilities affecting completion of projects.
+\end{enumerate}
+
+\begin{steps}
+	
+	\item \textbf{Arrival of projects}\\
+	Earlier we stated that this process was based on a multivariate Bernoulli distribution. Specifically we use the 2-dimensional version, as we are working with 2 types of skills. We specify the vector of probabilities: $\mathbf{p} = (p_\alpha, p_\beta)$ such that an incoming project requires skill $\alpha$ with probability $p_\alpha$ and similarly for skill $\beta$.
+	
+	We create 2 `incoming project alert' nodes which we label as $P_\alpha$ and $P_\beta$. Thee state of these nodes is determined only by the previously mentioned probability distribution. Hence these nodes transition states independently of any other node. 
+	
+	\item \textbf{Assignment of projects}\\
+	First are the 3 simple cases. If a project which requires skill $\alpha$ but not $\beta$ arrives, and team $A$ is idle, then the project is assigned to $A$, resulting in team $A$ turning on. Similarly teams $B$ and $C$ will turn on if a project arrives tailored to their abilities while they are not already active.	
+	
+	2 more cases exist: If a project suitable for team $A$ arrives while $A$ is busy and $C$ is idle, then $C$ will be assigned $A$'s task. The same will apply if $B$ is busy when such a project arrives. Finally, if a project requiring both skills arrives while $C$ is busy while $A$ and $B$ are both idle, then $A$ and $B$ will be assigned the project, resulting in both of them transitioning to a state of `on'.
+	
+	\item \textbf{Completion of projects}\\
+	We already stated the time required to complete a project to be modelled by th exponential distribution. This was so we could use a simple Bernoulli process to determine when a project is completed. This means that the probability of completing a project is constant w.r.t. time. However, to make this process more realistic, we decide that the probability of completing a project will not be independent of active working connections.
+	
+	We define the parameters $k_A$, $k_B$ and $k_C$ to represent the effectiveness of each team. If $A$ is active, then it will complete its task with probability $k_A$ after each time-step, and so on. 
+	
+	However, when teams are working on similar tasks, then collaboration occurs. Specifically, if teams $A$ and $C$ are both active, since skill $\alpha$ is required for both projects, $C$ will assist $A$. However, as $C$'s project also involved skill $\beta$, $A$ will be unable to return the assistance. In this case, $A$ will finish its task after the next time-step with probability $k_A + k_B$, which for $C$ things are unchanged. 
+	
+	$C$ can only receive assistance when all teams are active, since together $A$ and $B$ account for all required skills. In this final case, $C$ will complete its task with probability $k_A+k_B+k_C$.
+\end{steps}
+
+
+Now we can put this all together to form the state by node transition probability matrix: $\mathbf{T}$, defined as:
+\begin{equation}
+\mathbf{T}_{ij}= P(G_j^{t+1}=1 | G^t = i)
+\end{equation}
+where $G$ refers to the entire network with $G_j$ standing for $A$, $B$ and $C$ for $j=1,2,3$. $\mathbf{T}$ will have a row for each state of the system, and a column for each node. Hence its shape will be $2^n \times n$ assuming that each node has exactly 2 states (as in IIT). We present the matrix in table \ref{mat:model1}.
+
+
+\begin{table}[h]
+	\centering
+	
+
+	$\begin{array}{l|ccc}
+	\hline
+	\multicolumn{1}{|l|}{\text{State}} & \multicolumn{1}{c|}{A} & \multicolumn{1}{c|}{B} & \multicolumn{1}{c|}{C} \\ \hline
+	000                         & .25                    & .25                    & .25                    \\
+	100                         & 1-k_A                  & .25                    & .5                     \\
+	010                         & .25                    & 1-k_B                  & .5                     \\
+	110                         & 1-k_A                  & 1-k_B                  & .75                    \\
+	001                         & .5                     & .5                     & 1-k_C                  \\
+	101                         & 1-k_A-k_C              & .25                    & 1-k_C                  \\
+	011                         & .25                    & 1-k_B-k_C              & 1-k_C                  \\
+	111                         & 1-k_A-k_C              & 1-k_B-k_C              & 1-k_A-k_B-k_C         
+	\end{array}$
+	\caption{The state by node transition probability matrix for the model.}
+	\label{mat:model1}
+\end{table}
+
+\begin{description}
+	\item[Note] You may notice that this matrix refers to a 3 node system, while the network presented in figure \ref{fig:diagram1} contains 5 nodes which switch states. This is because the incoming project alert nodes switch `on' and `off' randomly, and independently of anything else. To simplify the IIT computation, we average over all possible external inputs. This results in reducing the $32\times5$ matrix to a $8\times3$ matrix.
+	
+	To do this, we `noise' out the nodes $P_{\alpha}$ and $P_{\beta}$, which involves taking $p_A$ and $p_B$ to both be 50\%. In other words, the valeus $p_A$ and $p_B$ have no effect on the calculation of $\Phi$, as they are merely external inputs, and not integrated into the dynamics of $A$, $B$ and $C$. With this assumption made, we average over all possible states of $P_\alpha$ and $P_\beta$ to gain the reduced matrix.
+\end{description}
+
+Finally, for this model to be interesting, we need to have some control over the parameters. For this, we think of $k_A$, $k_B$ and $k_C$ of being directly related to the funding invested in each team. Hence we assume $k_A+k_B+k_C = K$, where $K$ is a constant which refers to the total amount of funding at the organisations disposal. $k_i$'s refer to how we allocate that funding.
+
+When solving for this model, we will employ two methods: IIT and a classical approach. For IIT, we will compute the value of $\Phi$, while for the classical approach, we instead will introduce the notion of costs, and from this compute the economic performance with respect to the parameters $k_A$, $k_B$ and $k_C$. 
+
+\subsubsection{Classical Approach to solving the model}
+Currently in our model a project will definitely be completed, the question is how long it will take. Thus we don't have to worry about the cost of failed projects. Instead, we concern ourselves with the value of missed projects: those which arrive when there is no suitable team or combination of team available to be assigned to it. Define $W_A$, $W_B$ and $W_C$ to be the waste incurred when a project requiring skills $\alpha$, $\beta$ and both  is missed respectively.
+
+When does this waste happen? Look back at table \ref{mat:model1}. Based on how we've define the allocation process, the only states at which waste can occur are: $101$, $011$ and $111$. If the state is $101$, then wast occurs if a project which requires skill $\alpha$ arrives. If skill $\beta$ is further required, then the cost is $W_C$, else the cost is $W_A$. Since each combination of skills can arrive with equal probability (assumed for the sake of IIT), the expected loss when the state is $101$ is $0.25(W_A+W_C)$.
+Similarly the costs for states $011$ and $111$ are $0.25(W_B+W_C)$ and $0.25(W_A+W_B+W_C)$ respectively.
+
+Now we know how much money we expect to waste for each state. Now the question is: how often do we expect to be at each state? We can take two approaches: either we can simulate the system and compute waste from the time series, or else we can compute the expected waste per iteration by finding the stationary distribution of the system. We take the latter approach.
+
+When the values of $k_i \in (0,1)$, then the $8\times8$ state by state transition probability matrix $\mathbf{M}$ will have an eigenvalue of 1 with geometric multiplicity 1. Furthermore, $-1$ will not be an eigenvalue. Hence the left eigenvector with eigenvalue 1 will the be stationary distribution of the system, which precisely describes the long term behaviour of the system. 
+
+Hence our cost function is:
+\begin{equation}
+\label{eq:simple_model_cost_function}
+f(k_A, k_B, k_C) = \mathbf{q} \cdot \mathbf{v}(\mathbf{M}(k_A, k_B, k_C))
+\end{equation}
+
+where $\mathbf{v}$ is the normalised eigenvector corresponding to the eigenvalue 1 of the matrix $\mathbf{M}$ which in turn depends on $k_A$, $k_B$ and $k_C$. $\mathbf{eta}$ is a vector which contains the cost of each state. It can be written as: 
+\begin{equation}
+q_i = 0.25(W_A+W_C)\delta(i-5) + 0.25(W_B+W_C)\delta(i-6) + 0.25(W_A+W_B+W_C)\delta(i-7)
+\end{equation}
+
+In short, given the constants $W_A$, $W_B$ and $W_C$, we express the expected waste of the system as a function of $k_A$, $k_B$ and $k_C$. 
+
+\subsubsection{Significance of $\Phi$}
+
+In this section we compare the results of IIT with the expected waste of the network. $\Phi$ depends on the matrix $\mathbf{M}$ and the initial state. meanwhile $f$ depends on $\mathbf{M}$ in addition to the constants $W_A$, $W_B$, and $W_C$. The independence of $\Phi$ and waste constants is alarming, and leaves little optimism regarding any correlation. 
+
+Since $k_A + k+B+ k+C = K$, our parameter space is 2-D. We therefore compute $\Phi$ and $f$ for all suitable values of $k_A$,\ldots, on a grid with points at a distance 0.01 from each other. We use 2 initial states for the purpose of computing $\Phi$ which are arbitrarily taken to be $000$ and $101$.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale = 0.5]{PhiCostcomp1.png}
+	\caption{We plot the value of $\Phi$ given an initial state of $000$  against the cost of missed projects. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
+	\label{fig:PhiCostcomp1}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale = 0.5]{PhiCostcomp2.png}
+	\caption{We plot the value of $\Phi$ given an initial state of $101$ against the cost of missed projects. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
+	\label{fig:PhiCostcomp2}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale = 0.5]{Phi2Phicomp.png}
+	\caption{We plot the value of $\Phi$ given an initial state of $101$ against $Phi$ given the initial state $000$. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
+	\label{fig:Ph2Phicomp}
+\end{figure}
+
+In figures \ref{fig:PhiCostcomp1}, \ref{fig:PhiCostcomp2} and \ref{fig:Ph2Phicomp}, we plot the values of $f$ computed against those of $\Phi$ given each of the 2 initial states. In particular we see in figure \ref{fig:PhiCostcomp1} that while there seems to be some form of relationship between the cost of wasted projects and the `consciousness', whatever relationship that exists does not appear to be particularly useful. 
+
+Similarly in figure \ref{fig:PhiCostcomp2} it seems like there might be something interesting happening in a dimension which we are not measuring. However, we can't gain insight as to what that is with these measurements. Finally when we compare the values of $\Phi$ for different initial states in figure \ref{fig:Ph2Phicomp}, we find that the two values are almost entirely independent of each other. 
+
+In general, $\Phi$ does not provide much insight into this model. Why might this be? We present 2 potential flaws of the model:
+
+\begin{enumerate}
+	\item What $\Phi$ computes is the difference in information that a system has, above an beyond what it would have if the system was partitioned. As things stand, our model is a fully connected 3 node system. Thus we can't expect interesting $\Phi$ behaviour, as there are no partitions which might radically affect our network. 
+
+	\item The mechanism we defined for allocation of projects is one which assumes perfect knowledge and communication. We never have a scenario in which two teams work on the same thing unnecessarily, or one team neglects working on a project becomes it assumes that another team is. These events are far more indicative of waste, then what was measured previously. 
+
+\end{enumerate}
+
+Motivated by these observations, we proceed to the next model.
+
+
+
+\subsection{A two cluster model}
+
+The purpose of this next model is to deliberately allow scenarios where realistic miscommunication might occur which results in waste. The question of interest is whether $\Phi$ can measure such miscommunication.
+
+We extend the previous model as follows: 
+\begin{enumerate}
+	\item Now we take there to be 3 skills: $\alpha, \beta$ and $\gamma$.
+	
+	\item As before we have nodes $A$, $B$ and $C$ which interact in the same way as previously. In addition, we include the nodes $D$ and $E$. $D$ is equipped with skills $\alpha$ and $\gamma$, while $E$ has skills $\beta$ and $\gamma$. 
+\end{enumerate}
+
+We illustrate the new system in the following figure \ref{fig:diagram2}.
+\begin{figure}[h]
+	\centering	
+	\includegraphics[]{Model2Diagram.png}
+	\caption{We have 3 types of nodes: skill types ($\alpha$, $\beta$, and $\gamma$), teams ($A$, $B$, $C$, $D$ and $E$), and incoming project alerts ($P_\alpha$, $P_\beta$ and $P_\gamma$). If a team node is joined to a skill node by an edge, then the team possesses that skill. The teams receive inputs from the incoming project alert nodes, but the dependence is strictly one directional.
+	Certain teams are connected, indicating that they are actively communicating with each other so to distribute work efficiently. Note that we have 2 disconnected clusters of teams. This will give rise to waste.}
+	\label{fig:diagram2}
+\end{figure}
+
+In the previous model, we constructed the TPM from a global perspective. This was valid since all the teams involved were in communication. For this model, I need to construct the decision process for each team regarding when to take up a project independently. This will allow for easier adjustment to my TPM when I add an edge joining the two clusters. For this purpose, we introduce the following notation:
+
+Let $\{G^t\}_{t=0}$ be a time series referring to the networks states. For a particular point in time $t_0$, we have $G^{t_0} = (A^{t_0}, B^{t_0}, C^{t_0}, D^{t_0}, E^{t_0})$, where each $A^{i}$ is a binary number; that is the node $A$ is either on or off. Similarly for the other nodes. We will use conventional boolean arithmetic notation ($+$ means `or', $\times$, or equivalent multiplication notation means `and' while $\overline{A}$ means `not $A$'.) Finally denote by $S(p)$ a random sample which if less than $p$ returns a 1, and otherwise 0.
+
+With this notation, our old system can be written as follows:
+\begin{align}
+\begin{split}
+\label{eq:transition_old}
+A^{i+1} &= \overline{A}^{i} P_\alpha \left(1-P_\beta + P_\beta \overline{B^i} C^i\right)+ A^i \left(\overline{C}^i\overline{S(k_A)} + C^i \overline{S(k_A+k_C)}\right)\\
+B^{i+1} &= \overline{B}^{i} P_\beta \left(1-P_\alpha + P_\alpha \overline{A^i} C^i\right)+ B^i \left(\overline{C}^i\overline{S(k_B)} + C^i \overline{S(k_B+k_C)}\right)\\
+C^{i+1}&= \overline{C}^i\left(A^i P_\alpha(1-P_\beta) + B^i P_\beta(1-P_\alpha) + P_\alpha P_\beta \right) + C^i\left(\overline{A}^i\overline{B}^i\overline{S(k_C)} +A^i B^i \overline{S(k_A+k_B+k_C)}\right)
+\end{split}
+\end{align}
+
+This system of difference equations is sensitive to the connectivity matrix, assuming that all three `team' nodes are connected to each other, and that all of these nodes see both $P_\alpha$ and $P_\beta$. In order to extend this to a more general system, we introduce additional notation. 
+
+Before, $A^{i+1} = f(A^i, B^i)$ would mean that the future state of $A$ depends on the current states of $A$ and $B$. Now, we redefine the notation $B^i$ such that $B^i$ refers to the state of $B$ provided that $A$ is connected to $B$ and can see what that state is. In rigorous notation, we have redefined: $B^i := M_{a,b}B^i$, and $\overline{B}^i :=M_{a,b}\overline{B}^i$, where $\mathbf{M}$ is the connectivity matrix.
+
+For convenience, we further define $B^i_*:= M_{a,b}M_{b,a}B^i$ and $\overline{B}^i_* = M_{a,b}M_{a,b}\overline{B}^i$. This refers to A being able to see $B$, and vice versa. 
+
+\begin{align}
+\begin{split}
+\label{eq:general_transition_averaged}
+\mathbf{T}_{.,1} &= \frac{1}{8}\overline{A}^{i} \left(1 + (1-\overline{C}^i )(\overline{B}^i_*+B^i\overline{E}^i_*)+ (1-\overline{D}^i)\overline{E}^i_* + \overline{E}^i\right)
+\end{split}
+\end{align}
+
+
+Note that even now, node $A$, $B$ and $C$ do not receive any inputs from $P_\gamma$. That is, they do not perceive all available information, which will result in waste. 
+
+On the other hand, $D$ and $E$ perceive all inputs, but not the state of other teams. Before we write the equations for $D^{i+1}$ and $E^{i+1}$, it is necessary to assume without loss of generality that the expected return from a project of requiring only skill $\alpha$ is greater than that for a project requiring skill $\beta$. Otherwise, if one arrives which requires only skill $\gamma$ while both $D$ and $E$ are idle, which should take the task? Having made this assumption however, it follows that $E$ should take the task, as it more likely to be beneficial keeping $D$'s skill set in reserve.
+
+\begin{align}
+\begin{split}
+\label{eq:transition_new}
+D^{i+1} &= \overline{D}^i \left( P_\gamma (1-P_\alpha)E^i + P_\alpha \right) + D^i\overline{S(k_D)}\\
+E^{i+1} &= \overline{E}^i \left( P_\gamma + P_\beta-P_\beta P_\gamma \right) + E^i\overline{S(k_E)}
+\end{split}
+\end{align}
+
+As before, we average over all possible inputs from $P_\alpha$, $P_\beta$ and $P_\gamma$ to reduce the TPM's size. This results in equations \ref{eq:transition_old} and \ref{eq:transition_new} becoming:
+
+\begin{align}
+\begin{split}
+\label{eq:transition_averaged}
+P(A^{i+1}=1) &= \frac{1}{4}\overline{A}^{i} \left(1 + \overline{B^i} C^i\right)+ A^i \left(\overline{C}^i(1-k_A) + C^i (1-k_A-k_C)\right)\\
+P(B^{i+1}=1) &= \frac{1}{4}\overline{B}^{i} \left(1 + \overline{A^i} C^i\right)+ B^i \left(\overline{C}^i(1-k_B) + C^i (1-k_B-k_C)\right)\\
+P(C^{i+1}=1)&= \frac{1}{4}\overline{C}^i\left(A^i  + B^i + 1 \right) + C^i \left(\overline{A}^i\overline{B}^i(1-k_C) +A^i B^i (1-k_A-k_B-k_C)\right)\\
+P(D^{i+1}=1) &= \frac{1}{4}\overline{D}^i \left(2 +E^i \right) + D^i(1-k_D)\\
+P(E^{i+1}=1) &= \frac{3}{4}\overline{E}^i  + E^i(1-k_E)\\
+\end{split}
+\end{align}
+
+We construct the $32\times5$ TPM directly from equation \ref{eq:transition_averaged}, although we do not present it here due to its size.
+
+
+
+
+\subsubsection{Solving the 2 cluster model}
+First of all, this system is easy to solve from the perspective of IIT. One finds that there is a single complex: $ABC$. This complex has the same value of $\Phi$ given a state as previously. This means that $D$ and $E$ contain no integrated information as is. This is not surprising given that the difference equation for $E$ depends only on $E$, resulting in it being independent of $D$.
+
+
+\subsection{Next steps}
+
+Here we present additional features which might develop this model into being more useful:
+
+\begin{enumerate}
+	\item A continuum of states for a project. Before a project was either `on' or `off'. It would be better if 1 were to refer to unstarted, 0 referred to completed, and any number in between indicated the progress made. This would allow the completion rate of projects to not be memoryless.
+	\item A more sophisticated mechanism for collaboration. 
 \end{enumerate}
 
 
-\subsection{A basic model}
-In our first model, we consider 3 teams to exist which we label as teams `A', `B', and `C'. Each of these teams, we represent as a node, equipped with 2 states (`on' and `off') within a network. By saying that node `A' is `on', we mean that team `A' is actively working on a project. Hence if `A' is idyll, the state of `A' is `off'. We represent `on' with a 1, and `off' with a 0.
-
-With each time-step, a node might transition from a state of idyllness to one of activity, or vice versa. For the simplest possible approach, we assume that a team will finish its task after a time-step with a fixed probability; we label these probabilities as $k_A, k_B$, and $k_C$. In other works, node `A' will transition from state 1 to state 0 with probability $k_A$.
-
-Next we need to determine the mechanism by which teams get assigned to projects, and hence transitioning to a state of 1. Here we need to be careful, as we need our model to be consistent with the assumptions of IIT. In particular we need each of `teams' to transition independently of each other, else the calculation of $\Phi$ to be incorrect. 
-
-
-
-\iffalse
-\subsection{Two Directions}
-As I'm trying to put together a model, it seems to me that there are two separate things which I might try to calculate the consciousness of. 
-
-The first option, is the mechanism of assignment. For this case, I would come up with a model which would recruit, merge, split, sack and assign teams (to projects). In this model, important pieces of information would be: do all projects have sufficient teams assigned to them, when a project appears how should available teams be selected to work on it, under what circumstances should a new team be recruited. 
-
-If I pursue this model, in the best case scenario I might be able to simulate such allocation mechanisms to determine the expected profits and compare this to the system's consciousness. Hence it may be possible to relate monetary effectiveness of the mechanism to its consciousness. However, this approach does not give attention to in information flow between teams as they work on a project. 
-
-Alternatively, I could focus less on the larger macro level decisions, and more on how groups should interact with each other. I'm not sure how I would make this relate to integrated information theory though. I could potentially use the connections as the features which switch on and off depending on the inputs, but if that were done, I'm not sure how feedback would work, as that structure seems to have a one directional chain of communication.
-
-\subsection{Model 1}
-For our simplest model, we let there be 3 distinct `skills', which we label merely as $A$, $B$ and $C$. For each time-step (we choose time to be discrete), a project will appear with a particular `skill' requirement based on a multinomial distribution. That is we select 3 probabilities: $p_A$, $p_B$ and $p_C$ such that the project will require `skill' set $A$ with probability $p_A$, and so on. It follows that no new project might appear at all, and this happens with probability $p_A p_B p_C$.
-
-When a project appears, we represent it as a node on a graph. By default this node is turned off. Once a project is connected to a number of teams which account for all of its required skills, then it turns on. Once on, with each time-step the project is completed with a fixed probability. 
-
-We begin with there being no teams in existence. With each time-step, at most one team may be recruited, as we are assuming that it is costly in both time and resources to recruit a new team. Also we are more interested in the long term amount of teams deployed, so we wish our system to respond slowly when teams are lacking/plentiful.
-\fi
 
 \section{Applying IIT}
 In this section I intend to talk about observing how $\Phi$ actually behaves when I use it to measure consciousness. What type of shape it has, what type of optimal values can be achieved in practice. This section should include a detailed look at simple cases.
@@ -229,3 +442,17 @@ Attempt to generalise ideas from previous section here. Can I find an optimum wi
 
 \subsection{Alternative Measures of $\Phi$}
 Compare measurements of $\Phi$ using IIT 3.0 with results using alternative measures which have been proposed. Are they correlated. Are they measuring the same thing?
+
+\section{Applicability of IIT to organisations}
+In this section we consider the properties of $\Phi$, and question whether or not they are desirable properties in the context of a model for an organisation.
+
+\begin{enumerate}
+	\item \textbf{State Dependence}: Not only does the computation of $\Phi$ depend on the networks structure and transition mechanism, but it also depends on the state of every node within the system at the current time-step, but also on the previous state of every node outside the subsystem of consideration. This makes sense from the perspective of neuroscience as the level of consciousness is determined by which nodes are active at once, and not merely on the structure of the brain. Hence, within a fixed brain, consciousness various throughout the day. 
+	
+	In the context of a model for an organisation, a single time-step is not of particular interest if ones goal is simply to optimize profits. 
+	
+	
+	\item \textbf{Consciousness of Deterministic Systems}: It is stated by Tegmark \cite{improvedIIT} that it is undesirable for a measurement of consciousness to be 0 for deterministic systems. Thus from the perspective of IIT, it is not necessarily unreasonable that numerical experiments would find $\Phi$ tending to be larger for deterministic systems than probabilistic ones.
+	
+	From the perspective of an organisation, a fully random decision process is obviously bad. However, 
+\end{enumerate}
