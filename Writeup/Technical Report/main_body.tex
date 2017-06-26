@@ -1,17 +1,114 @@
 
 \section{Integrated Information Theory}
 
-In this section, we present a summary of Integrated Information Theory as presented by Tononi et all \cite{main}.
+In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{main} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
 
 \subsection{Definitions and Notation}
-We take the term \textit{mechanism} to mean a non-empty set of nodes, connected in some way to each other, such that the current state of a node depends on the previous state of nodes which it is connected to. We show examples where nodes are AND, OR, XOR, and COPY gates. The \textit{order} of a mechanisms refers the number of nodes within the mechanism. A mechanism is called \textit{elementary} if it is of order one.
+
+Integrated Information Theory introduces a function $\Phi$ which measures the integrated information of a discrete time multivariate stochastic process. We write:
+
+\begin{equation}
+\label{def:1}
+Z^t = \left(\begin{array}{cccc} z^1_t&z^2_t&\ldots&z^n_t\end{array}\right)
+\end{equation}
+
+to represent the multivariate random variable, where $z^i_t \in \{0,1\} \quad\forall i, t$. This stochastic process can be related to a graph containing $n = |Z_t|$ nodes. Each node refers to one of the $z^i$'s and can be in one of two states: `off' at time $t$ if $z^i_t=0$ and `on' if $z^i_t = 1$. We join $z^i$ to $z^j$ with a directed edge if the future state of $z^i$ depends in some way on $z^j$. From now on, we will refer to the $z^i$'s as `nodes'.
+
+Before we proceed, we need to specify what is meant by the terms \textit{mechanism} and \textit{system of mechanism}.
+
+\begin{figure}[ht]
+	\centering
+	
+	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
+	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The system of mechanisms in consideration is similarly circled in green. Finally, all nodes lying outside of the system are considered to be external inputs/outputs.}
+	\label{fig:IIT_illustration1}
+\end{figure}
 
 
-Let $G$ refer to a mechanism. We denote the current, past and future states of $G$ by $G^c$, $G^p$ and $G^f$ respectively. 
+\begin{definition}{A \textit{mechanism} refers to any non-empty set of nodes. The \textit{order} of a mechanism refers to the size of the set. A mechanism is \textit{elementary} if it is of order 1.}
+\end{definition}
 
-Suppose the current state, or part of it is known (i.e. we know the values of one or more nodes) and we call this information $X$. Then we define the \textit{cause repertoire} to be the distribution of past states that could have caused $G^c = X$. We abuse probability notation by writing this as: $p(G^p | G^c = X)$. Similarly the \textit{effect repertoire} is the distribution of future states which may have been caused by $G^c = X$. Again, we write this as $p(G^f|G^c=X)$. 
+\begin{definition}{A \textit{system of mechanisms} is a set of mechanisms. The elements of this set may have non-empty intersections.}
+\end{definition}
 
-Finally, we define the \textit{unconstrained past repertoire} of a mechanism $G$ to be the distribution of states of $G^p$ with unconstrained outputs. In practice, this distribution is uniform. We denote this distribution by: $p^{uc}(G^p)$. The \textit{unconstrained future repertoire} is a distribution of future states of $G$ with unconstrained \textit{inputs}, similarly denoted by $p^{uc}(G^f)$. That the inputs instead of the outputs are constrained results in this distribution not being uniform.
+
+Just as each node can be in one of two states, so too can mechanisms and systems be in states. The state of a mechanism is the combination of the states of all nodes within it. For example, if we have $z^1=1$, $z^2=0$ and $z^3=0$, than the mechanism $Z = \left(\begin{array}{ccc}z^1&z^2&z^3\end{array}\right)$ has state $\left(\begin{array}{ccc}1&0&0\end{array}\right)$. 
+
+
+The progression of $Z_t$ as time passes is dictated by the transition probability matrix (TPM) $\mathbf{M}$, which gives at $M_{ij}$ the probability of transitioning from state $i$ to state $j$ after a single time step. There are 3 points in time for which we consider a mechanism: the immediate past (time $t-1$), present (time $t$) and future (time $t+1$). Oizumi et all \cite{main} denote the state of a mechanism at these times by $Z^c$, $Z^p$ and $Z^f$ referring to the current, past and future states respectively. Alternatively, Krohn and Ostwald \cite{krohn2016computing} write $Z_{t-1}$, $Z_{t}$, and $Z_{t+1}$. In this document, we adopt the latter style.
+
+
+\begin{definition}
+	{Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge. We write it as $p_e(Z_{t+1}|W_t=X)$. Similarly the \textit{cause repertoire} of the state $W_t = X$ is the conditional probability distribution for past states of $Z$ given our current knowledge. We write it as $p_c(Z_{t-1}|W_t = X)$.}
+\end{definition}
+
+
+\subsection{Computation of Repertoires}
+In this section, we construct each of the previously defined repertoires from the TPM. First however, we need to introduce both the \textit{perturb function}, and the assumption of conditional independence, as all future definitions rely on these.
+
+\begin{definition}
+	{Let $S$ be a set such that $|S| = n$, and its elements are indexed by $s_1, s_2, \ldots, s_n$. Further let $f$ be a function which operates on the elements of $S$. Then we write the perturbation function as:
+	\[per(f(a, S), S) = \left(\begin{array}{cccc}f(a,s_1)&f(a,s_2)&\ldots&f(a,s_n) \end{array}\right)^T\]
+	That is, the perturbation function returns a vector where each of its entries corresponds to the $f$ taking a different input from $S$.}
+\end{definition} 
+
+\subsubsection{Conditional Independence}
+In order to simplify all computations, IIT makes a large mathematical assumption. Specifically it assumes that the probability distributions for the future states of each node are conditionally independent with respect to the previous state of the system. i.e. if $Z$ is a mechanism, then:
+
+\begin{equation}
+\label{eq:cond_independence}
+p(Z_{t+1}|Z_t = X) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=X)
+\end{equation}
+
+This assumption allows us to simplify the $2^n \times 2^n $ \textit{state by state} transition probability matrix $\mathbf{M}$ into the $2^n \times n$ \textit{state by node} transition probability matrix $\mathbf{T}$. As is, each row of $\mathbf{M}$ is a distribution containing the probabilities that any of $2^{|Z|}$ possible future state may be transitioned to. We replace this row with the values of $p(z^j_{t+1}=1|Z_t=X)$ where $j$ is a column index. Equation \ref{eq:cond_independence}, along with the fact that: \[p(z^i_{t+1}=1|Z_t=X)+p(z^i_{t+1} =0|Z_t=X) =1\]
+allows this smaller row of only $n$ values to uniquely specify the larger row of length $2^n$.
+
+
+\subsubsection{Effect repertoire}
+
+Let $Z$ be a mechanism, and suppose that the state of the subset $W \subset X$ is known: $W_t = X$. Then we first define the \textit{effect repertoire} to have the property of factorisation, that is:
+
+\begin{equation}
+\label{def:controversial}
+p_e(Z_{t+1}|W_t = X) = \prod \limits_{i= 1}^n p(z^i_{t+1}|W_t = X)
+\end{equation}
+
+It is important to note that this factorisation does not follow generally from equation \ref{eq:cond_independence}, as it was only assumed that future state of each node was conditionally independent with respect to the current states of the entire system, as opposed to with respect to all possible subsets of this system as well.
+
+This is justified by Oizumi et all \cite{main} in their supplementary methods document on the grounds that they are interested in how $W_t=X$ affects each $z^i_{t+1}$ individually and thus factorise as above in order to remove correlations.
+
+
+Finally, let $W$ be a subset of $Z$ which is known, and let $z^{i_0}$ be a particular node in $Z$. Then we have:
+\begin{equation}
+\label{def:effect_repertoire}
+p_e(z_{t+1}^{i_0}|W_t = X) = 2^{-|Z\setminus W|}\sum \limits_{Z\setminus W} p(z_{t+1}^{i_0}|W_t = X, Z\setminus W)
+\end{equation}
+
+This is equivalent to averaging over all rows of the TPM which corresponds to states of $Z_t$ such that $Z_t \supset W_t = X$.
+
+Hence, the generator \textit{unconstrained effect repertoire} $p(Z_t | \emptyset)$ is s
+
+\subsubsection{Cause repertoire}
+
+Just as the effect repertoire is broken into a smaller problem in equation \ref{def:controversial}, there exists an equivalent simplification for computing the cause repertoire. Let the state of $W \subset Z$ be known,$m:=|W|$, and $V$ be any other subset of $Z$. Then 
+
+\begin{equation}
+\label{def:cause_rep1}
+p_c(V_{t-1} | W_t=X) = \prod \limits_{i = 1}^{m} p_c(V_{t-1}|w^i_{t} = x^i)
+\end{equation}
+
+This is not an additional assumption, but rather it follows from equation \ref{def:controversial}. We then complete the computation as follows:
+
+
+\begin{equation}
+\label{def:cause_rep2}
+p_c(V_{t-1}| w_t = x) = \frac{\sum \limits_{Z\setminus V} p_e(w_t = x| V_{t-1}, Z \setminus V)}{p(w_t = x)}
+\end{equation}
+
+In short, we add up the probabilities of each individual previous state resulting in our current information ($w_t = x)$, and then scale by the overall probability that we observe $w_t = x$ in the first place. Note that equation \ref{def:cause_rep2} features the effect repertoire $p_e$ on the right hand side, not $p_c$.
+
+
+
 
 \subsection{The earth mover's distance (EMD)}
 In the context of this document, we will frequently calculate the distance between two probability distributions $p1$ and $p1$. For this we will use the mathematical notation $D(p1,p2)$, where $D$ is referring to the earth mover's distance.
@@ -44,76 +141,75 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance instead of bothering with $\text{EMD}(P,Q)$ each time.
 
 \subsection{Calculations for mechanisms}\label{sec:little_phi}
+When making a computation for a mechanism, we must be sure to treat each type of node appropriately. Let $G$ be the set of all nodes present, $Z$ be the system of nodes which we are considering, and $W$ the mechanism within the system. For an illustration of this, consider figure \ref{fig:IIT_illustration1}.
+
+For all nodes in $G\setminus Z$, that is the external inputs/outputs, we treat their states as constant. We do not concern ourselves with their past or future states when computing repertoires. However, the state of these nodes may affect the nodes within the mechanism $W$.
+
+In contrast, the state of nodes within $Z \setminus W$ are treated as unknown. While they do affect past and future repertoires, the do so differently than nodes within the mechanism. Finally, we are concerned with how the state of the mechanism constrains the past and future states of these nodes.
 
 \subsubsection{cause-effect information}
-The cause-effect information ($cei$) is a measure of the significance a piece of information has. It is calculated in 2 parts. First the cause information ($ci$) is defined by:
+The cause-effect information ($cei$) is a measurement of the significance which a piece of information has. It is calculated in 2 parts. First we have the cause information ($ci$), which measures how the past can be constrained given knowledge of the present. It is defined by:
 
 \begin{equation}
 \label{def:ci}
-ci(G^p|G^c = X) = D\left(p(G^p|G^c = X)||p^{uc}(G^p)\right)
+ci(W_{t} = X) = D\left(p_c(Z_{t-1}|W_{t} = X)||p_c(Z_{t-1}|\emptyset)\right)
 \end{equation}
 
 
-Next the effect information ($ei$) is defined as:
+Next we have the effect information ($ei$), which measures how the future is constrained given knowledge of the present. We define it as:
 \begin{equation}
 \label{def:ei}
-ci(G^f|G^c = X) = D\left(p(G^f|G^c = X)||p^{uc}(G^f)\right)
+ei(W_{t} = X) = D\left(p_e(Z_{t+1}|W_{t} = X)||p_{e}(Z_{t+1}|\emptyset)\right)
 \end{equation}
 
-Finally, the $cei$ is calculated as:
+Finally, we define the cause-effect information ($cei$) to be the minimum between the cause information and effect information:
 
 \begin{equation}
 \label{def:cei}
-cei(G^c = X) = \min\left(ci(G^p|G^c = X), ei(G^f|G^c = X \right)
+cei(W_{t} = X) = \min\left(ci(W_{t} = X), ei(W_{t} = X) \right)
 \end{equation}
-
-Intuitively we understand the $ei$ as how the knowledge of $G^c = X$ effect our expectation for the future. Similarly $ci$ measures how much this present knowledge specifies the past. Together, the $cei$ measures how much information beyond the present does the piece of present information give.
 
 \subsubsection{integrated information}
 IIT assumes that only information which is irreducible can contribute to consciousness. This motivates the calculation of $\varphi$, which calculates the distance between the cause-effect repertoires of an entire mechanism, and the cause-effect repertoires of the partitioned mechanism. 
 
-Intuitively, if a mechanism can be split into parts and these smaller mechanism generate the same result, then the mechanism is reducible and $\varphi=0$. In contrast, the larger $\varphi$ is, the more information the mechanism has beyond the sum of its parts.
+Intuitively, if a mechanism can be split into parts and these smaller mechanisms generate the same result, then the mechanism is reducible and $\varphi=0$. In contrast, the larger $\varphi$ is, the more information the mechanism has beyond the sum of its parts.
 
-Let $G$ be a mechanism, $X$ a state of $G$ such that $G^c = X$, and $P(G)$ be the power set of $G$; that is the set of all subsets of $G$. Let $N, M \in P(g)$, then we define the following notation:
+As addition to $Z$ and $W$, we introduce the sets $N \in \mathbb{P}(W)$ and $M \in \mathbb{P}(Z)$.
 
 \begin{equation}
 \label{def:preMIP}
-p(A|B /M, N)= p(M|N) p(A \backslash M |B \backslash N)
+p_c(A_{t-1}|B_t ,M, N):= p(N_{t-1}|M_t) p(A_{t-1} \backslash N_{t-1} |B_t \backslash M_t)
 \end{equation}
 
 Then
 
 \begin{equation}
 \label{def:phi2}
-\varphi_{cause}(G^p|G^c=X/ M, N) = D \left( p(G^p|G^c=X) ,p(G^p|G^c=X/M,N)  \right)
+\varphi_{cause}^{M,N}(W_t=X) = D \left( p_c(Z_{t-1}|W_t=X) ,p(Z_{t-1}|W_{t} = X,M,N)  \right)
 \end{equation}.
 
 With the benefit of this notation, we now introduce the notion of the minimum information partition (MIP). Specifically, the MIP refers to the sets $M'$ and $N'$ which minimise $\varphi_{cause}$. We then have:
 
 \begin{equation}
 \label{def:phi3}
-\varphi^{\text{MIP}}_{cause}(G^p|G^c=X) = \varphi_{cause}(G^p|G^c=X/ M', N')
+\varphi_{cause}^{\text{MIP}}(W_t=X)  = \varphi_{cause}^{M',N'}(W_t=X) 
 \end{equation}
 
-$\varphi_{effect}$ is defined similarly. One need only swap the $p$ superscript with a $f$ superscript. 
-
-Finally we can define integrated information $\varphi$:
+$\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ for $p_e$ superscript. This allows us to define integrated information $\varphi$:
 \begin{equation}
 \label{def:phi}
-\varphi^{\text{MIP}}(G^{p,f}|G^c = X) = \min \left( \varphi^{\text{MIP}}_{cause}(G^p|G^c=X), \varphi^{\text{MIP}}_{effect}(G^f|G^c=X)  \right) 
+\varphi^{\text{MIP}}(W_t=X) = \min \left( \varphi_{cause}^{\text{MIP}}(W_t=X), \varphi_{effect}^{\text{MIP}}(W_t=X)  \right) 
 \end{equation}
 
 
 
-If $M'$ and $N'$ give rise to the cause MIP, we write the following:
+It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{IITbounds}:
 \begin{equation}
-\label{def:notation1}
-G^c/G^p \rightarrow (M'/N') \times (G^c \backslash M'/ G^p\backslash N')
+\label{eq:bound_phi_cei}
+\varphi^{\text{MIP}}(W_t=X) \leq cei(W_t=X) 
 \end{equation}
 
-\begin{description}
-	\item[Note] In this section, we demonstrate how to find the MIP for $G^c/G^p$ or $G^c/G^f$. However, this calculation does not require us to be working with the entire mechanism $G$. We can also compute the MIP for $A^c/B^p, \quad \forall A,B \in P(G)$. Once we have the MIP, we can also compute $\varphi^{\text{MIP}}(B|A)$ as before.
-\end{description}
+This implies that the biggest different we can make to $\varphi$ by partitioning a mechanism occurs when the partitioned repertoire is precisely the unconstrained repertoire. 
 
 \subsubsection{maximally integrated information}
 It follows from the assumptions of IIT that a mechanism has a unique cause and effect. We identify these as the maximally irreducible causes and effects respectively. 
@@ -124,7 +220,14 @@ Let $G^c = X$. We now ask the question: what is the cause of $X$? Any element in
 \varphi^{\text{Max}}_{\text{cause}}(X):=\varphi^{\text{MIP}}_{\text{cause}}(G^p = S'^p|G^c = X)
 \end{equation}
 
-We identify the \textit{core effect} and calculate $\varphi^{\text{Max}}_{\text{effect}}$ in the equivalent fashion, and finish with setting $\varphi^{\text{Max}}$ to be the minimum of the two as before.
+We identify the \textit{core effect} and calculate $\varphi^{\text{Max}}_{\text{effect}}$ in the equivalent fashion, and finish with setting $\varphi^{\text{Max}}$ to be the minimum of the two as before. It is important to note that we find the core cause and effect separately, and that these need not be the same set.
+
+As with $\varphi^{\text{MIP}}$ we can bound $\varphi^{\text{Max}}$. Specifically we have for any current state $X$ that:
+
+\begin{equation}
+\label{eq:bound_phimax}
+\varphi^{\text{MIP}}(G^{p,f}|G^c = X) \leq \varphi^{\text{Max}}(G^c = X)\leq cei(G^{p,f}|G^c = X)
+\end{equation}
 
 Let $S$ and $R$ be the sets which maximise $\varphi^{\text{MIP}}_{\text{cause}}(G^p = S|G^c = X)$ and $\varphi^{\text{MIP}}_{\text{effect}}(G^f = R|G^c = X)$ respectively. Then if $\varphi^{\text{Max}}(X)\neq 0$, we call $X/S^p,R^f$ a \textit{concept}. Given a state $X$, a concept has a maximally irreducible cause-effect repertoire (MICE). This refers to the combination of the maximally irreducible cause repertoire: $p(S^p|G^c=X)$ and the maximally irreducible effect repertoire $p(R^f|G^c=X)$.
 
@@ -155,13 +258,19 @@ Denoted by $\Phi$, integrated conceptual information is the value which we seek 
 
 
 \subsection{Computational cost}
-Previously in section \ref{sec:little_phi}, we presented the functions $cei$, $\varphi$ and $\varphi^{MAX}$. Now we examine these more closely in or to estimate the cost of computing these functions. 
+We now ask how expensive is the computation of $\Phi^{Max}$. Let $Z$ refer to a system of nodes such that $|Z| = n$.
 
-First, we note that each term of the form $p(G^p|G^c)$ is probability distribution over the states of $G$. We represent this as a vector of length $2^n$ (where $|G| = n$). The computational time required by the EMD is $O(N^3 \log N)$, where $N$ is the size of the distribution. Hence, computing $cei$ is $O(n2^{6n})$.
+\begin{enumerate}
+	\item To compute $\Phi^{Max}$, we must calculate $\Phi$ for possible subsets of our system. There are at most $2^n$ such subsets, and hence we must compute $\Phi$ this many times.
+	\item For a particular subset of consideration, we must determine the Minimum information partition of one directional cuts. If the subset is of size $m$, then there at most $2^{m+1}$ ways to do this (if the connectivity matrix is sparse, then there are considerably less). $m$ itself is bounded by $n$, so we say that this step must occur at most $2^{n+1}$ times.
+	\item Each computation of $\Phi$ for a particular partition requires the calculation of all values of $\varphi^{Max}$. As each element of the power set may have a positive value of such, we must carry out this computation up to $2^n$ times.
+	\item Each computation of $\varphi^{Max}$ requires both the core cause and core effect to be identified. This involves calculation $\varphi^{MIP}_{cause}$ and $\varphi^{MIP}_{effect}$ each over the entire power set, resulting in a further $2^{n+1}$ computations.  
+	\item To compute $\phi_{cause}^{MIP}$, we must search over all possible partitions. There are $2^n$ of these.
+	\item Finally, when measuring the difference made by a partition, we must measure the distance between probability distributions. This is done using the Earth Mover's Distance, which scales $O(N^3 \log N)$, where $N$ is the number of states found in the distributions the distance is being measured between. As there are $2^n$ of these, this step scales with $O(2^{3n} (\log n)^3)$
+\end{enumerate}
 
-Next for computing $\varphi$ and $\varphi^{MAX}$, we make the assumption that no calculation is repeated. In other words, we have a perfect memory for what we have calculated. In the process to find $\varphi^{MAX}$, we will need to compute $p(A|B= X), \quad \forall A\in P(G^p), B\in P(G^c)$. Since $P(G^p)$ and $P(G^c)$ have a size $O(2^n)$, it follows that if no computations are repeated, $O(2^{2n})$ will be required. For each of these computations, a distance computation will also be required. Thus we have $O(n2^{8n})$. 
+When we put this all together, we conclude that the calculation of $\Phi^{Max}$ scales with $O( 2^{8n}(\log n)^3)$.
 
-Finally, this computes $\varphi^{MAX}$ given one particular initial state (out of $2^n$). To compute $\varphi^{MAX}$ for all possible starting state, the cost would be $O(n2^{9n})$.
 
 \section{Modelling an Organisation}
 
@@ -177,7 +286,7 @@ In this chapter, we seek to model an organisation which seeks to maximise its pr
 
 \end{enumerate}
 
-Within these assumptions, there are many variations of models we can build. This follows from the different ways we can choose the following:
+Within these assumptions, there are many variations of models we can build. Each model is specified by how we define these values and processes:
 
 \begin{enumerate}
 	\item Progression of time. We take our model to be a discrete iterative process. Each iteration marks the passage of a fixed time period. 
@@ -196,7 +305,7 @@ Within these assumptions, there are many variations of models we can build. This
 \subsection{A single-cluster model}
 In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. We take the assignment of skills to teams as fixed, deciding arbitrarily that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 
 	\includegraphics[]{ModelDiagram.png}
@@ -204,7 +313,7 @@ In this model, we consider there to be 3 teams, and 2 skill types. We label the 
 	\label{fig:diagram1}
 \end{figure}
 
-With the teams, skills and assignment of these defined, all that remains to be specified for this model is the following:
+With the teams, skills and assignment of these defined, we now need to define these 3 last values/processes:
 
 \begin{enumerate}
 	\item The probabilities affecting arrival of projects.
@@ -240,6 +349,53 @@ Now we can put this all together to form the state by node transition probabilit
 \mathbf{T}_{ij}= P(G_j^{t+1}=1 | G^t = i)
 \end{equation}
 where $G$ refers to the entire network with $G_j$ standing for $A$, $B$ and $C$ for $j=1,2,3$. $\mathbf{T}$ will have a row for each state of the system, and a column for each node. Hence its shape will be $2^n \times n$ assuming that each node has exactly 2 states (as in IIT). We present the matrix in table \ref{mat:model1}.
+
+
+
+\begin{table}[]
+	\centering
+	\label{mat:simple_system}
+	$
+	\begin{array}{|l|ccccc}
+		\hline
+		\multicolumn{1}{|r|}{\text{State}} & \multicolumn{1}{c|}{A} & \multicolumn{1}{c|}{B} & \multicolumn{1}{c|}{C} & \multicolumn{1}{c|}{P_\alpha} & \multicolumn{1}{c|}{P_\beta} \\ \hline
+		000 00                      & 0                      & 0                      & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		100 00                      & 1-k_A                 & 0                      & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		010 00                      & 0                      & 1-k_B                 & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		110 00                      & 1-k_A                 & 1-k_B                 & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		001 00                      & 0                      & 0                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		101 00                      & 1-k_A-k_C            & 0                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		011 00                      & 0                      & 1-k_B-k_C            & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		111 00                      & 1-k_A-k_C            & 1-k_B-k_C            & 1-k_A-k_B-k_C       & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		000 10                      & 1                      & 0                      & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		100 10                      & 1-k_A                 & 0                      & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		010 10                      & 1                      & 1-k_B                 & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		110 10                      & 1-k_A                 & 1-k_B                 & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		001 10                      & 1                      & 0                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		101 10                      & 1-k_A-k_C            & 0                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		011 10                      & 1                      & 1-k_B-k_C            & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		111 10                      & 1-k_A-k_C            & 1-k_B-k_C            & 1-k_A-k_B-k_C       & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		000 01                      & 0                      & 1                      & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		100 01                      & 1-k_A                 & 1                      & 0                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		010 01                      & 0                      & 1-k_B                 & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		110 01                      & 1-k_A                 & 1-k_B                 & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		001 01                      & 0                      & 1                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		101 01                      & 1-k_A-k_C            & 1                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		011 01                      & 0                      & 1-k_B-k_C            & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		111 01                      & 1-k_A-k_C            & 1-k_B-k_C            & 1-k_A-k_B-k_C       & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		000 11                      & 0                      & 0                      & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		100 11                      & 1-k_A                 & 0                      & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		010 11                      & 0                      & 1-k_B                 & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		110 11                      & 1-k_A                 & 1-k_B                 & 1                      & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		001 11                      & 1                      & 1                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		101 11                      & 1-k_A-k_C            & 0                      & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		011 11                      & 0                      & 1-k_B-k_C            & 1-k_C                 & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+		111 11                      & 1-k_A - k_C          & 1-k_B-k_C            & 1-k_A-k_B-k_C       & p_\alpha                      & p_\beta                      \\ \cline{1-1}
+	\end{array}
+	$
+	\caption{My caption}
+\end{table}
+
 
 
 \begin{table}[h]
@@ -301,21 +457,21 @@ In this section we compare the results of IIT with the expected waste of the net
 
 Since $k_A + k+B+ k+C = K$, our parameter space is 2-D. We therefore compute $\Phi$ and $f$ for all suitable values of $k_A$,\ldots, on a grid with points at a distance 0.01 from each other. We use 2 initial states for the purpose of computing $\Phi$ which are arbitrarily taken to be $000$ and $101$.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[scale = 0.5]{PhiCostcomp1.png}
 	\caption{We plot the value of $\Phi$ given an initial state of $000$  against the cost of missed projects. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
 	\label{fig:PhiCostcomp1}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[scale = 0.5]{PhiCostcomp2.png}
 	\caption{We plot the value of $\Phi$ given an initial state of $101$ against the cost of missed projects. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
 	\label{fig:PhiCostcomp2}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[scale = 0.5]{Phi2Phicomp.png}
 	\caption{We plot the value of $\Phi$ given an initial state of $101$ against $Phi$ given the initial state $000$. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
@@ -351,74 +507,62 @@ We extend the previous model as follows:
 \end{enumerate}
 
 We illustrate the new system in the following figure \ref{fig:diagram2}.
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering	
 	\includegraphics[]{Model2Diagram.png}
 	\caption{We have 3 types of nodes: skill types ($\alpha$, $\beta$, and $\gamma$), teams ($A$, $B$, $C$, $D$ and $E$), and incoming project alerts ($P_\alpha$, $P_\beta$ and $P_\gamma$). If a team node is joined to a skill node by an edge, then the team possesses that skill. The teams receive inputs from the incoming project alert nodes, but the dependence is strictly one directional.
-	Certain teams are connected, indicating that they are actively communicating with each other so to distribute work efficiently. Note that we have 2 disconnected clusters of teams. This will give rise to waste.}
+	Certain teams are connected, indicating that they are actively communicating with each other so to distribute work efficiently. Note that in this figure, we have 2 disconnected clusters of teams. This will give rise to waste.}
 	\label{fig:diagram2}
 \end{figure}
 
-In the previous model, we constructed the TPM from a global perspective. This was valid since all the teams involved were in communication. For this model, I need to construct the decision process for each team regarding when to take up a project independently. This will allow for easier adjustment to my TPM when I add an edge joining the two clusters. For this purpose, we introduce the following notation:
-
-Let $\{G^t\}_{t=0}$ be a time series referring to the networks states. For a particular point in time $t_0$, we have $G^{t_0} = (A^{t_0}, B^{t_0}, C^{t_0}, D^{t_0}, E^{t_0})$, where each $A^{i}$ is a binary number; that is the node $A$ is either on or off. Similarly for the other nodes. We will use conventional boolean arithmetic notation ($+$ means `or', $\times$, or equivalent multiplication notation means `and' while $\overline{A}$ means `not $A$'.) Finally denote by $S(p)$ a random sample which if less than $p$ returns a 1, and otherwise 0.
-
-With this notation, our old system can be written as follows:
-\begin{align}
-\begin{split}
-\label{eq:transition_old}
-A^{i+1} &= \overline{A}^{i} P_\alpha \left(1-P_\beta + P_\beta \overline{B^i} C^i\right)+ A^i \left(\overline{C}^i\overline{S(k_A)} + C^i \overline{S(k_A+k_C)}\right)\\
-B^{i+1} &= \overline{B}^{i} P_\beta \left(1-P_\alpha + P_\alpha \overline{A^i} C^i\right)+ B^i \left(\overline{C}^i\overline{S(k_B)} + C^i \overline{S(k_B+k_C)}\right)\\
-C^{i+1}&= \overline{C}^i\left(A^i P_\alpha(1-P_\beta) + B^i P_\beta(1-P_\alpha) + P_\alpha P_\beta \right) + C^i\left(\overline{A}^i\overline{B}^i\overline{S(k_C)} +A^i B^i \overline{S(k_A+k_B+k_C)}\right)
-\end{split}
-\end{align}
-
-This system of difference equations is sensitive to the connectivity matrix, assuming that all three `team' nodes are connected to each other, and that all of these nodes see both $P_\alpha$ and $P_\beta$. In order to extend this to a more general system, we introduce additional notation. 
-
-Before, $A^{i+1} = f(A^i, B^i)$ would mean that the future state of $A$ depends on the current states of $A$ and $B$. Now, we redefine the notation $B^i$ such that $B^i$ refers to the state of $B$ provided that $A$ is connected to $B$ and can see what that state is. In rigorous notation, we have redefined: $B^i := M_{a,b}B^i$, and $\overline{B}^i :=M_{a,b}\overline{B}^i$, where $\mathbf{M}$ is the connectivity matrix.
-
-For convenience, we further define $B^i_*:= M_{a,b}M_{b,a}B^i$ and $\overline{B}^i_* = M_{a,b}M_{a,b}\overline{B}^i$. This refers to A being able to see $B$, and vice versa. 
-
-\begin{align}
-\begin{split}
-\label{eq:general_transition_averaged}
-\mathbf{T}_{.,1} &= \frac{1}{8}\overline{A}^{i} \left(1 + (1-\overline{C}^i )(\overline{B}^i_*+B^i\overline{E}^i_*)+ (1-\overline{D}^i)\overline{E}^i_* + \overline{E}^i\right)
-\end{split}
-\end{align}
+In the previous model, we constructed the TPM from a global perspective. This was valid since all the teams involved were in communication. For this model, we use the following policy to determined whether or not a node decides  to take on a project. In decreasing order of importance, we aim to:
 
 
-Note that even now, node $A$, $B$ and $C$ do not receive any inputs from $P_\gamma$. That is, they do not perceive all available information, which will result in waste. 
+\begin{enumerate}
+	\item allocate the project if it is possible to do so.
+	\item minimize the amount of teams needed to work on the project.
+	\item minimize the amount of excess skills possessed by the team/teams assigned to the project.
+\end{enumerate}
 
-On the other hand, $D$ and $E$ perceive all inputs, but not the state of other teams. Before we write the equations for $D^{i+1}$ and $E^{i+1}$, it is necessary to assume without loss of generality that the expected return from a project of requiring only skill $\alpha$ is greater than that for a project requiring skill $\beta$. Otherwise, if one arrives which requires only skill $\gamma$ while both $D$ and $E$ are idle, which should take the task? Having made this assumption however, it follows that $E$ should take the task, as it more likely to be beneficial keeping $D$'s skill set in reserve.
+When applying this policy, we must do it from the perspective of each individual team. This means that if a team is disconnected from all other teams (meaning it does not know what any of the others are doing), then it will always take on an incoming project which it can do. This will happen independently of whether another team is also taking on the project, because the isolated team does not know this. 
 
-\begin{align}
-\begin{split}
-\label{eq:transition_new}
-D^{i+1} &= \overline{D}^i \left( P_\gamma (1-P_\alpha)E^i + P_\alpha \right) + D^i\overline{S(k_D)}\\
-E^{i+1} &= \overline{E}^i \left( P_\gamma + P_\beta-P_\beta P_\gamma \right) + E^i\overline{S(k_E)}
-\end{split}
-\end{align}
+Alternatively, if a pair of strongly connected teams see a project which they are overqualified for, and can both see another pair of teams which can complete the project with less excess skills, then the first team will ignore the project. However, while the first pair of teams observed that the second pair were both idle, it couldn't observe whether the 2nd two were strongly connected. If the second team are not strongly connected, then the project will be missed entirely, due to lack of communication. We illustrate this phenomenon in figure 
 
-As before, we average over all possible inputs from $P_\alpha$, $P_\beta$ and $P_\gamma$ to reduce the TPM's size. This results in equations \ref{eq:transition_old} and \ref{eq:transition_new} becoming:
+\begin{figure}[ht]
+	\centering	
+	\includegraphics[scale=0.13]{Waste1demo1.png}
+	\caption{In this example we have an incoming project which requires both skills $\alpha$ and $\beta$. Teams $D$ and $E$ would possess these skills if they collaborate which they can do as they are connected, but have 2 $\gamma$ skills in excess. However, both $D$ and $E$ can see that the collaboration of $A$ and $B$ can complete the project more efficiently. Thus $D$ and $E$ do not take on the project as they do not know that $A$ and $B$ are not collaborating, and thus won't take the project either. Due to this lack of communication, even though there were plenty of ways that the project might have been done, the project is wasted.}
+	\label{fig:waste1demo1}
+\end{figure}
 
-\begin{align}
-\begin{split}
-\label{eq:transition_averaged}
-P(A^{i+1}=1) &= \frac{1}{4}\overline{A}^{i} \left(1 + \overline{B^i} C^i\right)+ A^i \left(\overline{C}^i(1-k_A) + C^i (1-k_A-k_C)\right)\\
-P(B^{i+1}=1) &= \frac{1}{4}\overline{B}^{i} \left(1 + \overline{A^i} C^i\right)+ B^i \left(\overline{C}^i(1-k_B) + C^i (1-k_B-k_C)\right)\\
-P(C^{i+1}=1)&= \frac{1}{4}\overline{C}^i\left(A^i  + B^i + 1 \right) + C^i \left(\overline{A}^i\overline{B}^i(1-k_C) +A^i B^i (1-k_A-k_B-k_C)\right)\\
-P(D^{i+1}=1) &= \frac{1}{4}\overline{D}^i \left(2 +E^i \right) + D^i(1-k_D)\\
-P(E^{i+1}=1) &= \frac{3}{4}\overline{E}^i  + E^i(1-k_E)\\
-\end{split}
-\end{align}
+Ultimately, this procedure precisely determines a $2^8 \times 8$ transition probability matrix, which for obvious reasons is not presented here.
 
-We construct the $32\times5$ TPM directly from equation \ref{eq:transition_averaged}, although we do not present it here due to its size.
+\subsubsection{Classical Solution of the 2 Cluster Model}
+
+In this section, we compute the expected waste which will result from a particular connectivity matrix. However, we first must lay out what we mean by `waste'. In the context of this model, there are 3 different types of inefficiencies that can occur in the distribution of projects:
+
+\begin{enumerate}
+	\item \textbf{Unnecessary dismissal of project}\\
+	If there exists a minimal subset of idle teams which possess the required skills to take on an incoming project, and yet do not have it assigned to them, then this is wasteful of the project itself.
+	
+	\item \textbf{Duplication of work}\\
+	If there exists multiple minimal subsets of idle teams which possess the required skills to take on an incoming project, and multiple of these teams are then assigned to the project, then this is an unnecessary duplication of labour.
+	
+	\item \textbf{Excess Skills}
+	If there exists an idle team which possesses skills beyond the requirements of an incoming project, and this team is assigned to the project, then this wasteful of these excess skills.
+\end{enumerate}
+
+Of these 3 sources of waste, we arbitrarily view type 1 to be 10 times worse than type 2 which is again 10 times worse than type 3. However, what is the numerical value of these costs?
+
+For this we take a simplistic approach. We assign the values $w_\alpha, w_\beta$ and $w_\gamma$ to be the values of each skill type. When counting type 1 waste (a doable project is ignored), we add the values of all skills required and scale by 10. Hence, a project requiring all 3 skills would have a cost of $10(w_\alpha+w_\beta+w_\gamma)$.
+
+With type 2 waste (a project being worked on by more than one team), we count the skills possessed by all teams which are assigned to the project. Then we determine how many times the project could be completed form this pool of skills. We assign the cost in this case to be the sum of the costs applying to the skills required by the project, multiplied by the number of times we find this 
+
+ When counting type 3 waste, we count how many excess skills are possessed by the assigned teams, and then add up the values of these skills. Finally we scale this value by $1/10$.
+
+For type 2 waste, we count 
 
 
-
-
-\subsubsection{Solving the 2 cluster model}
-First of all, this system is easy to solve from the perspective of IIT. One finds that there is a single complex: $ABC$. This complex has the same value of $\Phi$ given a state as previously. This means that $D$ and $E$ contain no integrated information as is. This is not surprising given that the difference equation for $E$ depends only on $E$, resulting in it being independent of $D$.
 
 
 \subsection{Next steps}
