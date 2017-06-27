@@ -1,4 +1,8 @@
 
+
+
+\section{Introduction}
+
 \section{Integrated Information Theory}
 
 In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{main} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
@@ -170,6 +174,7 @@ cei(W_{t} = X) = \min\left(ci(W_{t} = X), ei(W_{t} = X) \right)
 \end{equation}
 
 \subsubsection{integrated information}
+\label{sec:mech_integration}
 IIT assumes that only information which is irreducible can contribute to consciousness. This motivates the calculation of $\varphi$, which calculates the distance between the cause-effect repertoires of an entire mechanism, and the cause-effect repertoires of the partitioned mechanism. 
 
 Intuitively, if a mechanism can be split into parts and these smaller mechanisms generate the same result, then the mechanism is reducible and $\varphi=0$. In contrast, the larger $\varphi$ is, the more information the mechanism has beyond the sum of its parts.
@@ -181,24 +186,24 @@ As addition to $Z$ and $W$, we introduce the sets $N \in \mathbb{P}(W)$ and $M \
 p_c(A_{t-1}|B_t ,M, N):= p(N_{t-1}|M_t) p(A_{t-1} \backslash N_{t-1} |B_t \backslash M_t)
 \end{equation}
 
-Then
+Then we define:
 
 \begin{equation}
 \label{def:phi2}
-\varphi_{cause}^{M,N}(W_t=X) = D \left( p_c(Z_{t-1}|W_t=X) ,p(Z_{t-1}|W_{t} = X,M,N)  \right)
+\varphi_{cause}^{M,N}(W_t=X, Z) := D \left( p_c(Z_{t-1}|W_t=X) ,p(Z_{t-1}|W_{t} = X,M,N)  \right)
 \end{equation}.
 
 With the benefit of this notation, we now introduce the notion of the minimum information partition (MIP). Specifically, the MIP refers to the sets $M'$ and $N'$ which minimise $\varphi_{cause}$. We then have:
 
 \begin{equation}
 \label{def:phi3}
-\varphi_{cause}^{\text{MIP}}(W_t=X)  = \varphi_{cause}^{M',N'}(W_t=X) 
+\varphi_{cause}^{\text{MIP}}(W_t=X, Z)  = \varphi_{cause}^{M',N'}(W_t=X, Z) 
 \end{equation}
 
 $\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ for $p_e$ superscript. This allows us to define integrated information $\varphi$:
 \begin{equation}
 \label{def:phi}
-\varphi^{\text{MIP}}(W_t=X) = \min \left( \varphi_{cause}^{\text{MIP}}(W_t=X), \varphi_{effect}^{\text{MIP}}(W_t=X)  \right) 
+\varphi^{\text{MIP}}(W_t=X, Z) = \min \left( \varphi_{cause}^{\text{MIP}}(W_t=X, Z), \varphi_{effect}^{\text{MIP}}(W_t=X, Z)  \right) 
 \end{equation}
 
 
@@ -206,7 +211,7 @@ $\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ f
 It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{IITbounds}:
 \begin{equation}
 \label{eq:bound_phi_cei}
-\varphi^{\text{MIP}}(W_t=X) \leq cei(W_t=X) 
+\varphi^{\text{MIP}}(W_t=X, Z) \leq cei(W_t=X) 
 \end{equation}
 
 This implies that the biggest different we can make to $\varphi$ by partitioning a mechanism occurs when the partitioned repertoire is precisely the unconstrained repertoire. 
@@ -214,44 +219,53 @@ This implies that the biggest different we can make to $\varphi$ by partitioning
 \subsubsection{maximally integrated information}
 It follows from the assumptions of IIT that a mechanism has a unique cause and effect. We identify these as the maximally irreducible causes and effects respectively. 
 
-Let $G^c = X$. We now ask the question: what is the cause of $X$? Any element in $P(G)$ is a candidate, so we need to conduct an exhaustive search. For each $S \in P(G)$, we calculate $\varphi^{\text{MIP}}_{\text{cause}}(S^p|G^c=X)$. We call the set $S'$ which maximised $\varphi^{\text{MIP}}$ the \textit{core cause}, and define 
+Let $W_t = X$. We now ask the question: what is the cause of $X$? Any element in $\mathbb{P}(Z)$ is a candidate, so we need to conduct an exhaustive search. Hence we define $\varphi^{\text{Max}}$, the maximally integrated information as: 
 \begin{equation}
 \label{def:core_cause}
-\varphi^{\text{Max}}_{\text{cause}}(X):=\varphi^{\text{MIP}}_{\text{cause}}(G^p = S'^p|G^c = X)
+\varphi^{\text{Max}}_{\text{cause}}(W_t = X):=\max \limits_{S \in \mathbb{P}(Z)}\varphi^{\text{MIP}}_{\text{cause}}(W_t = X|S)
 \end{equation}
 
-We identify the \textit{core effect} and calculate $\varphi^{\text{Max}}_{\text{effect}}$ in the equivalent fashion, and finish with setting $\varphi^{\text{Max}}$ to be the minimum of the two as before. It is important to note that we find the core cause and effect separately, and that these need not be the same set.
+The particular set $S'$ which maximised the right hand side we call the \textit{core cause}. The \textit{core effect} and $\varphi^{\text{Max}}_{\text{effect}}$ are defined in the equivalent fashion. Finally we finish  by setting $\varphi^{\text{Max}}$ to be the minimum of the two as before. It is important to note that we find the core cause and effect separately, and that these need not be the same set.
 
 As with $\varphi^{\text{MIP}}$ we can bound $\varphi^{\text{Max}}$. Specifically we have for any current state $X$ that:
 
 \begin{equation}
 \label{eq:bound_phimax}
-\varphi^{\text{MIP}}(G^{p,f}|G^c = X) \leq \varphi^{\text{Max}}(G^c = X)\leq cei(G^{p,f}|G^c = X)
+\varphi^{\text{MIP}}(W_t = X, Z) \leq \varphi^{\text{Max}}(W_t = X)\leq cei(W_t = X)
 \end{equation}
 
-Let $S$ and $R$ be the sets which maximise $\varphi^{\text{MIP}}_{\text{cause}}(G^p = S|G^c = X)$ and $\varphi^{\text{MIP}}_{\text{effect}}(G^f = R|G^c = X)$ respectively. Then if $\varphi^{\text{Max}}(X)\neq 0$, we call $X/S^p,R^f$ a \textit{concept}. Given a state $X$, a concept has a maximally irreducible cause-effect repertoire (MICE). This refers to the combination of the maximally irreducible cause repertoire: $p(S^p|G^c=X)$ and the maximally irreducible effect repertoire $p(R^f|G^c=X)$.
+If we find that $\varphi^{\text{Max}}(W_t = X)>0$, then we call the combination of $\varphi^{\text{Max}}(W_t = X)$ with its core cause and effect a \textit{concept}. This allows us to define a MICE.
+
+\begin{definition}
+	{The maximally integrated cause effect repertoire of a piece of information, or MICE, refers to the combination of the cause repertoire $p_c(C_{t-1}|W_t = X)$, where $C$ is the core cause of $W_t=X$ along with the effect repertoire $p_e(E_{t+1}|W_t = X)$, where $E$ is the core effect of $W_t = X$.}
+\end{definition}
 
 \subsection{Calculations for systems of mechanisms}
-Thus far calculations have been restricted to a single mechanism, whether 1st, 2nd, or $n$th order. However, a network of more than one node may contain multiply mechanisms, and these may share nodes. For example, a network of 3 node could potentially contain 7 mechanisms (all possible subsets of nodes less the empty set).
+Thus far calculations have been restricted to a single mechanism, whether 1st, 2nd, or $n$th order. However, a network of more than one node may contain multiple mechanisms, which may overlap with each other. For example, a system of 3 nodes could potentially contain 7 mechanisms (all possible subsets of nodes less the empty set).
 
-Now we turn our attention to a system of mechanisms, i.e. all mechanisms contained within a set of nodes. 
+Now we focus our attention on computing integrated information in a system of mechanisms. 
 
 \subsubsection{conceptual information}
-To calculate the conceptual information (CI) given a current state ($X$) for a system of mechanisms, first calculate $\varphi^{\text{Max}}(X)$ for each individual mechanism in the system as well as the corresponding MICE. Any mechanism for which $\varphi^{\text{Max}}(X)=0$ we neglect, as it contributed no conceptual information.
+The Conceptual Information (CI) extends the notion of cause-effect information to a system of nodes. Before we computed the distance between the repertoire specified by some information and the unconstrained repertoire. Now, instead of computing the distance between repertoires, we add up the distances between concepts.
 
-Denote $M_i$ for the MICE for the $i$th mechanism with a concept, and $\varphi^{\text{Max}}_i(X)$ for the integrate information of the $i$th concept. Then the conceptual information of a sate $X$ is given by:
+The Conceptual Information is simply weighted sum of the distance between the MICE of each of its concepts, and the unconstrained MICE. We compute it below:
 
 \begin{equation}
 \label{def:CI}
-CI(X) = \sum \limits_i \varphi^{\text{Max}}_i(X) D(M_i, M^{uc})
+CI(X) = \sum \limits_{S \in \mathbb{P}(Z)} \varphi^{\text{Max}}(S_t) D(M^S, M^{uc})
 \end{equation}
 
-where $M^{uc}$ refers to the `null' concept, i.e. a combination of the unconstrained past and future repertoires. $D$ again refers to the earth mover's distance, although in a more generalised form from that originally 
-described. 
+where $M^S$ refers to the MICE of the concept $S$, and $M^{uc}$ is the unconstrained MICE, which is just the unconstrained cause and effect repertoires. We measure the distance between $M^S$ and $M^{uc}$ by adding the distances between the two cause, and effect repertoires.
 
-Thus, the conceptual information of a system is affected by how many concepts exist within the system, and by how much information each of these concepts possess.
+
 \subsubsection{integrated conceptual information}
-Denoted by $\Phi$, integrated conceptual information is the value which we seek to compute.
+Now we measure the integration of a piece of information on the level of a system of mechanisms. Here it is useful to define the term \textit{constellation}.
+
+\begin{definition}
+	{A \textit{constellation} refers to the set of all concepts within a system, each concept equipped with its' MICE.}
+\end{definition}
+
+As before, we consider all ways to partition the system $Z$. However, on this occasions, each partition is a one directional cut. Hence there exist twice as many possible partitions as in section \ref{sec:mech_integration}.
 
 
 \subsubsection{maximally irreducible conceptual structure}
@@ -574,7 +588,7 @@ Here we present additional features which might develop this model into being mo
 	\item A more sophisticated mechanism for collaboration. 
 \end{enumerate}
 
-
+\section{Conclusions}
 
 \section{Applying IIT}
 In this section I intend to talk about observing how $\Phi$ actually behaves when I use it to measure consciousness. What type of shape it has, what type of optimal values can be achieved in practice. This section should include a detailed look at simple cases.
