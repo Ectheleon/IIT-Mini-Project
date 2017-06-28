@@ -2,6 +2,10 @@
 
 
 \section{Introduction}
+Within any organisation, no matter what the type, communication must be present. If members of a company don't communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may get in the way of actual work being done, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
+
+The approach taken in this project is inspired by the brain. The human brain consists of billions of neurons, which are constantly communication and hence passing information around the body. From comparing the human brain to that of animals, we see the decision making potential of the brain is not only related to its size, but also its internal structure. Philosophically, we identify consciousness as one of the 
+
 
 \section{Integrated Information Theory}
 
@@ -13,7 +17,7 @@ Integrated Information Theory introduces a function $\Phi$ which measures the in
 
 \begin{equation}
 \label{def:1}
-Z^t = \left(\begin{array}{cccc} z^1_t&z^2_t&\ldots&z^n_t\end{array}\right)
+Z_t = \left(\begin{array}{cccc} z^1_t&z^2_t&\ldots&z^n_t\end{array}\right)
 \end{equation}
 
 to represent the multivariate random variable, where $z^i_t \in \{0,1\} \quad\forall i, t$. This stochastic process can be related to a graph containing $n = |Z_t|$ nodes. Each node refers to one of the $z^i$'s and can be in one of two states: `off' at time $t$ if $z^i_t=0$ and `on' if $z^i_t = 1$. We join $z^i$ to $z^j$ with a directed edge if the future state of $z^i$ depends in some way on $z^j$. From now on, we will refer to the $z^i$'s as `nodes'.
@@ -326,6 +330,9 @@ When we put this all together, we conclude that the calculation of $\Phi^{Max}$ 
 
 
 \section{Modelling an Organisation}
+
+In this section, we seek to model communication flow within an organisation. It is 
+
 
 In this chapter, we seek to model an organisation which seeks to maximise its profits. In particular, we interest ourselves in the case where revenue is gained by the completion of `projects' which are assigned at random points in time. The organisation has a set of teams at its disposal, to whom it assigns each project as it appears. We assume the following factors which influence how we assign teams to projects:
 
