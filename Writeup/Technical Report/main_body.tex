@@ -61,6 +61,7 @@ In this section, we construct each of the previously defined repertoires from th
 \end{definition} 
 
 \subsubsection{Conditional Independence}
+\label{sec:conditional_independence}
 In order to simplify all computations, IIT makes a large mathematical assumption. Specifically it assumes that the probability distributions for the future states of each node are conditionally independent with respect to the previous state of the system. i.e. if $Z$ is a mechanism, then:
 
 \begin{equation}
@@ -331,39 +332,35 @@ When we put this all together, we conclude that the calculation of $\Phi^{Max}$ 
 
 \section{Modelling an Organisation}
 
-In this section, we seek to model communication flow within an organisation. It is 
-
-
-In this chapter, we seek to model an organisation which seeks to maximise its profits. In particular, we interest ourselves in the case where revenue is gained by the completion of `projects' which are assigned at random points in time. The organisation has a set of teams at its disposal, to whom it assigns each project as it appears. We assume the following factors which influence how we assign teams to projects:
+In this section, we seek to model communication flow within an organisation. To do this, the first step is to specify the type of organisation that we're referring to. 
 
 \begin{enumerate}
-	\item Each project requires a particular set of `skills' in order to be completed. 
+	\item The organisation is a company which generates revenue by completing projects.
 	
-	\item Each team possesses one or more of these `skills'. 
+	\item Each project requires the application of certain skills in order to be completed.
 	
-	\item A project can be completed only when sufficiently many teams are assigned to it that possess all of the `skills' required by the project.
+	\item The organisation consists of a fixed number of teams, each possessing one or more skill.
+	
+	\item Projects are completed by assigning sufficiently many teams to the project which possess all skills required to complete the project.
+\end{enumerate} 
 
+Within this framework, where does communication come in? Suppose that a project appears which requires python programming skills. Further, let there be 2 distinct teams which have this skill. What happens now? If these teams are not communicating, then they might both take on the same project, depending on the policy by which they decide what to do. Alternatively, if they are communication, not only can they guarantee that they don't do the same thing, but they can also collaborate with each other, thus finishing the project faster than otherwise.
 
-\end{enumerate}
+Suppose we have $n$ teams. We represent these teams in mathematics as nodes in a graph. Each of these nodes has 2 states: `on' and `off'. A team is active if its node is `on', and is idle if the node is `off'. Next we say that one team $v_1$ is paying attention to another team $v_2$ if there exists a directed edge from $v_1$ to $v_2$. Furthermore, these teams are said to be communicating both teams are paying attention to each other.
 
-Within these assumptions, there are many variations of models we can build. Each model is specified by how we define these values and processes:
+With this structure defined, we now need to consider how to build dynamics into the model. In particular we must define the following:
 
-\begin{enumerate}
+\begin{itemize}
 	\item Progression of time. We take our model to be a discrete iterative process. Each iteration marks the passage of a fixed time period. 
 
-	\item Number of `skill' types. This value we select in advance and is constant.
-	\item Number of teams. We take this to be constant for each version of our model.
-
-	\item Number of Projects. We assume the likelihood that a project will require one particular skill to be independent of whether or requires any other skill. Hence we take the arrival of Projects to be based on a multivariate Bernoulli distribution. 
+	\item Arrival of Projects. We model projects such that with each time step, a single project might arrive. The nature of the project which arrives we determine using a multivariate Bernoulli distribution.
 	
-	\item How projects are completed. We arbitrarily decide that the duration of a project will be distributed exponentially. This is equivalent to saying that each project has an identical chance of completion following each iteration.
-	
-
-\end{enumerate}
+	\item Completion of Projects. We arbitrarily decide that the duration of a project will be distributed exponentially. This is equivalent to saying that each project has an identical chance of completion following each iteration.
+\end{itemize}
 
 
-\subsection{A single-cluster model}
-In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. We take the assignment of skills to teams as fixed, deciding arbitrarily that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
+\subsection{The small 3-node model}
+In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. We decide arbitrarily that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
 
 \begin{figure}[ht]
 	\centering
@@ -373,20 +370,14 @@ In this model, we consider there to be 3 teams, and 2 skill types. We label the 
 	\label{fig:diagram1}
 \end{figure}
 
-With the teams, skills and assignment of these defined, we now need to define these 3 last values/processes:
-
-\begin{enumerate}
-	\item The probabilities affecting arrival of projects.
-	\item The process by which projects are assigned to teams.
-	\item The probabilities affecting completion of projects.
-\end{enumerate}
+With the teams, skills and assignment of these defined, we specify the details of the model dynamics in the following three steps.
 
 \begin{steps}
 	
 	\item \textbf{Arrival of projects}\\
 	Earlier we stated that this process was based on a multivariate Bernoulli distribution. Specifically we use the 2-dimensional version, as we are working with 2 types of skills. We specify the vector of probabilities: $\mathbf{p} = (p_\alpha, p_\beta)$ such that an incoming project requires skill $\alpha$ with probability $p_\alpha$ and similarly for skill $\beta$.
 	
-	We create 2 `incoming project alert' nodes which we label as $P_\alpha$ and $P_\beta$. Thee state of these nodes is determined only by the previously mentioned probability distribution. Hence these nodes transition states independently of any other node. 
+	We create 2 `incoming project alert' nodes which we label as $P_\alpha$ and $P_\beta$. The state of these nodes is determined only by the previously mentioned probability distribution. Hence these nodes transition states independently of any other node. 
 	
 	\item \textbf{Assignment of projects}\\
 	First are the 3 simple cases. If a project which requires skill $\alpha$ but not $\beta$ arrives, and team $A$ is idle, then the project is assigned to $A$, resulting in team $A$ turning on. Similarly teams $B$ and $C$ will turn on if a project arrives tailored to their abilities while they are not already active.	
@@ -406,15 +397,14 @@ With the teams, skills and assignment of these defined, we now need to define th
 
 Now we can put this all together to form the state by node transition probability matrix: $\mathbf{T}$, defined as:
 \begin{equation}
-\mathbf{T}_{ij}= P(G_j^{t+1}=1 | G^t = i)
+\mathbf{T}_{ij}= P(z^j_{t+1}=1 | Z_t = i)
 \end{equation}
-where $G$ refers to the entire network with $G_j$ standing for $A$, $B$ and $C$ for $j=1,2,3$. $\mathbf{T}$ will have a row for each state of the system, and a column for each node. Hence its shape will be $2^n \times n$ assuming that each node has exactly 2 states (as in IIT). We present the matrix in table \ref{mat:model1}.
+
+where $Z$ refers to the entire network with $z^j$ standing for $A$, $B$, and $C$ (the team nodes) in addition to $P_\alpha$ and $P_\beta$, (the incoming project alert nodes) for $j=1,2, \ldots, 5$. $\mathbf{T}$ is the \textit{state by node} transition probability matrix, as previous described in section \ref{sec:conditional_independence} having 32 rows and 5 columns. We present this matrix in table \ref{mat:simple_system}.
 
 
-
-\begin{table}[]
+\begin{table}[h!]
 	\centering
-	\label{mat:simple_system}
 	$
 	\begin{array}{|l|ccccc}
 		\hline
@@ -453,36 +443,11 @@ where $G$ refers to the entire network with $G_j$ standing for $A$, $B$ and $C$ 
 		111 11                      & 1-k_A - k_C          & 1-k_B-k_C            & 1-k_A-k_B-k_C       & p_\alpha                      & p_\beta                      \\ \cline{1-1}
 	\end{array}
 	$
-	\caption{My caption}
+	\caption{Above is the Transition Probability Matrix for the small 3-node model. We represent each state of the system as a length 5 binary string, where the 1's and 0's refer to `on' and `off' respectively. We list nodes in the order: $A, B, C, P_\alpha, P_\beta$. Hence, 10010 means that nodes $A$ and $P_\alpha$ are active, while the rest are idle.}
+	\label{mat:simple_system}
 \end{table}
 
 
-
-\begin{table}[h]
-	\centering
-	
-
-	$\begin{array}{l|ccc}
-	\hline
-	\multicolumn{1}{|l|}{\text{State}} & \multicolumn{1}{c|}{A} & \multicolumn{1}{c|}{B} & \multicolumn{1}{c|}{C} \\ \hline
-	000                         & .25                    & .25                    & .25                    \\
-	100                         & 1-k_A                  & .25                    & .5                     \\
-	010                         & .25                    & 1-k_B                  & .5                     \\
-	110                         & 1-k_A                  & 1-k_B                  & .75                    \\
-	001                         & .5                     & .5                     & 1-k_C                  \\
-	101                         & 1-k_A-k_C              & .25                    & 1-k_C                  \\
-	011                         & .25                    & 1-k_B-k_C              & 1-k_C                  \\
-	111                         & 1-k_A-k_C              & 1-k_B-k_C              & 1-k_A-k_B-k_C         
-	\end{array}$
-	\caption{The state by node transition probability matrix for the model.}
-	\label{mat:model1}
-\end{table}
-
-\begin{description}
-	\item[Note] You may notice that this matrix refers to a 3 node system, while the network presented in figure \ref{fig:diagram1} contains 5 nodes which switch states. This is because the incoming project alert nodes switch `on' and `off' randomly, and independently of anything else. To simplify the IIT computation, we average over all possible external inputs. This results in reducing the $32\times5$ matrix to a $8\times3$ matrix.
-	
-	To do this, we `noise' out the nodes $P_{\alpha}$ and $P_{\beta}$, which involves taking $p_A$ and $p_B$ to both be 50\%. In other words, the valeus $p_A$ and $p_B$ have no effect on the calculation of $\Phi$, as they are merely external inputs, and not integrated into the dynamics of $A$, $B$ and $C$. With this assumption made, we average over all possible states of $P_\alpha$ and $P_\beta$ to gain the reduced matrix.
-\end{description}
 
 Finally, for this model to be interesting, we need to have some control over the parameters. For this, we think of $k_A$, $k_B$ and $k_C$ of being directly related to the funding invested in each team. Hence we assume $k_A+k_B+k_C = K$, where $K$ is a constant which refers to the total amount of funding at the organisations disposal. $k_i$'s refer to how we allocate that funding.
 
@@ -491,58 +456,41 @@ When solving for this model, we will employ two methods: IIT and a classical app
 \subsubsection{Classical Approach to solving the model}
 Currently in our model a project will definitely be completed, the question is how long it will take. Thus we don't have to worry about the cost of failed projects. Instead, we concern ourselves with the value of missed projects: those which arrive when there is no suitable team or combination of team available to be assigned to it. Define $W_A$, $W_B$ and $W_C$ to be the waste incurred when a project requiring skills $\alpha$, $\beta$ and both  is missed respectively.
 
-When does this waste happen? Look back at table \ref{mat:model1}. Based on how we've define the allocation process, the only states at which waste can occur are: $101$, $011$ and $111$. If the state is $101$, then wast occurs if a project which requires skill $\alpha$ arrives. If skill $\beta$ is further required, then the cost is $W_C$, else the cost is $W_A$. Since each combination of skills can arrive with equal probability (assumed for the sake of IIT), the expected loss when the state is $101$ is $0.25(W_A+W_C)$.
-Similarly the costs for states $011$ and $111$ are $0.25(W_B+W_C)$ and $0.25(W_A+W_B+W_C)$ respectively.
+When does this waste happen? Look back at table \ref{mat:model1}. Based on how we've define the allocation process, the only states at which waste can occur are: $10110$, $11110$, $01101$, $11101$, $10111$, $01111$ and $11111$. If the last two digits of the state is $10$, then a project requiring skill $\alpha$ is lost, resulting in waste of $W_A$. $01$ means that a project needing skill $\beta$ is lost, resulting in waste of $W_C$. The rest refer to a project needing both skills, for which the waste is $W_C$. In short, waste results from exactly 7 different states, and can be either $W_A$, $W_B$ or $W_C$.
 
-Now we know how much money we expect to waste for each state. Now the question is: how often do we expect to be at each state? We can take two approaches: either we can simulate the system and compute waste from the time series, or else we can compute the expected waste per iteration by finding the stationary distribution of the system. We take the latter approach.
+So we know how much money we expect to waste for each state. Now the question is: how often do we expect to be at each state? We can take two approaches: either we can simulate the system and compute waste from the time series, or else we can compute the expected waste per iteration by finding the stationary distribution of the system. We take the latter approach.
 
-When the values of $k_i \in (0,1)$, then the $8\times8$ state by state transition probability matrix $\mathbf{M}$ will have an eigenvalue of 1 with geometric multiplicity 1. Furthermore, $-1$ will not be an eigenvalue. Hence the left eigenvector with eigenvalue 1 will the be stationary distribution of the system, which precisely describes the long term behaviour of the system. 
+When the values of $k_i \in (0,1)$, then the $32\times32$ state by state transition probability matrix $\mathbf{M}$ will have an eigenvalue of 1 with geometric multiplicity 1. Furthermore, $-1$ will not be an eigenvalue. Hence the left eigenvector with eigenvalue 1 will the be stationary distribution of the system, which precisely describes the long term behaviour of the system. 
 
 Hence our cost function is:
 \begin{equation}
 \label{eq:simple_model_cost_function}
-f(k_A, k_B, k_C) = \mathbf{q} \cdot \mathbf{v}(\mathbf{M}(k_A, k_B, k_C))
+f(k_A, k_B, k_C) = \mathbf{q}(W_A, W_B, W_C) \cdot \mathbf{v}(k_A, k_B, k_C, p_\alpha, p_\beta)
 \end{equation}
 
-where $\mathbf{v}$ is the normalised eigenvector corresponding to the eigenvalue 1 of the matrix $\mathbf{M}$ which in turn depends on $k_A$, $k_B$ and $k_C$. $\mathbf{eta}$ is a vector which contains the cost of each state. It can be written as: 
+where $\mathbf{v}$ is the stationary distribution of the system, which depends on $k_A$, $k_B$, $k_C$, $p_\alpha$ and $p_\beta$ while $\mathbf{q}$ is a vector which contains the cost of each state hence depending on $W_A$, $W_B$ and $W_C$. In short, given the 5 constants: $p_\alpha$, $p_\beta$, $W_A$, $W_B$ and $W_C$, we can express cost as a function of $k_A$, $k_B$ and $k_C$. 
+
+\subsubsection{IIT Solution}
+
+In this section we compare the results of IIT with the expected waste of the network. $\Phi$ depends on the matrix $\mathbf{M}$ and the initial state. However, we would prefer to have a function which is independent of state like our cost function. Thus, just as we computed cost in equation \ref{eq:simple_model_cost_function} by taking the inner project of the cost vector with the stationary distribution, we take a similar approach here.
+Define $\mathbf{\Phi}$ the length $2^n$ vector containing the values of $\Phi$ at each state of the system. Using this, we compute:
+
 \begin{equation}
-q_i = 0.25(W_A+W_C)\delta(i-5) + 0.25(W_B+W_C)\delta(i-6) + 0.25(W_A+W_B+W_C)\delta(i-7)
+\mathbb{E}[\Phi]:= \mathbf{\Phi}\cdot \mathbf{v}(k_A, k_B, k_C, p_\alpha, p_\beta)
 \end{equation}
 
-In short, given the constants $W_A$, $W_B$ and $W_C$, we express the expected waste of the system as a function of $k_A$, $k_B$ and $k_C$. 
+Using $\mathbb{E}[\Phi]$ instead of $\Phi$ given a particular state makes sense intuitively. Suppose $\Phi$ measured in some what the quality of the project allocation process at a particular step. Then its is possible that the reason it was a good step was because it will create opportunities in the future by taking on costs in the present. Thus we would be more interested in the average value of $\Phi$ if it were to have this meaning, which is what we hope.
 
-\subsubsection{Significance of $\Phi$}
+Finally we compare $\mathbb{E}[\Phi]$ against expected waste. We arbitrarily choose $p_\alpha$ and $p_\beta$ to both be $0.5$, while we pick $W_A=0.3$, $W_B = 0.5$ and $W_C = 0.2$. Finally we set $K = k_A+k_B+k_C = 0.5$, and vary the parameters according to this constraint. We present our results in figure \ref{fig:simple_model_phi_cost_plot}.
 
-In this section we compare the results of IIT with the expected waste of the network. $\Phi$ depends on the matrix $\mathbf{M}$ and the initial state. meanwhile $f$ depends on $\mathbf{M}$ in addition to the constants $W_A$, $W_B$, and $W_C$. The independence of $\Phi$ and waste constants is alarming, and leaves little optimism regarding any correlation. 
-
-Since $k_A + k+B+ k+C = K$, our parameter space is 2-D. We therefore compute $\Phi$ and $f$ for all suitable values of $k_A$,\ldots, on a grid with points at a distance 0.01 from each other. We use 2 initial states for the purpose of computing $\Phi$ which are arbitrarily taken to be $000$ and $101$.
-
-\begin{figure}[!ht]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[scale = 0.5]{PhiCostcomp1.png}
-	\caption{We plot the value of $\Phi$ given an initial state of $000$  against the cost of missed projects. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
-	\label{fig:PhiCostcomp1}
+	\includegraphics[scale = 0.5]{phicostplot.pdf}
+	\caption{We present a scatter-plot of the values for $\mathbf{E}[\Phi]$ and expected waste, when we vary the parameters $k_A, k_B$ and $k_C$ subject to $k_A+k_B+k_B=1/2$.}
+	\label{fig:simple_model_phi_cost_plot}
 \end{figure}
 
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[scale = 0.5]{PhiCostcomp2.png}
-	\caption{We plot the value of $\Phi$ given an initial state of $101$ against the cost of missed projects. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
-	\label{fig:PhiCostcomp2}
-\end{figure}
 
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[scale = 0.5]{Phi2Phicomp.png}
-	\caption{We plot the value of $\Phi$ given an initial state of $101$ against $Phi$ given the initial state $000$. The value of $K$ is 0.5, and $W_A$, $W_B$ and $W_C$ are 0.4, 0.4 and 0.2 respectively. }
-	\label{fig:Ph2Phicomp}
-\end{figure}
-
-In figures \ref{fig:PhiCostcomp1}, \ref{fig:PhiCostcomp2} and \ref{fig:Ph2Phicomp}, we plot the values of $f$ computed against those of $\Phi$ given each of the 2 initial states. In particular we see in figure \ref{fig:PhiCostcomp1} that while there seems to be some form of relationship between the cost of wasted projects and the `consciousness', whatever relationship that exists does not appear to be particularly useful. 
-
-Similarly in figure \ref{fig:PhiCostcomp2} it seems like there might be something interesting happening in a dimension which we are not measuring. However, we can't gain insight as to what that is with these measurements. Finally when we compare the values of $\Phi$ for different initial states in figure \ref{fig:Ph2Phicomp}, we find that the two values are almost entirely independent of each other. 
-
-In general, $\Phi$ does not provide much insight into this model. Why might this be? We present 2 potential flaws of the model:
 
 \begin{enumerate}
 	\item What $\Phi$ computes is the difference in information that a system has, above an beyond what it would have if the system was partitioned. As things stand, our model is a fully connected 3 node system. Thus we can't expect interesting $\Phi$ behaviour, as there are no partitions which might radically affect our network. 
