@@ -5,7 +5,7 @@
 
 \section{Integrated Information Theory}
 
-In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{main} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
+In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{oizumi2014phenomenology} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
 
 \subsection{Definitions and Notation}
 
@@ -39,7 +39,7 @@ Before we proceed, we need to specify what is meant by the terms \textit{mechani
 Just as each node can be in one of two states, so too can mechanisms and systems be in states. The state of a mechanism is the combination of the states of all nodes within it. For example, if we have $z^1=1$, $z^2=0$ and $z^3=0$, than the mechanism $Z = \left(\begin{array}{ccc}z^1&z^2&z^3\end{array}\right)$ has state $\left(\begin{array}{ccc}1&0&0\end{array}\right)$. 
 
 
-The progression of $Z_t$ as time passes is dictated by the transition probability matrix (TPM) $\mathbf{M}$, which gives at $M_{ij}$ the probability of transitioning from state $i$ to state $j$ after a single time step. There are 3 points in time for which we consider a mechanism: the immediate past (time $t-1$), present (time $t$) and future (time $t+1$). Oizumi et all \cite{main} denote the state of a mechanism at these times by $Z^c$, $Z^p$ and $Z^f$ referring to the current, past and future states respectively. Alternatively, Krohn and Ostwald \cite{krohn2016computing} write $Z_{t-1}$, $Z_{t}$, and $Z_{t+1}$. In this document, we adopt the latter style.
+The progression of $Z_t$ as time passes is dictated by the transition probability matrix (TPM) $\mathbf{M}$, which gives at $M_{ij}$ the probability of transitioning from state $i$ to state $j$ after a single time step. There are 3 points in time for which we consider a mechanism: the immediate past (time $t-1$), present (time $t$) and future (time $t+1$). Oizumi et all \cite{oizumi2014phenomenology} denote the state of a mechanism at these times by $Z^c$, $Z^p$ and $Z^f$ referring to the current, past and future states respectively. Alternatively, Krohn and Ostwald \cite{krohn2016computing} write $Z_{t-1}$, $Z_{t}$, and $Z_{t+1}$. In this document, we adopt the latter style.
 
 
 \begin{definition}
@@ -79,7 +79,7 @@ p_e(Z_{t+1}|W_t = X) = \prod \limits_{i= 1}^n p(z^i_{t+1}|W_t = X)
 
 It is important to note that this factorisation does not follow generally from equation \ref{eq:cond_independence}, as it was only assumed that future state of each node was conditionally independent with respect to the current states of the entire system, as opposed to with respect to all possible subsets of this system as well.
 
-This is justified by Oizumi et all \cite{main} in their supplementary methods document on the grounds that they are interested in how $W_t=X$ affects each $z^i_{t+1}$ individually and thus factorise as above in order to remove correlations.
+This is justified by Oizumi et all \cite{oizumi2014phenomenology} in their supplementary methods document on the grounds that they are interested in how $W_t=X$ affects each $z^i_{t+1}$ individually and thus factorise as above in order to remove correlations.
 
 
 Finally, let $W$ be a subset of $Z$ which is known, and let $z^{i_0}$ be a particular node in $Z$. Then we have:
@@ -101,8 +101,7 @@ Just as the effect repertoire is broken into a smaller problem in equation \ref{
 p_c(V_{t-1} | W_t=X) = \prod \limits_{i = 1}^{m} p_c(V_{t-1}|w^i_{t} = x^i)
 \end{equation}
 
-This is not an additional assumption, but rather it follows from equation \ref{def:controversial}. We then complete the computation as follows:
-
+We then complete the computation as follows:
 
 \begin{equation}
 \label{def:cause_rep2}
@@ -111,6 +110,9 @@ p_c(V_{t-1}| w_t = x) = \frac{\sum \limits_{Z\setminus V} p_e(w_t = x| V_{t-1}, 
 
 In short, we add up the probabilities of each individual previous state resulting in our current information ($w_t = x)$, and then scale by the overall probability that we observe $w_t = x$ in the first place. Note that equation \ref{def:cause_rep2} features the effect repertoire $p_e$ on the right hand side, not $p_c$.
 
+\begin{remark}
+	Equation \ref{def:cause_rep1} does not make an additional assumption, but rather follows as a consequence from equation \ref{def:controversial}.
+\end{remark}
 
 
 
@@ -208,13 +210,15 @@ $\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ f
 
 
 
-It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{IITbounds}:
+It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{marshal2016integrated}:
 \begin{equation}
 \label{eq:bound_phi_cei}
 \varphi^{\text{MIP}}(W_t=X, Z) \leq cei(W_t=X) 
 \end{equation}
 
 This implies that the biggest different we can make to $\varphi$ by partitioning a mechanism occurs when the partitioned repertoire is precisely the unconstrained repertoire. 
+
+
 
 \subsubsection{maximally integrated information}
 It follows from the assumptions of IIT that a mechanism has a unique cause and effect. We identify these as the maximally irreducible causes and effects respectively. 
@@ -246,17 +250,21 @@ Thus far calculations have been restricted to a single mechanism, whether 1st, 2
 Now we focus our attention on computing integrated information in a system of mechanisms. 
 
 \subsubsection{conceptual information}
+\label{sec:CI}
 The Conceptual Information (CI) extends the notion of cause-effect information to a system of nodes. Before we computed the distance between the repertoire specified by some information and the unconstrained repertoire. Now, instead of computing the distance between repertoires, we add up the distances between concepts.
 
 The Conceptual Information is simply weighted sum of the distance between the MICE of each of its concepts, and the unconstrained MICE. We compute it below:
 
 \begin{equation}
 \label{def:CI}
-CI(X) = \sum \limits_{S \in \mathbb{P}(Z)} \varphi^{\text{Max}}(S_t) D(M^S, M^{uc})
+CI(Z_t = X) = \sum \limits_{S \in \mathbb{P}(Z)} \varphi^{\text{Max}}(S_t=X) D(M^S, M^{uc})
 \end{equation}
 
 where $M^S$ refers to the MICE of the concept $S$, and $M^{uc}$ is the unconstrained MICE, which is just the unconstrained cause and effect repertoires. We measure the distance between $M^S$ and $M^{uc}$ by adding the distances between the two cause, and effect repertoires.
 
+\begin{remark}
+	Equation \ref{def:CI} uses Oizumi et all's \cite{oizumi2014phenomenology} definition of $CI$. However, it was pointed out by Krohn and Ostwald \cite{krohn2016computing} that this definition is not well defined. The MICE is defined as the set of cause and effect repertoires that maximize $\phi^{MIP}$. However, there may be two such MICE's: $M_1$ and $M_2$, which yield the same value for $\phi^{Max}$, and yet affect equation \ref{def:CI} differently. We show equation \ref{def:CI} as we used the software provided by Mayner et all \cite{pyphi} which follows the flawed definition. Krohn and Ostwald propose a simpler definition which fixes this issue, where they merely add up the values of $\varphi^{\text{Max}}$, and ignore the MICE.
+\end{remark}
 
 \subsubsection{integrated conceptual information}
 Now we measure the integration of a piece of information on the level of a system of mechanisms. Here it is useful to define the term \textit{constellation}.
@@ -265,21 +273,52 @@ Now we measure the integration of a piece of information on the level of a syste
 	{A \textit{constellation} refers to the set of all concepts within a system, each concept equipped with its' MICE.}
 \end{definition}
 
-As before, we consider all ways to partition the system $Z$. However, on this occasions, each partition is a one directional cut. Hence there exist twice as many possible partitions as in section \ref{sec:mech_integration}.
+As before, we consider all ways to partition the system $Z$. However, on this occasions, each partition is a one directional cut. Hence there exist twice as many possible partitions as in section \ref{sec:mech_integration}. We compute the constellation for the partitioned system, labelling it as $M^p$. For this partitioned system, some of the concepts from the while system will remain intact, but others will have been destroyed by the partition.
 
+Let the function $C(P)$ refer to the set of concepts, given the partition $P$. Then we define:
+
+\begin{equation}
+\label{def:Phi_integration1}
+\Phi^P(Z_t = X) = \sum \limits_{S \in (Z \setminus C(p))} \varphi^{\text{Max}}(S_t = X)D(M^S, M^{uc})
+\end{equation}
+
+The difference between $\Phi^P$ and $CI$ is that while in $CI$ we sum over all concepts, in $\Phi^P$ we only sum over the concepts which have been destroyed by the partition.
+
+As before we seek the minimum information partition (MIP). This time we define it as:
+
+\begin{equation}
+\label{def:Phi_integration2}
+\Phi^{\text{MIP}} (Z_t = X) = \min \limits_{P} \Phi^P(Z_t = X)
+\end{equation}
+
+\begin{remark}
+	As in section \ref{sec:CI}, the value specified in equation \ref{def:Phi_integration2} is not defined, for the same reason as previously. Krohn and Ostwald present the same solution as before: they remove the $D(M^S, M^{uc})$ term from the equation, leaving only the $\varphi^{\text{Max}}$ terms.
+\end{remark}
 
 \subsubsection{maximally irreducible conceptual structure}
 
+Thus far in how $\Phi$ is defined, there exists an intuitive example which breaks the definition. Consider a network consisting of a dense cluster of nodes which has a large value of $\Phi$. Next, add a single node to this cluster, which we connect to the cluster with a single edge. If we compute $\Phi$ now, find a partition which makes almost no difference at all (when we eliminate the single node), which results in the new system having a small $\Phi$ value. 
+
+Intuitively we understand that the conclusion: `adding a single extra neuron to the brain destroys all consciousness' is ridiculous. Hence we need the value $\Phi^{\text{Max}}$ to finish our definition of Integrated Information Theory. We define:
+
+\begin{equation}
+\label{def:Phimax}
+\Phi^{\text{Max}}(Z_t = X) := \max \limits_{W \in \mathbb{P}(Z)}\Phi^{\text{MIP}} (W_t = X)
+\end{equation}
+
+\begin{remark}
+	When we compute $\Phi^{\text{MIP}} $ for all subsets $W$ of $Z$, we are not computing it over the \textit{mechanism} $W$ but rather over the \textit{system} $W$. This means that all nodes in $Z \setminus W$ are now treated as external inputs/outputs, instead of unknown nodes in system.
+\end{remark}
 
 \subsection{Computational cost}
 We now ask how expensive is the computation of $\Phi^{Max}$. Let $Z$ refer to a system of nodes such that $|Z| = n$.
 
 \begin{enumerate}
-	\item To compute $\Phi^{Max}$, we must calculate $\Phi$ for possible subsets of our system. There are at most $2^n$ such subsets, and hence we must compute $\Phi$ this many times.
+	\item To compute $\Phi^{\text{Max}}$, we must calculate $\Phi$ for possible subsets of our system. There are at most $2^n$ such subsets, and hence we must compute $\Phi$ this many times.
 	\item For a particular subset of consideration, we must determine the Minimum information partition of one directional cuts. If the subset is of size $m$, then there at most $2^{m+1}$ ways to do this (if the connectivity matrix is sparse, then there are considerably less). $m$ itself is bounded by $n$, so we say that this step must occur at most $2^{n+1}$ times.
-	\item Each computation of $\Phi$ for a particular partition requires the calculation of all values of $\varphi^{Max}$. As each element of the power set may have a positive value of such, we must carry out this computation up to $2^n$ times.
-	\item Each computation of $\varphi^{Max}$ requires both the core cause and core effect to be identified. This involves calculation $\varphi^{MIP}_{cause}$ and $\varphi^{MIP}_{effect}$ each over the entire power set, resulting in a further $2^{n+1}$ computations.  
-	\item To compute $\phi_{cause}^{MIP}$, we must search over all possible partitions. There are $2^n$ of these.
+	\item Each computation of $\Phi$ for a particular partition requires the calculation of all values of $\varphi^{\text{Max}}$. As each element of the power set may have a positive value of such, we must carry out this computation up to $2^n$ times.
+	\item Each computation of $\varphi^{\text{Max}}$ requires both the core cause and core effect to be identified. This involves calculation $\varphi^{\text{MIP}}_{cause}$ and $\varphi^{\text{MIP}}_{effect}$ each over the entire power set, resulting in a further $2^{n+1}$ computations.  
+	\item To compute $\phi_{cause}^{\text{MIP}}$, we must search over all possible partitions. There are $2^n$ of these.
 	\item Finally, when measuring the difference made by a partition, we must measure the distance between probability distributions. This is done using the Earth Mover's Distance, which scales $O(N^3 \log N)$, where $N$ is the number of states found in the distributions the distance is being measured between. As there are $2^n$ of these, this step scales with $O(2^{3n} (\log n)^3)$
 \end{enumerate}
 
@@ -588,6 +627,8 @@ Here we present additional features which might develop this model into being mo
 	\item A more sophisticated mechanism for collaboration. 
 \end{enumerate}
 
+\section{Criticism of IIT}
+
 \section{Conclusions}
 
 \section{Applying IIT}
@@ -610,7 +651,7 @@ In this section we consider the properties of $\Phi$, and question whether or no
 	In the context of a model for an organisation, a single time-step is not of particular interest if ones goal is simply to optimize profits. 
 	
 	
-	\item \textbf{Consciousness of Deterministic Systems}: It is stated by Tegmark \cite{improvedIIT} that it is undesirable for a measurement of consciousness to be 0 for deterministic systems. Thus from the perspective of IIT, it is not necessarily unreasonable that numerical experiments would find $\Phi$ tending to be larger for deterministic systems than probabilistic ones.
+	\item \textbf{Consciousness of Deterministic Systems}: It is stated by Tegmark \cite{tegmark2016improved} that it is undesirable for a measurement of consciousness to be 0 for deterministic systems. Thus from the perspective of IIT, it is not necessarily unreasonable that numerical experiments would find $\Phi$ tending to be larger for deterministic systems than probabilistic ones.
 	
 	From the perspective of an organisation, a fully random decision process is obviously bad. However, 
 \end{enumerate}
