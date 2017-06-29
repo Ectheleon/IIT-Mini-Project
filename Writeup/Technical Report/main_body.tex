@@ -215,7 +215,7 @@ $\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ f
 
 
 
-It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{marshal2016integrated}:
+It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{marshall2016integrated}:
 \begin{equation}
 \label{eq:bound_phi_cei}
 \varphi^{\text{MIP}}(W_t=X, Z) \leq cei(W_t=X) 
@@ -483,18 +483,22 @@ Using $\mathbb{E}[\Phi]$ instead of $\Phi$ given a particular state makes sense 
 
 Finally we compare $\mathbb{E}[\Phi]$ against expected waste. We arbitrarily choose $p_\alpha$ and $p_\beta$ to both be $0.5$, while we pick $W_A=0.3$, $W_B = 0.5$ and $W_C = 0.2$. Finally we set $K = k_A+k_B+k_C = 0.5$, and vary the parameters according to this constraint. We present our results in figure \ref{fig:simple_model_phi_cost_plot}.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 	\centering
-	\includegraphics[scale = 0.5]{phicostplot.pdf}
-	\caption{We present a scatter-plot of the values for $\mathbf{E}[\Phi]$ and expected waste, when we vary the parameters $k_A, k_B$ and $k_C$ subject to $k_A+k_B+k_B=1/2$.}
+	\includegraphics[scale = 0.5]{phicostplot.png}
+	\caption{We present a scatter-plot of the values for $\mathbb{E}[\Phi]$ and expected waste, when we vary the parameters $k_A, k_B$ and $k_C$ subject to $k_A+k_B+k_B=1/2$.}
 	\label{fig:simple_model_phi_cost_plot}
 \end{figure}
 
+What we find is there does seem to be a relation between the expected waste and $\mathbb{E}[\Phi]$. When we look at figure, we see what the points lie along a shape which resembles a quadratic function with respect to expected waste. This is ideal from the perspective that it leads us to believe that these values are not independent of each other. On the other hand, we can't express Expected Waste as a function of $\mathbb{E}[\Phi]$ since, the shape bends back on itself. i.e. if we pick the value of $\mathbb{E}[\Phi]$ which corresponding to the point of minimal waste, there are other points that have considerably more waste, yet with the same value of $\mathbb{E}[\Phi]$.
 
+While we could adjust the parameters to see how this shape evolves, instead we question whether this model is suitable, or should be added to. We identify the following flaws in this setup:
 
 \begin{enumerate}
-	\item What $\Phi$ computes is the difference in information that a system has, above an beyond what it would have if the system was partitioned. As things stand, our model is a fully connected 3 node system. Thus we can't expect interesting $\Phi$ behaviour, as there are no partitions which might radically affect our network. 
-
+	\item As things stand, the project allocation process assumes that all three worker nodes are connected to each other, and hence communicating at all times. It would be preferable if this was not always the case.
+	
+	\item The current definition of waste is the value of the projects which can't be done because the workers are busy. However, this rather measures missed opportunities due to the size of the organisation, as opposed to communication errors. We're more interested in measuring the direct consequences of miscommunication.
+	
 	\item The mechanism we defined for allocation of projects is one which assumes perfect knowledge and communication. We never have a scenario in which two teams work on the same thing unnecessarily, or one team neglects working on a project becomes it assumes that another team is. These events are far more indicative of waste, then what was measured previously. 
 
 \end{enumerate}
