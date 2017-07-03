@@ -8,12 +8,18 @@ paragraph about other approaches being taken
 
 The approach we take is inspired by the brain. If we think of the neurons within the brain passing information between each other, then this becomes a similar problem to communicating within an organisation. Motivated by this, we attempt to apply Integrated Information theory to the problem.
 
-What is integrated information theory? Originally present in 2004 by Tononi \cite{tononi2004information}, this is the most recent attempt to rigorously define consciousness. Since its first appearance, it has receives multiple updates and adjustments \cite{tononi2011integrated} \cite{balduzzi2008integrated} \cite{tononi2016consciousness}
+What is integrated information theory? Originally present in 2004 by Tononi \cite{tononi2004information}, this is the most recent attempt to rigorously define consciousness. Since its first appearance it presents the function $\Phi$ which computes the integrated information of a system of mechanism. The main claim of integrated information theory is that consciousness and integrated information are the same thing, and hence computing $\Phi$ is computing consciousness. The arguments used to justify this claim are primarily philosophical in nature, and thus will not be discussed in this report. 
+
+Since 2004, IIT has received multiple updates and adjustments \cite{tononi2011integrated,balduzzi2008integrated,tononi2016consciousness} each of which resolve issues found in the previous definition. Currently the most up to date version of IIT is version 3.0 \cite{oizumi2014phenomenology}, and hence we will primarily focus on that version in this report.
+
+While IIT has developed from version 1.0 to 3.0 by its inventor Giulio Tononi, at the same time other authors have developed the theory in different directions. For example Barrett and Smith \cite{barrett2011practical} designed an alternative definition in order to apply the theory to time series data. A list of such alternative definitions was compiled by Tegmark \cite{tegmark2016improved} for the purpose of considering their relative mathematical merits.
+
+Our focus is to investigate whether the computation of $\Phi$ for a network model of an organisation might give any insight into the efficiency of communication within the organisation. As $\Phi$ is expensive to compute (as will be discussed in greater detail in section \ref{sec:cost}), we restrict our attention to a small scale toy model which we derive for the purpose of capturing the effects of poor communication within an organisation. Although computation of $\Phi$ based on IIT 2.0 is cheaper than for 3.0, we choose to use the most up to date version in order to ensure that we keep up to date with the state of the theory. 
 
 \section{Integrated Information Theory}
 \label{sec:iit}
 
-In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{oizumi2014phenomenology} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
+In this section, we present an overview of Integrated Information Theory 3.0 as presented by Oizumi et all \cite{oizumi2014phenomenology} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
 
 \subsection{Definitions and Notation}
 
@@ -56,6 +62,7 @@ The progression of $Z_t$ as time passes is dictated by the transition probabilit
 
 
 \subsection{Computation of Repertoires}
+\label{sec:cost}
 In this section, we construct each of the previously defined repertoires from the TPM. First however, we need to introduce both the \textit{perturb function}, and the assumption of conditional independence, as all future definitions rely on these.
 
 \begin{definition}
