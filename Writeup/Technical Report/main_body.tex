@@ -4,10 +4,15 @@
 \section{Introduction}
 Within any organisation, no matter what the type, communication must be present. If members of a company don't communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may get in the way of actual work being done, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
 
-The approach taken in this project is inspired by the brain. The human brain consists of billions of neurons, which are constantly communication and hence passing information around the body. From comparing the human brain to that of animals, we see the decision making potential of the brain is not only related to its size, but also its internal structure. Philosophically, we identify consciousness as one of the 
+paragraph about other approaches being taken
+
+The approach we take is inspired by the brain. The human brain consists of billions of neurons, which are constantly communication and hence passing information around the body. blah blah blah, stuff about why the brain is worth copying.
+
+paragraph introducing what iit is
 
 
 \section{Integrated Information Theory}
+\label{sec:iit}
 
 In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{oizumi2014phenomenology} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
 
@@ -121,7 +126,7 @@ In short, we add up the probabilities of each individual previous state resultin
 
 
 
-\subsection{The earth mover's distance (EMD)}
+\subsection{The Earth Mover's Distance (EMD)}
 In the context of this document, we will frequently calculate the distance between two probability distributions $p1$ and $p1$. For this we will use the mathematical notation $D(p1,p2)$, where $D$ is referring to the earth mover's distance.
 
 To use this distance measure, we require the existence of another metric which measures the distance between any pair of states. Here we use the Hamming distance for this purpose, that is the number of individual bytes which disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
@@ -151,14 +156,14 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 
 From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance instead of bothering with $\text{EMD}(P,Q)$ each time.
 
-\subsection{Calculations for mechanisms}\label{sec:little_phi}
+\subsection{Calculations for Mechanisms}\label{sec:little_phi}
 When making a computation for a mechanism, we must be sure to treat each type of node appropriately. Let $G$ be the set of all nodes present, $Z$ be the system of nodes which we are considering, and $W$ the mechanism within the system. For an illustration of this, consider figure \ref{fig:IIT_illustration1}.
 
 For all nodes in $G\setminus Z$, that is the external inputs/outputs, we treat their states as constant. We do not concern ourselves with their past or future states when computing repertoires. However, the state of these nodes may affect the nodes within the mechanism $W$.
 
 In contrast, the state of nodes within $Z \setminus W$ are treated as unknown. While they do affect past and future repertoires, the do so differently than nodes within the mechanism. Finally, we are concerned with how the state of the mechanism constrains the past and future states of these nodes.
 
-\subsubsection{cause-effect information}
+\subsubsection{Cause-Effect Information}
 The cause-effect information ($cei$) is a measurement of the significance which a piece of information has. It is calculated in 2 parts. First we have the cause information ($ci$), which measures how the past can be constrained given knowledge of the present. It is defined by:
 
 \begin{equation}
@@ -180,7 +185,7 @@ Finally, we define the cause-effect information ($cei$) to be the minimum betwee
 cei(W_{t} = X) = \min\left(ci(W_{t} = X), ei(W_{t} = X) \right)
 \end{equation}
 
-\subsubsection{integrated information}
+\subsubsection{Integrated Information}
 \label{sec:mech_integration}
 IIT assumes that only information which is irreducible can contribute to consciousness. This motivates the calculation of $\varphi$, which calculates the distance between the cause-effect repertoires of an entire mechanism, and the cause-effect repertoires of the partitioned mechanism. 
 
@@ -225,7 +230,7 @@ This implies that the biggest different we can make to $\varphi$ by partitioning
 
 
 
-\subsubsection{maximally integrated information}
+\subsubsection{Maximally Integrated Information}
 It follows from the assumptions of IIT that a mechanism has a unique cause and effect. We identify these as the maximally irreducible causes and effects respectively. 
 
 Let $W_t = X$. We now ask the question: what is the cause of $X$? Any element in $\mathbb{P}(Z)$ is a candidate, so we need to conduct an exhaustive search. Hence we define $\varphi^{\text{Max}}$, the maximally integrated information as: 
@@ -249,12 +254,12 @@ If we find that $\varphi^{\text{Max}}(W_t = X)>0$, then we call the combination 
 	{The maximally integrated cause effect repertoire of a piece of information, or MICE, refers to the combination of the cause repertoire $p_c(C_{t-1}|W_t = X)$, where $C$ is the core cause of $W_t=X$ along with the effect repertoire $p_e(E_{t+1}|W_t = X)$, where $E$ is the core effect of $W_t = X$.}
 \end{definition}
 
-\subsection{Calculations for systems of mechanisms}
+\subsection{Calculations for Systems of Mechanisms}
 Thus far calculations have been restricted to a single mechanism, whether 1st, 2nd, or $n$th order. However, a network of more than one node may contain multiple mechanisms, which may overlap with each other. For example, a system of 3 nodes could potentially contain 7 mechanisms (all possible subsets of nodes less the empty set).
 
 Now we focus our attention on computing integrated information in a system of mechanisms. 
 
-\subsubsection{conceptual information}
+\subsubsection{Conceptual Information}
 \label{sec:CI}
 The Conceptual Information (CI) extends the notion of cause-effect information to a system of nodes. Before we computed the distance between the repertoire specified by some information and the unconstrained repertoire. Now, instead of computing the distance between repertoires, we add up the distances between concepts.
 
@@ -271,7 +276,7 @@ where $M^S$ refers to the MICE of the concept $S$, and $M^{uc}$ is the unconstra
 	Equation \ref{def:CI} uses Oizumi et all's \cite{oizumi2014phenomenology} definition of $CI$. However, it was pointed out by Krohn and Ostwald \cite{krohn2016computing} that this definition is not well defined. The MICE is defined as the set of cause and effect repertoires that maximize $\phi^{MIP}$. However, there may be two such MICE's: $M_1$ and $M_2$, which yield the same value for $\phi^{Max}$, and yet affect equation \ref{def:CI} differently. We show equation \ref{def:CI} as we used the software provided by Mayner et all \cite{pyphi} which follows the flawed definition. Krohn and Ostwald propose a simpler definition which fixes this issue, where they merely add up the values of $\varphi^{\text{Max}}$, and ignore the MICE.
 \end{remark}
 
-\subsubsection{integrated conceptual information}
+\subsubsection{Integrated Conceptual Information}
 Now we measure the integration of a piece of information on the level of a system of mechanisms. Here it is useful to define the term \textit{constellation}.
 
 \begin{definition}
@@ -300,7 +305,7 @@ As before we seek the minimum information partition (MIP). This time we define i
 	As in section \ref{sec:CI}, the value specified in equation \ref{def:Phi_integration2} is not defined, for the same reason as previously. Krohn and Ostwald present the same solution as before: they remove the $D(M^S, M^{uc})$ term from the equation, leaving only the $\varphi^{\text{Max}}$ terms.
 \end{remark}
 
-\subsubsection{maximally irreducible conceptual structure}
+\subsubsection{Maximally Irreducible Conceptual Structure}
 
 Thus far in how $\Phi$ is defined, there exists an intuitive example which breaks the definition. Consider a network consisting of a dense cluster of nodes which has a large value of $\Phi$. Next, add a single node to this cluster, which we connect to the cluster with a single edge. If we compute $\Phi$ now, find a partition which makes almost no difference at all (when we eliminate the single node), which results in the new system having a small $\Phi$ value. 
 
@@ -315,7 +320,7 @@ Intuitively we understand that the conclusion: `adding a single extra neuron to 
 	When we compute $\Phi^{\text{MIP}} $ for all subsets $W$ of $Z$, we are not computing it over the \textit{mechanism} $W$ but rather over the \textit{system} $W$. This means that all nodes in $Z \setminus W$ are now treated as external inputs/outputs, instead of unknown nodes in system.
 \end{remark}
 
-\subsection{Computational cost}
+\subsection{Computational Cost}
 We now ask how expensive is the computation of $\Phi^{Max}$. Let $Z$ refer to a system of nodes such that $|Z| = n$.
 
 \begin{enumerate}
@@ -327,7 +332,7 @@ We now ask how expensive is the computation of $\Phi^{Max}$. Let $Z$ refer to a 
 	\item Finally, when measuring the difference made by a partition, we must measure the distance between probability distributions. This is done using the Earth Mover's Distance, which scales $O(N^3 \log N)$, where $N$ is the number of states found in the distributions the distance is being measured between. As there are $2^n$ of these, this step scales with $O(2^{3n} (\log n)^3)$
 \end{enumerate}
 
-When we put this all together, we conclude that the calculation of $\Phi^{Max}$ scales with $O( 2^{8n}(\log n)^3)$.
+When we put this all together, we conclude that the calculation of $\Phi^{Max}$ scales with $O(n^3 2^{8n})$.
 
 
 \section{Modelling an Organisation}
@@ -359,7 +364,8 @@ With this structure defined, we now need to consider how to build dynamics into 
 \end{itemize}
 
 
-\subsection{The small 3-node model}
+\subsection{The Small 3-node Model}
+\label{sec:3nodemodel}
 In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. We decide arbitrarily that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
 
 \begin{figure}[ht]
@@ -453,7 +459,7 @@ Finally, for this model to be interesting, we need to have some control over the
 
 When solving for this model, we will employ two methods: IIT and a classical approach. For IIT, we will compute the value of $\Phi$, while for the classical approach, we instead will introduce the notion of costs, and from this compute the economic performance with respect to the parameters $k_A$, $k_B$ and $k_C$. 
 
-\subsubsection{Classical Approach to solving the model}
+\subsubsection{Classical Solution}
 Currently in our model a project will definitely be completed, the question is how long it will take. Thus we don't have to worry about the cost of failed projects. Instead, we concern ourselves with the value of missed projects: those which arrive when there is no suitable team or combination of team available to be assigned to it. Define $W_A$, $W_B$ and $W_C$ to be the waste incurred when a project requiring skills $\alpha$, $\beta$ and both  is missed respectively.
 
 When does this waste happen? Look back at table \ref{mat:model1}. Based on how we've define the allocation process, the only states at which waste can occur are: $10110$, $11110$, $01101$, $11101$, $10111$, $01111$ and $11111$. If the last two digits of the state is $10$, then a project requiring skill $\alpha$ is lost, resulting in waste of $W_A$. $01$ means that a project needing skill $\beta$ is lost, resulting in waste of $W_C$. The rest refer to a project needing both skills, for which the waste is $W_C$. In short, waste results from exactly 7 different states, and can be either $W_A$, $W_B$ or $W_C$.
@@ -470,7 +476,7 @@ f(k_A, k_B, k_C) = \mathbf{q}(W_A, W_B, W_C) \cdot \mathbf{v}(k_A, k_B, k_C, p_\
 
 where $\mathbf{v}$ is the stationary distribution of the system, which depends on $k_A$, $k_B$, $k_C$, $p_\alpha$ and $p_\beta$ while $\mathbf{q}$ is a vector which contains the cost of each state hence depending on $W_A$, $W_B$ and $W_C$. In short, given the 5 constants: $p_\alpha$, $p_\beta$, $W_A$, $W_B$ and $W_C$, we can express cost as a function of $k_A$, $k_B$ and $k_C$. 
 
-\subsubsection{IIT Solution}
+\subsubsection{IIT Comparison}
 
 In this section we compare the results of IIT with the expected waste of the network. $\Phi$ depends on the matrix $\mathbf{M}$ and the initial state. However, we would prefer to have a function which is independent of state like our cost function. Thus, just as we computed cost in equation \ref{eq:simple_model_cost_function} by taking the inner project of the cost vector with the stationary distribution, we take a similar approach here.
 Define $\mathbf{\Phi}$ the length $2^n$ vector containing the values of $\Phi$ at each state of the system. Using this, we compute:
@@ -485,7 +491,7 @@ Finally we compare $\mathbb{E}[\Phi]$ against expected waste. We arbitrarily cho
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[scale = 0.5]{phicostplot.png}
+	\includegraphics[scale = 0.5]{phicostplot.pdf}
 	\caption{We present a scatter-plot of the values for $\mathbb{E}[\Phi]$ and expected waste, when we vary the parameters $k_A, k_B$ and $k_C$ subject to $k_A+k_B+k_B=1/2$.}
 	\label{fig:simple_model_phi_cost_plot}
 \end{figure}
@@ -495,70 +501,76 @@ What we find is there does seem to be a relation between the expected waste and 
 While we could adjust the parameters to see how this shape evolves, instead we question whether this model is suitable, or should be added to. We identify the following flaws in this setup:
 
 \begin{enumerate}
-	\item As things stand, the project allocation process assumes that all three worker nodes are connected to each other, and hence communicating at all times. It would be preferable if this was not always the case.
+	\item As things stand, the project allocation process assumes that all three worker nodes are connected to each other, and hence communicating at all times. More interesting results might be obtained if the connectivity was more sparse.
 	
 	\item The current definition of waste is the value of the projects which can't be done because the workers are busy. However, this rather measures missed opportunities due to the size of the organisation, as opposed to communication errors. We're more interested in measuring the direct consequences of miscommunication.
-	
-	\item The mechanism we defined for allocation of projects is one which assumes perfect knowledge and communication. We never have a scenario in which two teams work on the same thing unnecessarily, or one team neglects working on a project becomes it assumes that another team is. These events are far more indicative of waste, then what was measured previously. 
 
 \end{enumerate}
 
-Motivated by these observations, we proceed to the next model.
+Motivated by these observations, we need to include more worker nodes into the model so that we can have sparser connections, without the system becoming trivial. 
+
+\subsection{The 5-node Model}
+
+The general design of this model is the same as that in section \ref{sec:3nodemodel}. We begin by listing the extensions/adjustments:
 
 
-
-\subsection{A two cluster model}
-
-The purpose of this next model is to deliberately allow scenarios where realistic miscommunication might occur which results in waste. The question of interest is whether $\Phi$ can measure such miscommunication.
 
 We extend the previous model as follows: 
 \begin{enumerate}
-	\item Now we take there to be 3 skills: $\alpha, \beta$ and $\gamma$.
+
+
+	\item Before there were 2 types of skills: $\alpha$ and $\beta$. We now include a third: $\gamma$.
 	
-	\item As before we have nodes $A$, $B$ and $C$ which interact in the same way as previously. In addition, we include the nodes $D$ and $E$. $D$ is equipped with skills $\alpha$ and $\gamma$, while $E$ has skills $\beta$ and $\gamma$. 
+	\item As implied in the section title, we increase the size of the organization from 3 to 5 nodes. The first 3 nodes: $A$, $B$ and $C$ possess the same skills as in section \ref{sec:3nodemodel}. The two additional nodes $D$ and $E$ possess the skills $\alpha, \gamma$ and $\beta, \gamma$ respectively. We illustrate this in figure \ref{fig:diagram2}.
+	
+	\item We change our definition of waste to focus on errors due to miscommunication, as opposed to merely projects which can't be attempted.
+	
+	\item We adjust the project allocation procedure to be dependent on the connectivity matrix.
 \end{enumerate}
 
-We illustrate the new system in the following figure \ref{fig:diagram2}.
 \begin{figure}[ht]
 	\centering	
 	\includegraphics[]{Model2Diagram.png}
 	\caption{We have 3 types of nodes: skill types ($\alpha$, $\beta$, and $\gamma$), teams ($A$, $B$, $C$, $D$ and $E$), and incoming project alerts ($P_\alpha$, $P_\beta$ and $P_\gamma$). If a team node is joined to a skill node by an edge, then the team possesses that skill. The teams receive inputs from the incoming project alert nodes, but the dependence is strictly one directional.
-	Certain teams are connected, indicating that they are actively communicating with each other so to distribute work efficiently. Note that in this figure, we have 2 disconnected clusters of teams. This will give rise to waste.}
+		Certain teams are connected, indicating that they are actively communicating with each other so to distribute work efficiently. Note that in this figure, we have 2 disconnected clusters of teams. This will give rise to waste.}
 	\label{fig:diagram2}
 \end{figure}
 
-In the previous model, we constructed the TPM from a global perspective. This was valid since all the teams involved were in communication. For this model, we use the following policy to determined whether or not a node decides  to take on a project. In decreasing order of importance, we aim to:
+The increased size of this model allows us more realistic scenarios in which waste occurs due to miscommunication. The main question is: will $\Phi$ have a more obvious relation to this form of waste. Now we must define in detail: how allocate incoming projects, and how to define waste.
+
+
+In the previous model, we allocated projects from a global perspective. We knew for any given project was the the best arrangement would be, and then chose this to happen. Since all the teams involved were in communication, this made sense. However, what happens if teams are not all communicating?. For this model, we establish the following localised decision making policy to determine whether or not a team decides to take on a project. In decreasing order of importance, each team should aim to:
 
 
 \begin{enumerate}
-	\item allocate the project if it is possible to do so.
-	\item minimize the amount of teams needed to work on the project.
-	\item minimize the amount of excess skills possessed by the team/teams assigned to the project.
+	\item Ensure that a project is allocated if it is possible to do so.
+	\item Ensure that if a project is being worked on, that only on set of teams is doing so. In other words, ensure that there doesn't exist any duplication of labour.
+	\item Minimize the amount of excess skills possessed by the team/teams assigned to the project.
 \end{enumerate}
 
-When applying this policy, we must do it from the perspective of each individual team. This means that if a team is disconnected from all other teams (meaning it does not know what any of the others are doing), then it will always take on an incoming project which it can do. This will happen independently of whether another team is also taking on the project, because the isolated team does not know this. 
+When applying this policy, each individual team acts as if any team which it is not paying attention to does not exist. This means that if a team is disconnected from all other teams (meaning it does not know what any of the others are doing), then it will always take on an incoming project which it can do. This will happen independently of whether another team is also taking on the project, because the isolated team does not know this. 
 
-Alternatively, if a pair of strongly connected teams see a project which they are overqualified for, and can both see another pair of teams which can complete the project with less excess skills, then the first team will ignore the project. However, while the first pair of teams observed that the second pair were both idle, it couldn't observe whether the 2nd two were strongly connected. If the second team are not strongly connected, then the project will be missed entirely, due to lack of communication. We illustrate this phenomenon in figure 
+Similarly, if a pair of strongly connected teams see a project which they are overqualified for, and can both see another pair of teams which can complete the project with less excess skills, then the first team will ignore the project. However, while the first pair of teams observed that the second pair were both idle, it couldn't observe whether the 2nd two were strongly connected. If the second team are not strongly connected, then the project will be missed entirely, due to lack of communication. We illustrate this phenomenon in figure \ref{fig:waste1demo1}.
 
 \begin{figure}[ht]
 	\centering	
 	\includegraphics[scale=0.13]{Waste1demo1.png}
-	\caption{In this example we have an incoming project which requires both skills $\alpha$ and $\beta$. Teams $D$ and $E$ would possess these skills if they collaborate which they can do as they are connected, but have 2 $\gamma$ skills in excess. However, both $D$ and $E$ can see that the collaboration of $A$ and $B$ can complete the project more efficiently. Thus $D$ and $E$ do not take on the project as they do not know that $A$ and $B$ are not collaborating, and thus won't take the project either. Due to this lack of communication, even though there were plenty of ways that the project might have been done, the project is wasted.}
+	\caption{In this example we have an incoming project which requires both skills $\alpha$ and $\beta$. Teams $D$ and $E$ would possess these skills if they collaborate which they can do as they are connected, even though they have 2 $\gamma$ skills in excess. However, both $D$ and $E$ can see that the collaboration of $A$ and $B$ can complete the project more efficiently. Thus $D$ and $E$ do not take on the project as they do not know that $A$ and $B$ are not collaborating, and thus won't take the project either. Due to this lack of communication, even though there were plenty of ways that the project might have been done, the project is wasted.}
 	\label{fig:waste1demo1}
 \end{figure}
 
-Ultimately, this procedure precisely determines a $2^8 \times 8$ transition probability matrix, which for obvious reasons is not presented here.
+Ultimately, this procedure precisely determines a $2^8 \times 8$ transition probability matrix, which for obvious reasons is not presented here. Next we turn our attention exclusively to the classical solution, which is where we will redefine the notion of waste.
 
-\subsubsection{Classical Solution of the 2 Cluster Model}
+\subsubsection{Classical Solution}
 
 In this section, we compute the expected waste which will result from a particular connectivity matrix. However, we first must lay out what we mean by `waste'. In the context of this model, there are 3 different types of inefficiencies that can occur in the distribution of projects:
 
 \begin{enumerate}
 	\item \textbf{Unnecessary dismissal of project}\\
-	If there exists a minimal subset of idle teams which possess the required skills to take on an incoming project, and yet do not have it assigned to them, then this is wasteful of the project itself.
+	If there exists a minimal subset of idle teams which possess the required skills to take on an incoming project, and yet the project is not assigned to anyone, then this is wasteful of the project itself.
 	
 	\item \textbf{Duplication of work}\\
-	If there exists multiple minimal subsets of idle teams which possess the required skills to take on an incoming project, and multiple of these teams are then assigned to the project, then this is an unnecessary duplication of labour.
+	If there exists multiple minimal subsets of idle teams which possess the required skills to take on an incoming project, and multiple of these groups of teams are assigned to the project, then this is an unnecessary duplication of labour.
 	
 	\item \textbf{Excess Skills}
 	If there exists an idle team which possesses skills beyond the requirements of an incoming project, and this team is assigned to the project, then this wasteful of these excess skills.
@@ -566,51 +578,136 @@ In this section, we compute the expected waste which will result from a particul
 
 Of these 3 sources of waste, we arbitrarily view type 1 to be 10 times worse than type 2 which is again 10 times worse than type 3. However, what is the numerical value of these costs?
 
-For this we take a simplistic approach. We assign the values $w_\alpha, w_\beta$ and $w_\gamma$ to be the values of each skill type. When counting type 1 waste (a doable project is ignored), we add the values of all skills required and scale by 10. Hence, a project requiring all 3 skills would have a cost of $10(w_\alpha+w_\beta+w_\gamma)$.
+For this we take a simplistic approach. We assign the values $W_\alpha, W_\beta$ and $W_\gamma$ to be the values of each skill type. When counting type 1 waste (a doable project is ignored), we add the values of all skills required and scale by 10. Hence, a project requiring all 3 skills would have a cost of $10(W_\alpha+W_\beta+W_\gamma)$.
 
 With type 2 waste (a project being worked on by more than one team), we count the skills possessed by all teams which are assigned to the project. Then we determine how many times the project could be completed form this pool of skills. We assign the cost in this case to be the sum of the costs applying to the skills required by the project, multiplied by the number of times we find this 
 
- When counting type 3 waste, we count how many excess skills are possessed by the assigned teams, and then add up the values of these skills. Finally we scale this value by $1/10$.
+When counting type 3 waste, we count how many excess skills are possessed by the assigned teams, and then add up the values of these skills. Finally we scale this value by $1/10$.
 
-For type 2 waste, we count 
+\begin{remark}
+	In section \ref{sec:3nodemodel}, we assigned a distinct cost to each type of project. Here we simplify that approach as otherwise we would be left with 8 parameters.
+\end{remark}
+
+By applying this definition of waste to all states of the system, we construct the vector function $\mathbf{q}(W_\alpha, W_\beta, W_\gamma)$ so that each value in the vector refers to the waste given the corresponding state and parameters. From this, we construct our function:
+
+\begin{equation}
+\label{eq:cost_function}
+Cost(k_A, k_B, k_C) = \mathbf{q}(W_A, W_B, W_C) \cdot \mathbf{v}(k_A, k_B, k_C,k_E, k_F, p_\alpha, p_\beta, p_\gamma)
+\end{equation}
+
+where $\mathbf{v}$ is the same vector function defined in section \ref{sec:3nodemodel} appropriately adjusted for the additional nodes and skill type.
+
+\subsubsection{IIT Comparison}
+
+When comparing $\mathbb{E}[Cost]$ to $\mathbb{E}[\Phi]$, we first need to decide the context in which we are doing do. The approach we took was to keep the parameters $k_i, p_i$ and $W_i$ all fixed, and instead to vary the connectivity matrix. We justify this choice on grounds that: in an existing organisation, these values would be difficult to change. What could change more easily is who talks to whom. Thus we view that choosing the connectivity matrix to be our variable is more relevant to the problem.
+
+However, we still need to be more specific as there are exactly $2^{64}$ $8\times 8$ connectivity matrices. Thus we restrict our attention to connectivity matrices which have exactly 10 directed edges. There are still a vast number of such matrices, roughly 180,000. Therefore, due to computational time restrictions, we randomly select 200 of these matrices and plot the results in figure \ref{fig:model_costvsphi}.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale = 0.5]{maxvscost_random.pdf}
+	\caption{We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for 200 randomly selected connectivity matrices with precisely 10 directed edges.}
+	\label{fig:model_costvsphi}
+\end{figure}
+
+Having plotted $\mathbb{E}[Cost]$ as a function of $\mathbb{E}[\Phi]$, we see a linear correlation. Even more importantly though, we observe that maximising $\mathbb{E}[\Phi]$ also results in minimizing $\mathbb{E}[Cost]$. This looks ideal, but we must remind ourselves that a sample of size 200 out of 180,000 is by no means conclusive. Unfortunately, the time required to compute each data point prevents us from repeating this experiment. 
 
 
+Therefore, we set up a smaller problem which can be solved exhaustively. Instead of starting with an empty connectivity matrix, and adding 10 directed edges to it, now we start with a developed matrix. Specifically, we consider the matrix which applies to figure \ref{fig:diagram2}, in that the nodes $A$, $B$ and $C$ are completely connected to each other, which being entirely disconnected from $D$ and $E$. This matrix is a $5\times 5$ block diagonal matrix consisting of a $3 \times 3$ and $2 \times 2$ matrix of 1's along the diagonal. Next we introduce an addition 4 directed edges with which we want to join these 2 clusters.
+
+Intuitively, this problem can be though of as forcing two distinct department to talk to each other, and searching for the best way that this can be accomplished. In this setup, there are only 495 different connectivity matrices, and hence an exhaustive search is achievable.
+
+We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the result in figure \ref{fig:maxvscost_small}.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.5]{maxvscost_small.pdf}
+	\caption{We plot  $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for connectivity matrices where we add 4 directed edges to the network shown in figure \ref{fig:diagram2}}
+	\label{fig:maxvscost_small}
+\end{figure}
+
+Now I discuss the content of the figure which I have not yet generated as I don't have all of the data yet.
+
+I will also show what the best network in these setup is
+
+\section{IIT revisited}
+In section \ref{sec:iit}, we presented the definitions of Integrated Information Theory as defined by Oizumi et al \cite{oizumi2014phenomenology}, while using a modification of the notation presented by \cite{krohn2016computing}. In this section, we will critique the mathematical implementation of IIT, and consider whether it is indeed applicable to the problem of consideration: communication within an organisation.
+
+\subsection{Distance Between Repertoires}
+In this section, we examine the process of computing distances between effect repertoires. In particular, let $Z$ be a system of mechanisms, and $W$ a particular mechanism. Consider the computation of: $\varphi^{M,N}_{cause}(W_t = X, Z)$. This value is equal to the distance between two repertoires: $p_e(Z_{t+1}|W_t = X)$ and $p_e(N_{t+1}|N_t = X)p_e(Z\setminus N_{t+1}|W \setminus M _t = X)$.
+
+We can break down the first of these repertoires using conditional independence:
+
+\begin{equation}
+\label{eq:dist_argument_1}
+p_e(Z_{t+1}|W_t = X)=\prod \limits_{i=1}^{n} p(z^i_{t+1}|W_t=X)
+\end{equation}
+
+Denote by $\mathbf{x}(Z_{t+1}|W_t = X)$ the vector function such that:
+$x_i(Z_{t+1}|W_t = X) = p(z^i_{t+1}|W_t=X)$ for $i = 1, 2, \ldots, n$.
+
+Next we break down the second repertoire in a similar fashion:
+
+\begin{align}
+\label{eq:dist_argument_2}
+p_e(N_{t+1}|M_t = X)&=\prod \limits_{i\in N} p(z^i_{t+1}|M_t=X)\\
+p_e(Z\setminus N_{t+1}|W \setminus M_t = X)&=\prod \limits_{i\in Z \setminus N} p(z^i_{t+1}|Z \setminus M_t=X)
+\end{align}
+
+Denote by $\mathbf{y}(Z_{t+1}|W_t = X, M,N)$ the vector function such that $y_i(Z_{t+1}|W_t = X, M,N) = p(z^i_{t+1}|M_t=X)$ if $i \in N$ and otherwise is $p(z^i_{t+1}|Z \setminus M_t=X)$. For convenience we now refer to these vectors merely as $\mathbf{x}$ and $\mathbf{y}$.
+
+When computing a repertoire in practice, one first compute the generating vector, of which $\mathbf{x}$ and $\mathbf{y}$ are examples. If the system has $n$ nodes, then these vectors are of length $n$. Next we consider all possible states of the system. We compute the probabilities of each of these states occurring by multiplying values of $x_i$ and $1-x_i$ together. For example, if we wanted to compute the probability that the future state of a 3 node mechanism would be $101$, we would obtain this by computing $x_1 (1-x_2)x_3$.
+
+This procedure is in essence a function: $R: [0,1]^n \rightarrow [0,1]^{2^n}$ which converts the generating vectors into the actual effect repertoires. The last step in computing  $\varphi^{M,N}_{cause}(W_t = X, Z)$ is to use the earth mover's distance to find $\text{EMD}(R(\mathbf{x}), R(\mathbf{y}))$.
+
+Is this entire process really necessary? First we compute $\mathbf{x}$ and $\mathbf{y}$, next convert to $R(\mathbf{x})$ and $R(\mathbf{y})$, and finally compute the distances between these. The step where $R$ is applied scales with $O(2^n)$, and the EMD scales with the size of the vectors its comparing, which is in this case $O(n^3 2^{3n})$. What if instead we used a different distance measurement, and used it on $\mathbf{x}$ and $\mathbf{y}$ directly instead of bothering to apply $R$?
+
+\begin{prop}
+	\label{prop:alternative}
+	Let $p_1$ and $p_2$ be multivariate Bernoulli distributions equipped with vectors $\mathbf{x}$ and $\mathbf{y}$ such that $p_1(z^i=1) = x_i$ and $p_2(z^i = 1) = y_i$ for $y = 1, 2, \ldots, n$. We further assume that $p_k(z^i, z^j = 1,1) = p_k(z^i = 1) p_k(z^j=1)$ for all $i,j,k$. Then:
+	\begin{equation}
+	\text{EMD}(p_1, p_2) = ||\mathbf{x} - \mathbf{y}||_1
+	\end{equation}
+	where the earth mover's distance operates by using the Hamming distance to measure distance between states.
+	
+	
+\end{prop}
+
+\begin{remark}
+	For more information on multivariate Bernoulli distributions, see Teugels \cite{teugels1990some}.
+\end{remark}
+
+We have verified proposition \ref{prop:alternative} for multivariate distribution with up to 8 variables numerically, and have confirmed the statement to be true with 2 and 3 variable distributions analytically. However, a full proof has not yet been found. 
+
+Regardless of this, by measuring the $||\cdot||_1$ distance between $\mathbf{x} $ and $\mathbf{y}$, we use a process the cost of which scales with $O(n)$. In short, instead of computing distributions from generating vectors, and then finding the distance between these distributions, we simply find the distance between the generating vectors.
 
 
-\subsection{Next steps}
+\subsection{Computation of Effect Repertoires.}
 
-Here we present additional features which might develop this model into being more useful:
+In this section, we will examine exactly how the effect repertoire $p_e$ is defined, and how it differs from true conditional probability. Recall the definition of the effect repertoire:
 
-\begin{enumerate}
-	\item A continuum of states for a project. Before a project was either `on' or `off'. It would be better if 1 were to refer to unstarted, 0 referred to completed, and any number in between indicated the progress made. This would allow the completion rate of projects to not be memoryless.
-	\item A more sophisticated mechanism for collaboration. 
-\end{enumerate}
+\begin{definition}
+Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge.
+\end{definition}
 
-\section{Criticism of IIT}
+Based on the description, we should expect $p_e(Z_t|W_t = X)$ the repertoire to be exactly the same as $p(Z_t|W_t = X)$, the probability. 
+
+In section \ref{sec:conditional_independence} we state the assumption of conditional independence with respect to the system. With this states, we should now expect $p_e$ to be the same as $p$ given that conditional independence holds.
+
+...paused here. I had a thought that might explain this. Emailed the makers to IIT3 to check...
+
+
+\subsection{Alternative $\Phi$'s}
+Discuss the work of \cite{tegmark2016improved} and mention other options of $\Phi$. Explain why $IIT3$ was used.
 
 \section{Conclusions}
 
-\section{Applying IIT}
-In this section I intend to talk about observing how $\Phi$ actually behaves when I use it to measure consciousness. What type of shape it has, what type of optimal values can be achieved in practice. This section should include a detailed look at simple cases.
+1. IIT is correlated with a tangible cost of waste
 
-\subsection{2 nodes}
-Examine how $\Phi$ behaves on networks with 2 nodes. As this case is small, try to conduct exhaustive searches in pursuit of some intuition as to how $\Phi$ behaves.
-\subsection{3 nodes}
-Attempt to generalise ideas from previous section here. Can I find an optimum with manageable computational effort? Can I apply principles from the 2 nodes case to anticipate what an optimum might be?
+2. IIT has the potential to be sped up considerably by removing redundant steps
 
-\subsection{Alternative Measures of $\Phi$}
-Compare measurements of $\Phi$ using IIT 3.0 with results using alternative measures which have been proposed. Are they correlated. Are they measuring the same thing?
+3. IIT currently is computationally intractable for large systems
 
-\section{Applicability of IIT to organisations}
-In this section we consider the properties of $\Phi$, and question whether or not they are desirable properties in the context of a model for an organisation.
+4. IIT is justified philosophically, hence we are restricted to what the philosophers consider the most up to date version.
 
-\begin{enumerate}
-	\item \textbf{State Dependence}: Not only does the computation of $\Phi$ depend on the networks structure and transition mechanism, but it also depends on the state of every node within the system at the current time-step, but also on the previous state of every node outside the subsystem of consideration. This makes sense from the perspective of neuroscience as the level of consciousness is determined by which nodes are active at once, and not merely on the structure of the brain. Hence, within a fixed brain, consciousness various throughout the day. 
-	
-	In the context of a model for an organisation, a single time-step is not of particular interest if ones goal is simply to optimize profits. 
-	
-	
-	\item \textbf{Consciousness of Deterministic Systems}: It is stated by Tegmark \cite{tegmark2016improved} that it is undesirable for a measurement of consciousness to be 0 for deterministic systems. Thus from the perspective of IIT, it is not necessarily unreasonable that numerical experiments would find $\Phi$ tending to be larger for deterministic systems than probabilistic ones.
-	
-	From the perspective of an organisation, a fully random decision process is obviously bad. However, 
-\end{enumerate}
+conclude that until progress has been made on 2., there is no hope for practical application of IIT
