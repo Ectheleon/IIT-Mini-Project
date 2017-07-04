@@ -4,7 +4,7 @@
 \section{Introduction}
 Within any organisation, no matter what the type, communication must be present. If members of a company do not communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may damage productivity, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
 
-This problem is an specific example from the wider context of social network theory. Zhang and van der Schaar \cite{zhang2015reputational} looked at a similar problem,  creating a model where each agent in their networks decides which connections are of value to it based on limited information of their value, and how this affects the welfare of both the individual agent, and the network as a whole. This approach would be applicable to the problem, when thinking of the value of a connection between agents, as the importance of them communication.
+This problem is an specific example from the wider context of social network theory. Zhang and van der Schaar \cite{zhang2015reputational} looked at a similar problem,  creating a model where each agent in their network decides which connections are of value to it based on limited information of their value, and how this affects the welfare of both the individual agent, and the network as a whole. This approach would be applicable to the problem, when thinking of the value of a connection between agents, as the importance of them communicating.
 
 However, we approach the problem from a very different angle. Specifically we identify the brain as a biological example of effective communication between individual neurons. If we think of the neurons within the brain passing information between each other as being equivalent to individual workers/teams within an organisation talking to each other, then this becomes a similar problem in theory. Motivated by this, we attempt to apply Integrated Information theory to the problem.
 
@@ -23,43 +23,24 @@ In this section, we present an overview of Integrated Information Theory 3.0 as 
 	
 \subsection{Definitions and Notation}
 
-Integrated Information Theory introduces a function $\Phi$ which measures the \textit{integrated information} of a discrete time multivariate stochastic process. This process is $n$ dimensional, such the each individual random variable takes values of either $0$ or $1$. We write this process as $Z_t \in [0,1]^n$. 
+Integrated Information Theory proposes a function called $\Phi$ which is defined based on the notions of \textit{mechanisms} and \textit{systems} \cite{oizumi2014phenomenology}. However, these notions are not given a rigorous mathematical definition. Hence we introduce our own mathematical definition with the aim of staying loyal to the notation in used in \cite{krohn2016computing} so far as is possible.
 
-We relate this stochastic process to a graph containing $n$ nodes. Each node refers to one of the individual random variables and has two states: \textit{off}  and \textit{on}. Within this report, we abuse notation by allowing $Z$ to refer to the multivariate random process, and the set of all nodes in the graph simultaneously. When we index $Z$ as $z^i_t$, we refer to both the state of the $i$th node and the $i$th random variable at time $t$ as they have equivalent meanings. Similarly by $Z_t$ we refer to the state of the multivariate process/entire graph at time $t$. 
+Let $Z_t$ be a discrete time multivariate stochastic process which takes values from $[0,1]^n$.  The stochastic process $Z_t$ is assumed to be a markov process, and it thus equipped with a transition probability matrix $\mathbf{M}$. We relate this stochastic process to a graph containing $n$ nodes. Each node refers to one of the individual random variables and has two states: \textit{off}  and \textit{on}. Within this report, we abuse notation by allowing $Z$ to refer to the multivariate random process, and the set of all nodes in the graph simultaneously. 
 
-When we write $W\subset Z$, we mean that $W$ is simultaneously a sub-graph of $Z$, in addition to being a multivariate random variable consisting of all individual random variables $z^i, \quad i \in W$. 
 
 \begin{definition}
 	An \textit{elementary mechanism} doubly refers to a node in the graph $Z$, as well as a Bernoulli random variable. It has two states: \textit{off}, which corresponds to when the random variable takes the value 0, and \textit{on}, which corresponds to when the random variable takes the value 1. We denote an \textit{elementary mechanism} by $z^i$, and refer to its state at time $t$ by $z^i_t$.
 \end{definition}
 	
 \begin{definition}
-	A \textit{mechanism} is a set of \textit{elementary mechanisms}. As such, it also has the double meaning referring both to a subset of nodes in the graph $Z$, as well as the corresponding random variables. The state of a mechanism is given by the states of all \textit{elementary mechanisms} within it. Hence, if a mechanism is of size $m$, then it has $2^m$ distinct states.
+	A \textit{mechanism} is a set of \textit{elementary mechanisms}. As such, it also has the double meaning referring both to a subset of nodes in the graph $Z$, as well as the corresponding random variables. The state of a mechanism is given by the states of all \textit{elementary mechanisms} within it. Hence, if a mechanism is of size $m$, then it has $2^m$ distinct states. We denote the state of $W$ at time $t$ as $W_t$.
 \end{definition}
 
 \begin{definition}
-	A \textit{system} of mechanisms
+	A \textit{system} is the combination of a directed graph $Z$ with $n$ nodes, and the stochastic process $Z_t$. Therefore, all \textit{mechanisms} are contained within the \textit{system}.
 \end{definition}
 	
-
-We join $z^i$ to $z^j$ with a directed edge if the future state of $z^i$ depends in some way on $z^j$. From now on, we will refer to the $z^i$'s as `nodes'.
-
-We now introduce the notions of \textit{mechanisms} and \textit{systems}.
-
-\begin{figure}[ht]
-	\centering
-	
-	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
-	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The system of mechanisms in consideration is similarly circled in green. Finally, all nodes lying outside of the system are considered to be external inputs/outputs.}
-	\label{fig:IIT_illustration1}
-\end{figure}
-
-
-\begin{definition}{A \textit{mechanism} refers to any non-empty set of nodes. The \textit{order} of a mechanism refers to the size of the set. A mechanism is \textit{elementary} if it is of order 1.}
-\end{definition}
-
-\begin{definition}{A \textit{system of mechanisms} is a set of mechanisms. The elements of this set may have non-empty intersections.}
-\end{definition}
+The graph $Z$ is directed and has edges, so what do these mean in the context of the stochastic process? We join $z^i$ to $z^j$ with a directed edge if the $z^i_{t+1}$ depends in some way on $z^j_t$. From now on, we refer to \textit{elementary mechanisms} merely as nodes.
 
 
 
@@ -92,10 +73,8 @@ We now introduce the notions of \textit{mechanisms} and \textit{systems}.
 \end{tabularx}
 
 
-Just as each node can be in one of two states, so too can mechanisms and systems be in states. The state of a mechanism is the combination of the states of all nodes within it. For example, if we have $z^1=1$, $z^2=0$ and $z^3=0$, than the mechanism $Z = \left(\begin{array}{ccc}z^1&z^2&z^3\end{array}\right)$ has state $\left(\begin{array}{ccc}1&0&0\end{array}\right)$. 
 
 
-The progression of $Z_t$ as time passes is dictated by the transition probability matrix (TPM) $\mathbf{M}$, which gives at $M_{ij}$ the probability of transitioning from state $i$ to state $j$ after a single time step. There are 3 points in time for which we consider a mechanism: the immediate past (time $t-1$), present (time $t$) and future (time $t+1$). Oizumi et all \cite{oizumi2014phenomenology} denote the state of a mechanism at these times by $Z^c$, $Z^p$ and $Z^f$ referring to the current, past and future states respectively. Alternatively, Krohn and Ostwald \cite{krohn2016computing} write $Z_{t-1}$, $Z_{t}$, and $Z_{t+1}$. In this document, we adopt the latter style.
 
 
 \begin{definition}
@@ -206,6 +185,15 @@ From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distanc
 
 \subsection{Calculations for Mechanisms}\label{sec:little_phi}
 When making a computation for a mechanism, we must be sure to treat each type of node appropriately. Let $G$ be the set of all nodes present, $Z$ be the system of nodes which we are considering, and $W$ the mechanism within the system. For an illustration of this, consider figure \ref{fig:IIT_illustration1}.
+
+\begin{figure}[ht]
+	\centering
+	
+	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
+	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The system of mechanisms in consideration is similarly circled in green. Finally, all nodes lying outside of the system are considered to be external inputs/outputs.}
+	\label{fig:IIT_illustration1}
+\end{figure}
+
 
 For all nodes in $G\setminus Z$, that is the external inputs/outputs, we treat their states as constant. We do not concern ourselves with their past or future states when computing repertoires. However, the state of these nodes may affect the nodes within the mechanism $W$.
 
