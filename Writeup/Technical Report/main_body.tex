@@ -2,7 +2,7 @@
 
 
 \section{Introduction}
-Within any organisation, no matter what the type, communication must be present. If members of a company don't communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may get in the way of actual work being done, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
+Within any organisation, no matter what the type, communication must be present. If members of a company do not communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may damage productivity, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
 
 This problem is an specific example from the wider context of social network theory. Zhang and van der Schaar \cite{zhang2015reputational} looked at a similar problem,  creating a model where each agent in their networks decides which connections are of value to it based on limited information of their value, and how this affects the welfare of both the individual agent, and the network as a whole. This approach would be applicable to the problem, when thinking of the value of a connection between agents, as the importance of them communication.
 
@@ -19,20 +19,32 @@ Our focus is to investigate whether the computation of $\Phi$ for a network mode
 \section{Integrated Information Theory}
 \label{sec:iit}
 
-In this section, we present an overview of Integrated Information Theory 3.0 as presented by Oizumi et all \cite{oizumi2014phenomenology} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
-
+In this section, we present an overview of Integrated Information Theory 3.0 as presented by Oizumi et all \cite{oizumi2014phenomenology}, while adjusting the notation in order to make it mathematically consistent.
+	
 \subsection{Definitions and Notation}
 
-Integrated Information Theory introduces a function $\Phi$ which measures the integrated information of a discrete time multivariate stochastic process. We write:
+Integrated Information Theory introduces a function $\Phi$ which measures the \textit{integrated information} of a discrete time multivariate stochastic process. This process is $n$ dimensional, such the each individual random variable takes values of either $0$ or $1$. We write this process as $Z_t \in [0,1]^n$. 
 
-\begin{equation}
-\label{def:1}
-Z_t = \left(\begin{array}{cccc} z^1_t&z^2_t&\ldots&z^n_t\end{array}\right)
-\end{equation}
+We relate this stochastic process to a graph containing $n$ nodes. Each node refers to one of the individual random variables and has two states: \textit{off}  and \textit{on}. Within this report, we abuse notation by allowing $Z$ to refer to the multivariate random process, and the set of all nodes in the graph simultaneously. When we index $Z$ as $z^i_t$, we refer to both the state of the $i$th node and the $i$th random variable at time $t$ as they have equivalent meanings. Similarly by $Z_t$ we refer to the state of the multivariate process/entire graph at time $t$. 
 
-to represent the multivariate random variable, where $z^i_t \in \{0,1\} \quad\forall i, t$. This stochastic process can be related to a graph containing $n = |Z_t|$ nodes. Each node refers to one of the $z^i$'s and can be in one of two states: `off' at time $t$ if $z^i_t=0$ and `on' if $z^i_t = 1$. We join $z^i$ to $z^j$ with a directed edge if the future state of $z^i$ depends in some way on $z^j$. From now on, we will refer to the $z^i$'s as `nodes'.
+When we write $W\subset Z$, we mean that $W$ is simultaneously a sub-graph of $Z$, in addition to being a multivariate random variable consisting of all individual random variables $z^i, \quad i \in W$. 
 
-Before we proceed, we need to specify what is meant by the terms \textit{mechanism} and \textit{system of mechanism}.
+\begin{definition}
+	An \textit{elementary mechanism} doubly refers to a node in the graph $Z$, as well as a Bernoulli random variable. It has two states: \textit{off}, which corresponds to when the random variable takes the value 0, and \textit{on}, which corresponds to when the random variable takes the value 1. We denote an \textit{elementary mechanism} by $z^i$, and refer to its state at time $t$ by $z^i_t$.
+\end{definition}
+	
+\begin{definition}
+	A \textit{mechanism} is a set of \textit{elementary mechanisms}. As such, it also has the double meaning referring both to a subset of nodes in the graph $Z$, as well as the corresponding random variables. The state of a mechanism is given by the states of all \textit{elementary mechanisms} within it. Hence, if a mechanism is of size $m$, then it has $2^m$ distinct states.
+\end{definition}
+
+\begin{definition}
+	A \textit{system} of mechanisms
+\end{definition}
+	
+
+We join $z^i$ to $z^j$ with a directed edge if the future state of $z^i$ depends in some way on $z^j$. From now on, we will refer to the $z^i$'s as `nodes'.
+
+We now introduce the notions of \textit{mechanisms} and \textit{systems}.
 
 \begin{figure}[ht]
 	\centering
@@ -48,6 +60,36 @@ Before we proceed, we need to specify what is meant by the terms \textit{mechani
 
 \begin{definition}{A \textit{system of mechanisms} is a set of mechanisms. The elements of this set may have non-empty intersections.}
 \end{definition}
+
+
+
+
+\begin{tabularx}{\textwidth}{ll X}
+	Term & Notation & Explanation \\
+	\hline
+	\endfirsthead
+	\hline
+	\endhead
+	\endfoot
+	\hline
+	\caption{Key Definitions and Notation} 
+			%\addcontentsline{lot}{table}{\numberline{}Common abbreviations} % For use with fancy header package. 
+	\label{tab:defs}
+	\endlastfoot
+	\textit{system} & $Z$ & A system is a set of nodes. We denote this set by $Z$. If we subscript the set $Z_t$, we are referring to the \textit{state} of the set $Z$ at time $t$. We take there to be $n$ nodes in the system: $|Z|=n$.\\ 
+		\hline
+	\textit{mechanism} & $W$ & A \textit{mechanism} is a set of nodes. However, a \textit{mechanism} only exists as a subset of a $\textit{system}$: $W \subset Z$. We denote by $W_t$ the state of the \textit{mechanism} at time $t$. By $Z \setminus W$ we refer to the mechanism which consists of all the nodes found in $Z$, but not in $W$. \\
+		\hline
+	\textit{elementary mechanism} & $w^i$ & An \textit{elementary mechanism} consists of a single node. We write a mechanism this way only when we now for certain that it is elementary. We abuse notation by listing all elementary elements of $W$ as $w^i$ for $i = 1, 2, \ldots, |W|$, as if $W$ was a vector. We denote the state of $z^i$ at time $t$ by $z^i_t$.\\
+		\hline
+	power set & $\mathbb{P}(W)$ & The power set of a \textit{mechanism} (or \textit{system}) is the set of all subsets of that \textit{mechanism}.\\
+		\hline
+	forward distribution & $p(W_{t+1}|V_t=X)$ & Let $W, V \subset Z$ be \textit{mechanisms}. We denote $p(W_{t+1}|V_t= X)$ as the probability distribution of possible future states of $W$ given that the current state $V$ is $X$. Instead of the probability function $P$ which returns a number between 0 and 1, $p$ returns all possible states of $Z_{t+1}$, and the probability that each of them occurs.\\
+		\hline
+	backward distribution & $p(W_{}=X|V_{t-1})$ & Let $W, V \subset Z$ be \textit{mechanisms}. We denote$p(W_{t+1}=X|V_t)$ as the probability distribution of possible past states of $V$ given that the current state $W$ is $X$. \\
+		\hline
+	\textit{null mechanism} & $\emptyset$ & We label the \textit{null mechanism} as the empty set in order to write: $p(W_{t+1}|\emptyset)$. This refers to the distribution of future states of $W$ given no knowledge of the present. 
+\end{tabularx}
 
 
 Just as each node can be in one of two states, so too can mechanisms and systems be in states. The state of a mechanism is the combination of the states of all nodes within it. For example, if we have $z^1=1$, $z^2=0$ and $z^3=0$, than the mechanism $Z = \left(\begin{array}{ccc}z^1&z^2&z^3\end{array}\right)$ has state $\left(\begin{array}{ccc}1&0&0\end{array}\right)$. 
@@ -710,13 +752,13 @@ Discuss the work of \cite{tegmark2016improved} and mention other options of $\Ph
 \section{Conclusions}
 In summary, the first focus of this project was to investigate whether or not IIT has any tangible meaning in the context of communication flow within an organisation. We approached the problem by construction a model for the purpose of measuring the cost of wasted opportunities due to poor communication. The cost of this waste as we defined it does correlate with $\Phi$. This correlation is rough, but it does exist, which justifies the theory that $\Phi$ does relate to communication within a company. 
 
-However, while $\Phi$ does correlate with waste, the computational cost of $\Phi$ is large to the extent that it is not feasible to use, even which systems containing as few as 9 nodes.
+However, while $\Phi$ does correlate with waste, the computational cost of $\Phi$ is large to the extent that it is not feasible to use, even which systems containing as few as 9 nodes. This computational expense is caused to iterating over the power set of nodes multiple times, in addition to searching all possible partitions repeatedly. Given how each of the steps in computing $\Phi$ seem to be quite similar, we expect that further mathematical scrutiny may result in reducing the size of the computation by locating and removing irrelevant steps. 
 
-1. IIT is correlated with a tangible cost of waste
+In particular, if an appropriate method could be found which made a good estimate as to the minimum information partition (MIP), this would speed up the process considerably. Furthermore, it might be possible to determine what types of networks generate large $\Phi$, and construct them directly.
 
-2. IIT has the potential to be sped up considerably by removing redundant steps
+However until either of these are accomplished and speed up is achieved, IIT is far too expensive to be used on models containing a realistic number of workers. Hence, while $\Phi$ correlates with effectiveness of the network, it doesn't provide any practical help in optimizing communication.
 
-3. IIT currently is computationally intractable for large systems
+Does $\Phi$ need to be so computationally expensive? Unfortunately, we cannot answer this question. While certain phenomena observed in the brain are consistent with simple conclusions of IIT, the reality is that the computation of $\Phi$ is justified entirely with philosophical arguments, 
 
 4. IIT is justified philosophically, hence we are restricted to what the philosophers consider the most up to date version.
 
