@@ -21,7 +21,21 @@
 \usepackage{tabu}
 \usepackage{enumitem}
 \usepackage{amsthm}
+\usepackage{ltablex} % For long tables spanning multiple pages. % Must be before ARYDSHLN package!
 
+\usepackage[margin=10pt,font=small,labelfont=bf,labelsep=endash,figurewithin=section,tablewithin=section]{caption}
+% Caption figures and tables nicely. %% After cleveref.
+
+
+% Number equations down to the subection level, e.g. 1.2.3 is the third equation in
+% subsection 2 of section 1.
+\numberwithin{equation}{section}
+\newcommand*\tageq{\refstepcounter{equation}\tag{\theequation}}
+
+
+
+\keepXColumns % Keeps the X column
+\newcommand{\firstrowspacing}{\rule{0pt}{2.6ex}}
 
 
 
@@ -29,6 +43,7 @@
 \newtheorem{definition}{Definition}[section]
 \newtheorem*{remark}{Remark}
 \newtheorem{prop}{Proposition}
+\newtheorem{theorem}{Theorem}
 
 
 
@@ -72,7 +87,7 @@ Organisational Consciousness}
 	\include{main_body}
 	
 	\footnotesize
-	\bibliography{references.bib}
+	\bibliography{references}
 	
 \end{document}
 	

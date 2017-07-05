@@ -1,82 +1,193 @@
-
+ 
 
 
 \section{Introduction}
-Within any organisation, no matter what the type, communication must be present. If members of a company don't communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may get in the way of actual work being done, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
+Within any organisation, no matter what the type, communication must be present. If members of a company do not communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may damage productivity, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
 
-paragraph about other approaches being taken
+This problem is an specific example from the wider context of social network theory. Zhang and van der Schaar \cite{zhang2015reputational} looked at a similar problem,  creating a model where each agent in their network decides which connections are of value to it based on limited information of their value, and how this affects the welfare of both the individual agent, and the network as a whole. This approach would be applicable to the problem, when thinking of the value of a connection between agents, as the importance of them communicating.
 
-The approach we take is inspired by the brain. The human brain consists of billions of neurons, which are constantly communication and hence passing information around the body. blah blah blah, stuff about why the brain is worth copying.
+However, we approach the problem from a very different angle. Specifically we identify the brain as a biological example of effective communication between individual neurons. If we think of the neurons within the brain passing information between each other as being equivalent to individual workers/teams within an organisation talking to each other, then this becomes a similar problem in theory. Motivated by this, we attempt to apply Integrated Information theory to the problem.
 
-paragraph introducing what iit is
+What is integrated information theory? Originally present in 2004 by Tononi \cite{tononi2004information}, this is the most recent attempt to rigorously define consciousness. Since its first appearance it presents the function $\Phi$ which computes the integrated information of a system of mechanism. The main claim of integrated information theory is that consciousness and integrated information are the same thing, and hence computing $\Phi$ is computing consciousness. The arguments used to justify this claim are primarily philosophical in nature, and thus will not be discussed in this report. 
 
+Since 2004, IIT has received multiple updates and adjustments \cite{tononi2011integrated,balduzzi2008integrated,tononi2016consciousness} each of which resolve issues found in the previous definition. Currently the most up to date version of IIT is version 3.0 \cite{oizumi2014phenomenology}, and hence we will primarily focus on that version in this report.
+
+While IIT has developed from version 1.0 to 3.0 by its inventor Giulio Tononi, at the same time other authors have developed the theory in different directions. For example Barrett and Smith \cite{barrett2011practical} designed an alternative definition which was applicable to time series data. This $\Phi_e$ as they called it, has similar behaviour to the original $\Phi$ in settings where both could be applied, but can be used in more contexts. A list of such alternative definitions was compiled by Tegmark \cite{tegmark2016improved} for the purpose of considering their relative mathematical merits.
+
+Our focus is to investigate whether the computation of $\Phi$ for a network model of an organisation might give any insight into the efficiency of communication within the organisation. As $\Phi$ is expensive to compute (as will be discussed in greater detail in section \ref{sec:cost}), we restrict our attention to a small scale toy model which we derive for the purpose of capturing the effects of poor communication within an organisation. Despite the greater cost of using IIT 3.0 than 2.0, we choose to use the most up-to-date version, as we wish to avoid the flaws which have previously been identified in older editions.
 
 \section{Integrated Information Theory}
 \label{sec:iit}
 
-In this section, we present an overview of Integrated Information Theory as presented by Oizumi et all \cite{oizumi2014phenomenology} using a combination of their notation as well as that of Krohn and Ostwald \cite{krohn2016computing}.
-
+In this section, we present an overview of Integrated Information Theory 3.0 as presented by Oizumi et all \cite{oizumi2014phenomenology}, while adjusting the notation in order to make it mathematically consistent.
+	
 \subsection{Definitions and Notation}
 
-Integrated Information Theory introduces a function $\Phi$ which measures the integrated information of a discrete time multivariate stochastic process. We write:
+Integrated Information Theory proposes a function called $\Phi$ which is defined based on the notions of \textit{mechanisms} and \textit{systems} \cite{oizumi2014phenomenology}. However, these notions are not given a rigorous mathematical definition. Hence we introduce our own mathematical definition with the aim of staying loyal to the notation in used in \cite{krohn2016computing} so far as is possible.
 
-\begin{equation}
-\label{def:1}
-Z_t = \left(\begin{array}{cccc} z^1_t&z^2_t&\ldots&z^n_t\end{array}\right)
-\end{equation}
+Let $Z_t$ be a discrete time multivariate stochastic process which takes values from $[0,1]^n$.  The stochastic process $Z_t$ is assumed to be a markov process, and it thus equipped with a transition probability matrix $\mathbf{M}$. We relate this stochastic process to a graph containing $n$ nodes. Each node refers to one of the individual random variables and has two \textit{states}: \textit{off}  and \textit{on}. Within this report, we abuse notation by allowing $Z$ to refer to the multivariate random process, and the set of all nodes in the graph simultaneously. 
 
-to represent the multivariate random variable, where $z^i_t \in \{0,1\} \quad\forall i, t$. This stochastic process can be related to a graph containing $n = |Z_t|$ nodes. Each node refers to one of the $z^i$'s and can be in one of two states: `off' at time $t$ if $z^i_t=0$ and `on' if $z^i_t = 1$. We join $z^i$ to $z^j$ with a directed edge if the future state of $z^i$ depends in some way on $z^j$. From now on, we will refer to the $z^i$'s as `nodes'.
+\begin{definition}
+	The \textit{state} of a node simply refers to whether that node is \textit{on} or \textit{off}. We denote \textit{on} with a 1, and \textit{off} with a 0.
+\end{definition}
 
-Before we proceed, we need to specify what is meant by the terms \textit{mechanism} and \textit{system of mechanism}.
-
-\begin{figure}[ht]
-	\centering
+\begin{definition}
+	An \textit{elementary mechanism} doubly refers to a node in the graph $Z$, as well as a Bernoulli random variable. It has two states: \textit{off}, which corresponds to when the random variable takes the value 0, and \textit{on}, which corresponds to when the random variable takes the value 1. We denote an \textit{elementary mechanism} by $z^i$, and refer to its state at time $t$ by $z^i_t$.
+\end{definition}
 	
-	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
-	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The system of mechanisms in consideration is similarly circled in green. Finally, all nodes lying outside of the system are considered to be external inputs/outputs.}
-	\label{fig:IIT_illustration1}
-\end{figure}
-
-
-\begin{definition}{A \textit{mechanism} refers to any non-empty set of nodes. The \textit{order} of a mechanism refers to the size of the set. A mechanism is \textit{elementary} if it is of order 1.}
+\begin{definition}
+	A $m$th order \textit{mechanism} is a set of $m$ distinct \textit{elementary mechanisms}. As such, it also has the double meaning referring both to a subset of nodes in the graph $Z$, as well as the corresponding random variables. The state of a mechanism is given by the states of all \textit{elementary mechanisms} within it. Hencea $m$th order \textit{mechanism} has $2^m$ distinct states. We denote the state of $W$ at time $t$ as $W_t$.
 \end{definition}
 
-\begin{definition}{A \textit{system of mechanisms} is a set of mechanisms. The elements of this set may have non-empty intersections.}
+\begin{definition}
+	A \textit{system} is the combination of a directed graph $Z$ with $n$ nodes, and the stochastic process $Z_t$. Therefore, all \textit{mechanisms} are contained within the \textit{system}.
 \end{definition}
-
-
-Just as each node can be in one of two states, so too can mechanisms and systems be in states. The state of a mechanism is the combination of the states of all nodes within it. For example, if we have $z^1=1$, $z^2=0$ and $z^3=0$, than the mechanism $Z = \left(\begin{array}{ccc}z^1&z^2&z^3\end{array}\right)$ has state $\left(\begin{array}{ccc}1&0&0\end{array}\right)$. 
-
-
-The progression of $Z_t$ as time passes is dictated by the transition probability matrix (TPM) $\mathbf{M}$, which gives at $M_{ij}$ the probability of transitioning from state $i$ to state $j$ after a single time step. There are 3 points in time for which we consider a mechanism: the immediate past (time $t-1$), present (time $t$) and future (time $t+1$). Oizumi et all \cite{oizumi2014phenomenology} denote the state of a mechanism at these times by $Z^c$, $Z^p$ and $Z^f$ referring to the current, past and future states respectively. Alternatively, Krohn and Ostwald \cite{krohn2016computing} write $Z_{t-1}$, $Z_{t}$, and $Z_{t+1}$. In this document, we adopt the latter style.
-
+	
+The graph $Z$ is directed and has edges, so what do these mean in the context of the stochastic process? We join $z^i$ to $z^j$ with a directed edge if the $z^i_{t+1}$ depends in some way on $z^j_t$. 
 
 \begin{definition}
 	{Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge. We write it as $p_e(Z_{t+1}|W_t=X)$. Similarly the \textit{cause repertoire} of the state $W_t = X$ is the conditional probability distribution for past states of $Z$ given our current knowledge. We write it as $p_c(Z_{t-1}|W_t = X)$.}
 \end{definition}
 
+\begin{remark}
+	In this document, we use Krohn and Ostwalds  \cite{krohn2016computing} notation: $W_{t-1}, W_t, W_{t+1}$ to denote the past, present, and future states of a \textit{mechanism}. In \cite{oizumi2014phenomenology} however, these are denoted by $W^p, W^c$ and $W^f$ respectively.
+\end{remark}
+
+\begin{tabularx}{\textwidth}{ll X}
+	Term & Notation & Explanation \\
+	\hline
+	\endfirsthead
+	\hline
+	\endhead
+	\endfoot
+	\hline
+	\caption{Key Definitions and Notation} 
+			%\addcontentsline{lot}{table}{\numberline{}Common abbreviations} % For use with fancy header package. 
+	\label{tab:defs}
+	\endlastfoot
+	\textit{system} & $Z$ & A system is a set of nodes. We denote this set by $Z$. If we subscript the set $Z_t$, we are referring to the \textit{state} of the set $Z$ at time $t$. We take there to be $n$ nodes in the system: $|Z|=n$.\\ 
+		\hline
+	\textit{mechanism} & $W$ & A \textit{mechanism} is a set of nodes. However, a \textit{mechanism} only exists as a subset of a $\textit{system}$: $W \subset Z$. We denote by $W_t$ the state of the \textit{mechanism} at time $t$. By $Z \setminus W$ we refer to the mechanism which consists of all the nodes found in $Z$, but not in $W$. \\
+		\hline
+	\textit{elementary mechanism} & $w^i$ & An \textit{elementary mechanism} consists of a single node. We write a mechanism this way only when we now for certain that it is elementary. We abuse notation by listing all elementary elements of $W$ as $w^i$ for $i = 1, 2, \ldots, |W|$, as if $W$ was a vector. We denote the state of $z^i$ at time $t$ by $z^i_t$.\\
+		\hline
+	power set & $\mathbb{P}(W)$ & The power set of a \textit{mechanism} (or \textit{system}) is the set of all subsets of that \textit{mechanism}.\\
+		\hline
+	forward distribution & $p(W_{t+1}|V_t=X)$ & Let $W, V \subset Z$ be \textit{mechanisms}. We denote $p(W_{t+1}|V_t= X)$ as the probability distribution of possible future states of $W$ given that the current state $V$ is $X$. $p$ returns the probability of each possible future state occurring There are $2^{|W|}$ such states, and hence this is the size of the forward distribution.\\
+		\hline
+	backward distribution & $p(W_{}=X|V_{t-1})$ & Let $W, V \subset Z$ be \textit{mechanisms}. We denote$p(W_{t+1}=X|V_t)$ as the probability distribution of possible past states of $V$ given that the current state $W$ is $X$. Similarly to above, the size of the backward distribution is $2^{|V|}$\\
+		\hline
+	\textit{null mechanism} & $\emptyset$ & We label the \textit{null mechanism} as the empty set in order to write: $p(W_{t+1}|\emptyset)$. This refers to the distribution of future states of $W$ given no knowledge of the present. \\
+	\hline
+	\textit{state} & $\mathbf{s}$ & Let $W$ be a $m$th order mechanism. We write a possible \textit{state} of $W$ as a row vector $\mathbf{s} \in [0,1]^m$.\\
+	\hline
+	\textit{state set} & $\mathbb{S}(W)$ & A $m$th order \textit{mechanisms} \textit{state set} is the set of all possible \textit{states} of that \textit{mechanism}. This size of this set is $2^m$.
+\end{tabularx}
+
+
+
+
+
+
+
+
 
 \subsection{Computation of Repertoires}
-In this section, we construct each of the previously defined repertoires from the TPM. First however, we need to introduce both the \textit{perturb function}, and the assumption of conditional independence, as all future definitions rely on these.
+\label{sec:cost}
+In this section, we construct each of the previously defined repertoires from $\mathbf{M}$, the transition probability matrix. For later use, we define the product of probability distributions.
+
+%{First however, we need to introduce both the \textit{perturb function}, and the assumption of conditional independence, as all future definitions rely on these.
+
+%\begin{definition}
+%	{Let $S$ be a set such that $|S| = n$, and its elements are indexed by $s_1, s_2, \ldots, s_n$. Further let $f$ be a function which operates on the elements of $S$. Then we write the perturbation function as:
+%	\[per(f(a, S), S) = \left(\begin{array}{cccc}f(a,s_1)&f(a,s_2)&\ldots&f(a,s_n) \end{array}\right)^T\]
+%	That is, the perturbation function returns a vector where each of its entries corresponds to the $f$ taking a different input from $S$.}
+%\end{definition} 
 
 \begin{definition}
-	{Let $S$ be a set such that $|S| = n$, and its elements are indexed by $s_1, s_2, \ldots, s_n$. Further let $f$ be a function which operates on the elements of $S$. Then we write the perturbation function as:
-	\[per(f(a, S), S) = \left(\begin{array}{cccc}f(a,s_1)&f(a,s_2)&\ldots&f(a,s_n) \end{array}\right)^T\]
-	That is, the perturbation function returns a vector where each of its entries corresponds to the $f$ taking a different input from $S$.}
+	Let $A, B \subset Z$ such that $A$ and $B$ are disjoint. Then we define the \textit{distribution product} of $A$ and $B$ by:
+	\[p(A_{t+1}|Z_t)p(B_{t+1}|Z_t):=p(A_{t+1} \cup B_{t+1}|Z_t).\]
+	In other words the product of the distributions is the distribution for the union of the sets $A$ and $B$.
 \end{definition} 
 
 \subsubsection{Conditional Independence}
 \label{sec:conditional_independence}
-In order to simplify all computations, IIT makes a large mathematical assumption. Specifically it assumes that the probability distributions for the future states of each node are conditionally independent with respect to the previous state of the system. i.e. if $Z$ is a mechanism, then:
+In order to simplify all computations, IIT assumes the following theorem to hold.
+
+\begin{theorem}
+	\label{thm:cond_independence}
+	Let $Z$ be a \textit{system}. Then it holds that:
+	\begin{equation}
+	\label{eq:cond_independence}
+	p(Z_{t+1}|Z_t = X) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=X)
+	\end{equation}
+	
+	where we have reduced the probability distribution for future states of $Z$ to the products of the distributions for each of its \textit{elementary mechanisms}. 
+\end{theorem}
+
+Theorem \ref{thm:cond_independence} motivates the following definition.
+
+\begin{definition}
+	\label{thm:bijection}
+	Let $p(Z_{t+1}|Z_t = X)$ be a probability distribution. We define the row vector $\mathbf{q}(Z_{t+1}|Z_t = X)$ such that $q_i = p(z^i_{t+1}=1|Z_t=X), \quad \forall i \in 1, 2, \ldots, n$. We call $\mathbf{q}$ the \textit{distribution generator}.
+\end{definition}
+
+Now we present following key theorem which reduces the storage space required for future computations:
+
+\begin{theorem}
+	Let $A$ be the set of distributions for the system $Z$, and $B$ be the set of \textit{distribution generators} for the same system. Then there exists a bijection between between $A$ and $B$.
+\end{theorem}
+
+\begin{proof}
+	We prove this bijection by construction the function which converts a distribution into its \textit{generator}, and its inverse.
+	
+	Let $p$ be a probability distribution of length $2^n$ that applies to the system $Z$, such that $p_i$ is the probability of $i \in \mathbb{S}(Z)$ occurring. We order the \textit{states} of $\mathbb{S}(Z)$ in order to write $p$ as a vector, which we now write as $\mathbf{p}$. 
+	
+	Next we construct the $2^n \times n$ state matrix $\mathbf{S}$. Each row of this matrix is a state of the \textit{system}, which in turn is a row vector. To map from $\mathbf{p}$ to its generator $\mathbf{q}$, we simply write: $\mathbf{q} = \mathbf{p} \mathbf{S}$. We demonstrate this transformation in equation \ref{eq:matrix_tranform_demo}. Naturally, $\mathbf{q}$ is dependent on the ordering of states.
+	
+	To go back, we write:
+	
+	\begin{equation}
+	\label{eq:map_inv}
+	p_i := \prod \limits_{j=1}^{n} q_j^{S_{ij}} (1-q_j)^{1-S_{ij}}\quad \forall i \in \mathbb{S}(Z)
+	\end{equation}
+	
+	where  $S_{ij}$  indexes the state matrix and specifically says whether the $j$th node in the $i$ state is \textit{on} or \textit{off}. Hence we can compute $\mathbf{p}$ from $\mathbf{q}$, and go back. Thus this is a bijection.
+\end{proof}
+
+Theorem \ref{thm:bijection} enables us to condense $\mathbf{M}$ by converting each of its rows into the corresponding \textit{distribution generator}. We define the condensed matrix:
 
 \begin{equation}
-\label{eq:cond_independence}
-p(Z_{t+1}|Z_t = X) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=X)
+\label{def:generators}
+\mathbf{T}_{i} := \mathbf{q}(Z_{t+1} = j| Z_t = i) , \quad \forall i \in \mathbb{S}(Z).
 \end{equation}
 
-This assumption allows us to simplify the $2^n \times 2^n $ \textit{state by state} transition probability matrix $\mathbf{M}$ into the $2^n \times n$ \textit{state by node} transition probability matrix $\mathbf{T}$. As is, each row of $\mathbf{M}$ is a distribution containing the probabilities that any of $2^{|Z|}$ possible future state may be transitioned to. We replace this row with the values of $p(z^j_{t+1}=1|Z_t=X)$ where $j$ is a column index. Equation \ref{eq:cond_independence}, along with the fact that: \[p(z^i_{t+1}=1|Z_t=X)+p(z^i_{t+1} =0|Z_t=X) =1\]
-allows this smaller row of only $n$ values to uniquely specify the larger row of length $2^n$.
+We can convert $\mathbf{T}$ back to $\mathbf{M}$ if needed because $\mathbf{M} = p(Z_{t+1} = j| Z_t = i)$, due the the bijection between distributions and \textit{generators}
 
+We demonstrate transforming the transition probability matrix into the \textit{condensed matrix} in equation \ref{eq:matrix_tranform_demo}. In practice this is done by multiplying $\mathbf{M}$ to the $2^n \times n$ matrix whose rows are the elements of $\mathbb{S}(Z)$ appearing in chosen ordering:
+
+
+
+\begin{equation}
+\label{eq:matrix_tranform_demo}
+\left( \begin{array}{cccc} 0&0&0.25&0.75\\
+							0.35&0.15&0.35&0.15\\
+							0.1&0&0.9&0\\
+							0&0.6&0&0.4
+							\end{array} \right) 							
+\left(\begin{array}{cc}0&0\\
+1&0\\
+0&1\\
+1&1 \end{array} \right)
+\rightarrow \left( \begin{array}{cc}.75&1\\
+											.3&.5\\
+											0&.9\\
+											1&.4 \end{array} \right).
+\end{equation}
+
+\begin{remark}
+	In IIT 3.0 \cite{oizumi2014phenomenology}, the \textit{condensed matrix} $\mathbf{T}$ is incorrectly referred to a transition probability matrix. This name is incorrect as $\mathbf{T}$ is not a stochastic matrix. Hence we rename it for the purpose of mathematical consistency.
+\end{remark}
 
 \subsubsection{Effect repertoire}
 
@@ -158,6 +269,15 @@ From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distanc
 
 \subsection{Calculations for Mechanisms}\label{sec:little_phi}
 When making a computation for a mechanism, we must be sure to treat each type of node appropriately. Let $G$ be the set of all nodes present, $Z$ be the system of nodes which we are considering, and $W$ the mechanism within the system. For an illustration of this, consider figure \ref{fig:IIT_illustration1}.
+
+\begin{figure}[ht]
+	\centering
+	
+	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
+	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The system of mechanisms in consideration is similarly circled in green. Finally, all nodes lying outside of the system are considered to be external inputs/outputs.}
+	\label{fig:IIT_illustration1}
+\end{figure}
+
 
 For all nodes in $G\setminus Z$, that is the external inputs/outputs, we treat their states as constant. We do not concern ourselves with their past or future states when computing repertoires. However, the state of these nodes may affect the nodes within the mechanism $W$.
 
@@ -698,15 +818,19 @@ In section \ref{sec:conditional_independence} we state the assumption of conditi
 
 
 \subsection{Alternative $\Phi$'s}
+We have already mentioned how there exist multiple alternative definitions of $\Phi$. Here we take a closer look at them, and comment on their potential effectiveness beyond that of $\Phi$ as we've defined here.
 Discuss the work of \cite{tegmark2016improved} and mention other options of $\Phi$. Explain why $IIT3$ was used.
 
 \section{Conclusions}
+In summary, the first focus of this project was to investigate whether or not IIT has any tangible meaning in the context of communication flow within an organisation. We approached the problem by construction a model for the purpose of measuring the cost of wasted opportunities due to poor communication. The cost of this waste as we defined it does correlate with $\Phi$. This correlation is rough, but it does exist, which justifies the theory that $\Phi$ does relate to communication within a company. 
 
-1. IIT is correlated with a tangible cost of waste
+However, while $\Phi$ does correlate with waste, the computational cost of $\Phi$ is large to the extent that it is not feasible to use, even which systems containing as few as 9 nodes. This computational expense is caused to iterating over the power set of nodes multiple times, in addition to searching all possible partitions repeatedly. Given how each of the steps in computing $\Phi$ seem to be quite similar, we expect that further mathematical scrutiny may result in reducing the size of the computation by locating and removing irrelevant steps. 
 
-2. IIT has the potential to be sped up considerably by removing redundant steps
+In particular, if an appropriate method could be found which made a good estimate as to the minimum information partition (MIP), this would speed up the process considerably. Furthermore, it might be possible to determine what types of networks generate large $\Phi$, and construct them directly.
 
-3. IIT currently is computationally intractable for large systems
+However until either of these are accomplished and speed up is achieved, IIT is far too expensive to be used on models containing a realistic number of workers. Hence, while $\Phi$ correlates with effectiveness of the network, it doesn't provide any practical help in optimizing communication.
+
+Does $\Phi$ need to be so computationally expensive? Unfortunately, we cannot answer this question. While certain phenomena observed in the brain are consistent with simple conclusions of IIT, the reality is that the computation of $\Phi$ is justified entirely with philosophical arguments, 
 
 4. IIT is justified philosophically, hence we are restricted to what the philosophers consider the most up to date version.
 
