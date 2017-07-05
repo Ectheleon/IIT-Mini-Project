@@ -250,7 +250,7 @@ In short, we add up the probabilities of each individual previous state that res
 
 
 \subsection{The Earth Mover's Distance }
-In the context of this document, we calculate the distance between two probability distributions $p1$ and $p1$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD).
+In the context of this document, we calculate the distance between two probability distributions $p1$ and $p1$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD) \cite{rubner1998metric}.
 
 To use this distance, we require the existence of another metric which measures the distance between any pair of states. For this we use the Hamming distance (see \cite{hill1986first} for more details) which is the number of individual bytes that disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
 
@@ -280,74 +280,86 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance.
 
 \subsection{Calculations for Mechanisms}\label{sec:little_phi}
-When making a computation for a mechanism, we must be sure to treat each type of node appropriately. Let $G$ be the set of all nodes present, $Z$ be the system of nodes which we are considering, and $W$ the mechanism within the system. For an illustration of this, consider figure \ref{fig:IIT_illustration1}.
+There are 3 functions which operate over mechanisms: cei, $\varphi^{\text{MIP}}$ and $\varphi^{\text{Max}}$. When applying these functions to a \textit{mechanism} $W$ within the system \textit{system} $Z$, they treat nodes differently depending on whether the nodes are found within the \textit{mechanism} itself, the \textit{consideration set} but not the \textit{mechanism}, or the \textit{system} but not the \textit{consideration set}.
+
+We have not yet defined the \textit{consideration set}, and will not do so rigorously until section \ref{sec:systems}, as they are not important until then. For now, we merely define a consideration set $Y$ as a subset of the \textit{system} $Z$ such that $W \subset Y$, where $W$ is the $m$-th order mechanism. Figure \ref{fig:IIT_illustration1} illustrates this.
 
 \begin{figure}[ht]
 	\centering
 	
 	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
-	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The system of mechanisms in consideration is similarly circled in green. Finally, all nodes lying outside of the system are considered to be external inputs/outputs.}
+	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The \textit{consideration set} is similarly circled in green. Finally, all remaining nodes of the system which lie outside of the \textit{consideration set} are external inputs/outputs.}
 	\label{fig:IIT_illustration1}
 \end{figure}
 
+When we compute cei, $\varphi^{\text{MIP}}$ or $\varphi^{\text{Max}}$, we are computing the effect of knowing the state of the \textit{mechanism}, $W_t = \mathbf{s}$. However, we do not know the state of the nodes in $Y\setminus W$, and we thus assume they could be \textit{on} or \textit{off} with equal probability. Finally all nodes in $Z \setminus Y$ are considered as background conditions. These calculations require that the past and present states of such nodes are known. 
 
-For all nodes in $G\setminus Z$, that is the external inputs/outputs, we treat their states as constant. We do not concern ourselves with their past or future states when computing repertoires. However, the state of these nodes may affect the nodes within the mechanism $W$.
-
-In contrast, the state of nodes within $Z \setminus W$ are treated as unknown. While they do affect past and future repertoires, the do so differently than nodes within the mechanism. Finally, we are concerned with how the state of the mechanism constrains the past and future states of these nodes.
+In summary, cei, $\varphi^{\text{MIP}}$ and $\varphi^{\text{Max}}$ measure an effect that knowing the state of $W$ has on the \textit{consideration set}, given the background conditions of external inputs/outputs.
 
 \subsubsection{Cause-Effect Information}
-The cause-effect information ($cei$) is a measurement of the significance which a piece of information has. It is calculated in 2 parts. First we have the cause information ($ci$), which measures how the past can be constrained given knowledge of the present. It is defined by:
+\label{sec:cei}
+The \textit{cause-effect information} (cei) is a measurement of the significance of a piece of information. It is calculated in two parts. First we have the \textit{cause information} (ci), which measures how the past can be constrained given knowledge of the present. 
+
+Let $W$ and $V$ be $m$-th and $k$-th order \textit{mechanisms} respectively such that $W,V \subset Y$, the \textit{consideration set}. Then \textit{cause information} is defined \cite{oizumi2014phenomenology} by:
 
 \begin{equation}
 \label{def:ci}
-ci(W_{t} = X) = D\left(p_c(Z_{t-1}|W_{t} = X)||p_c(Z_{t-1}|\emptyset)\right)
+\text{ci}(W_{t} = X, V) = D\left(p_c(V_{t-1}|W_{t} = X),p_c(V_{t-1}|\emptyset)\right)
 \end{equation}
 
+What we do is compare using the earth mover's distance the probability distribution of future states of the  $V $ given knowledge of the present, to the distribution of future states given no knowledge of the present. The bigger this difference is, the more information is generated. 
 
-Next we have the effect information ($ei$), which measures how the future is constrained given knowledge of the present. We define it as:
+Second the \textit{effect information} (ei) measures how the future is constrained given knowledge of the present. It is defined in IIT \cite{oizumi2014phenomenology} as:
 \begin{equation}
 \label{def:ei}
-ei(W_{t} = X) = D\left(p_e(Z_{t+1}|W_{t} = X)||p_{e}(Z_{t+1}|\emptyset)\right)
+\text{ei}(W_{t} = \mathbf{s}, V) = D\left(p_e(V_{t+1}|W_{t} = \mathbf{s}),p_{e}(V_{t+1}|\emptyset)\right).
 \end{equation}
 
 Finally, we define the cause-effect information ($cei$) to be the minimum between the cause information and effect information:
 
 \begin{equation}
 \label{def:cei}
-cei(W_{t} = X) = \min\left(ci(W_{t} = X), ei(W_{t} = X) \right)
+\text{cei}(W_{t} = \mathbf{s}, V) = \min\left(\text{ci}(W_{t} = \mathbf{s}, V), \text{ei}(W_{t} = \mathbf{s}, V) \right)
 \end{equation}
+
+The minimum of these two functions is taken in order to ensure that knowledge which generates either no \textit{cause information} or no \textit{effect information} will thus generate no \textit{cause effect information}. Intuitively, cei measures how much $W$ effects, and is effected by $V$.
 
 \subsubsection{Integrated Information}
 \label{sec:mech_integration}
-IIT assumes that only information which is irreducible can contribute to consciousness. This motivates the calculation of $\varphi$, which calculates the distance between the cause-effect repertoires of an entire mechanism, and the cause-effect repertoires of the partitioned mechanism. 
+The function $\varphi^{\text{MIP}}$ measures the \textit{irreducibility} of the information generated by knowledge of a \textit{mechanism}. Specifically this function questions whether the same information might have been generated if the graph was cut into bipartitions. 
 
-Intuitively, if a mechanism can be split into parts and these smaller mechanisms generate the same result, then the mechanism is reducible and $\varphi=0$. In contrast, the larger $\varphi$ is, the more information the mechanism has beyond the sum of its parts.
-
-As addition to $Z$ and $W$, we introduce the sets $N \in \mathbb{P}(W)$ and $M \in \mathbb{P}(Z)$.
+Intuitively, if a mechanism can be split into disjoint parts and these generate the same result, then the mechanism is reducible and $\varphi=0$. In contrast, the larger $\varphi$ is, the more information the mechanism has beyond the sum of its parts. In order to make IIT's definition of $\varphi^{\text{MIP}}$ easier, we define some intermediate calculations, the first of which is the \textit{partitioned cause repertoire} as
 
 \begin{equation}
 \label{def:preMIP}
-p_c(A_{t-1}|B_t ,M, N):= p(N_{t-1}|M_t) p(A_{t-1} \backslash N_{t-1} |B_t \backslash M_t)
+p_c^{M,N}(A_{t-1}|B_t ):= p(N_{t-1}|M_t) p((A \backslash N)_{t-1} |(B \backslash M)_t).
 \end{equation}
 
-Then we define:
+In other words, we partition the information of the present into $M$ and $B\setminus M$, and possibilities of the past into $N$ and $A \setminus N$. Then instead of determining the distribution of past states of $A$ given $B$, we compute it for $N$ given $M$ and $A\setminus N$ given $B \setminus M$ separately. We then multiply these distributions together to get the \textit{partitioned cause repertoire}.
+
+Next, we define the \textit{partitioned cause information}:
 
 \begin{equation}
 \label{def:phi2}
-\varphi_{cause}^{M,N}(W_t=X, Z) := D \left( p_c(Z_{t-1}|W_t=X) ,p(Z_{t-1}|W_{t} = X,M,N)  \right)
+\varphi_{cause}^{M,N}(W_t=\mathbf{s}, V) := D \left( p_c(V_{t-1}|W_t=\mathbf{s}) ,p^{M,N}_c(V_{t-1}|W_{t} = \mathbf{s})  \right).
 \end{equation}.
 
-With the benefit of this notation, we now introduce the notion of the minimum information partition (MIP). Specifically, the MIP refers to the sets $M'$ and $N'$ which minimise $\varphi_{cause}$. We then have:
+where as in section \ref{sec:cei}, $V, W \subset Y$ are $k$-th and $m$-th order \textit{mechanisms} respectively. What this measures, is the difference between the distribution of future states of the $V$ , and the \textit{partitioned cause repertoire} using the EMD. In other words, we measure the difference made by partitioning our system.
+
+We then define the \textit{partitioned cause information} as below.
 
 \begin{equation}
 \label{def:phi3}
-\varphi_{cause}^{\text{MIP}}(W_t=X, Z)  = \varphi_{cause}^{M',N'}(W_t=X, Z) 
+\varphi_{cause}^{\text{MIP}}(W_t=\mathbf{s}, V)  =\min \limits_{M \in \mathbb{P}(V), N \in \mathbb{P}(W)} \varphi_{cause}^{M,N}(W_t=\mathbf{s}, V) 
 \end{equation}
 
-$\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ for $p_e$ superscript. This allows us to define integrated information $\varphi$:
+We call the sets $M$ and $N$ which gave rise the minimum the \textit{minimum information partition} (MIP) \cite{oizumi2014phenomenology}. We compute \textit{partitioned cause information} because the information we are measuring is only irreducible if a partition makes a difference even in the worst case scenario.
+
+
+To compute the analogous MIP for effects and $\varphi^{\text{MIP}}_{effect}$, We need only to swap $p_c$ for $p_e$. This allows us to define integrated information $\varphi^{\text{MIP}}$ \cite{oizumi2014phenomenology}:
 \begin{equation}
 \label{def:phi}
-\varphi^{\text{MIP}}(W_t=X, Z) = \min \left( \varphi_{cause}^{\text{MIP}}(W_t=X, Z), \varphi_{effect}^{\text{MIP}}(W_t=X, Z)  \right) 
+\varphi^{\text{MIP}}(W_t=\mathbf{s}, V) = \min \left( \varphi_{cause}^{\text{MIP}}(W_t=\mathbf{s}, V), \varphi_{effect}^{\text{MIP}}(W_t=\mathbf{s}, V)  \right) 
 \end{equation}
 
 
@@ -355,38 +367,39 @@ $\varphi^{\text{MIP}}_{effect}$ is defined similarly. One need only swap $p_c$ f
 It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{marshall2016integrated}:
 \begin{equation}
 \label{eq:bound_phi_cei}
-\varphi^{\text{MIP}}(W_t=X, Z) \leq cei(W_t=X) 
+\varphi^{\text{MIP}}(W_t=\mathbf{s}, V) \leq cei(W_t=\mathbf{s},V) 
 \end{equation}
 
-This implies that the biggest different we can make to $\varphi$ by partitioning a mechanism occurs when the partitioned repertoire is precisely the unconstrained repertoire. 
+This implies that the biggest difference we can make to $\varphi^{\text{MIP}}$ by partitioning a mechanism occurs when the partitioned repertoire is precisely the unconstrained repertoire. 
 
 
 
 \subsubsection{Maximally Integrated Information}
-It follows from the assumptions of IIT that a mechanism has a unique cause and effect. We identify these as the maximally irreducible causes and effects respectively. 
-
-Let $W_t = X$. We now ask the question: what is the cause of $X$? Any element in $\mathbb{P}(Z)$ is a candidate, so we need to conduct an exhaustive search. Hence we define $\varphi^{\text{Max}}$, the maximally integrated information as: 
+The last function on a \textit{mechanism} level to define is $\varphi^{\text{Max}}$. Let $W_t = \mathbf{s}$ be a $m$-th order mechanism, and $Y$ be the \textit{candidate set}, such that $W \subset Y$. We define $\varphi^{\text{Max}}$, the maximally integrated information \cite{oizumi2014phenomenology} as: 
 \begin{equation}
 \label{def:core_cause}
-\varphi^{\text{Max}}_{\text{cause}}(W_t = X):=\max \limits_{S \in \mathbb{P}(Z)}\varphi^{\text{MIP}}_{\text{cause}}(W_t = X|S)
+\varphi^{\text{Max}}_{\text{cause}}(W_t = \mathbf{s}):=\max \limits_{V \in \mathbb{P}(Y)}\varphi^{\text{MIP}}_{\text{cause}}(W_t = \mathbf{s}, V).
 \end{equation}
 
-The particular set $S'$ which maximised the right hand side we call the \textit{core cause}. The \textit{core effect} and $\varphi^{\text{Max}}_{\text{effect}}$ are defined in the equivalent fashion. Finally we finish  by setting $\varphi^{\text{Max}}$ to be the minimum of the two as before. It is important to note that we find the core cause and effect separately, and that these need not be the same set.
+What $\varphi^{\text{Max}}$ determines is how much integrated information is generated by $W$ on the subset of the \textit{candidate set} for which it generates the most integrated information. The \textit{mechanism} $V$ which gave rise to the maximum is called the \textit{core cause} of $W_t = \mathbf{s}$.
 
-As with $\varphi^{\text{MIP}}$ we can bound $\varphi^{\text{Max}}$. Specifically we have for any current state $X$ that:
+The \textit{core effect} and  $\varphi^{\text{Max}}_{\text{effect}}$ are defined similarly. Finally we finish  by setting $\varphi^{\text{Max}}$ to be the minimum of the two as before. It is important to note that we find the \textit{core cause} and \textit{effect separately}, and that these need not be the same set.
+
+As with $\varphi^{\text{MIP}}$ we bound $\varphi^{\text{Max}}$ \cite{marshall2016integrated}. 
 
 \begin{equation}
 \label{eq:bound_phimax}
-\varphi^{\text{MIP}}(W_t = X, Z) \leq \varphi^{\text{Max}}(W_t = X)\leq cei(W_t = X)
+\varphi^{\text{MIP}}(W_t = \mathbf{s}, V) \leq \varphi^{\text{Max}}(W_t = \mathbf{s})\leq cei(W_t = \mathbf{s}, V) \quad \forall V \in \mathbb{P}(Y).
 \end{equation}
 
-If we find that $\varphi^{\text{Max}}(W_t = X)>0$, then we call the combination of $\varphi^{\text{Max}}(W_t = X)$ with its core cause and effect a \textit{concept}. This allows us to define a MICE.
+If we find that $\varphi^{\text{Max}}(W_t =\mathbf{s})>0$, then we call the combination of $\varphi^{\text{Max}}(W_t = \mathbf{s})$ with its core cause and effect a \textit{concept}. This allows us to define a \textit{maximally integrated cause effect repertoire}.
 
 \begin{definition}
-	{The maximally integrated cause effect repertoire of a piece of information, or MICE, refers to the combination of the cause repertoire $p_c(C_{t-1}|W_t = X)$, where $C$ is the core cause of $W_t=X$ along with the effect repertoire $p_e(E_{t+1}|W_t = X)$, where $E$ is the core effect of $W_t = X$.}
+	{The \textit{maximally integrated cause effect repertoire} of a piece of information, or MICE, refers to the combination of the cause repertoire $p_c(C_{t-1}|W_t = \mathbf{s})$, where $C$ is the core cause of $W_t=\mathbf{s}$ along with the effect repertoire $p_e(E_{t+1}|W_t = \mathbf{s})$, where $E$ is the core effect of $W_t = \mathbf{s}$.}
 \end{definition}
 
 \subsection{Calculations for Systems of Mechanisms}
+\label{sec:systems}
 Thus far calculations have been restricted to a single mechanism, whether 1st, 2nd, or $n$th order. However, a network of more than one node may contain multiple mechanisms, which may overlap with each other. For example, a system of 3 nodes could potentially contain 7 mechanisms (all possible subsets of nodes less the empty set).
 
 Now we focus our attention on computing integrated information in a system of mechanisms. 
