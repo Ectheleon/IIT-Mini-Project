@@ -58,9 +58,11 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 \end{definition}
 
 
+
 \begin{definition}
-	{Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge. We write it as $p_e(Z_{t+1}|W_t=X)$. Similarly the \textit{cause repertoire} of the state $W_t = X$ is the conditional probability distribution for past states of $Z$ given our current knowledge. We write it as $p_c(Z_{t-1}|W_t = X)$.}
+	{IIT \cite{oizumi2014phenomenology} uses the names of \textit{effect repertoire} and \textit{cause repertoire} for specific distributions. Denoted as $p_e$ and $p_c$, these are similar to the forward and backward distributions, but rely on assumption \ref{asmp:cond_independence} which we will describe later. }
 \end{definition}
+
 
 \begin{remark}
 	In this document, we use Krohn and Ostwalds  \cite{krohn2016computing} notation: $W_{t-1}, W_t, W_{t+1}$ to denote the past, present, and future states of a \textit{mechanism}. In \cite{oizumi2014phenomenology} however, these are denoted by $W^p, W^c$ and $W^f$ respectively.
@@ -128,7 +130,7 @@ In this section, we construct each of the previously defined repertoires from $\
 In order to simplify all computations, IIT \cite{oizumi2014phenomenology} assumes the following theorem to hold.
 
 \begin{assumption}
-	\label{thm:cond_independence}
+	\label{asmp:cond_independence}
 	Let $Z$ be a \textit{system}. Then it holds that:
 	\begin{equation}
 	\label{eq:cond_independence}
@@ -250,14 +252,14 @@ In short, we add up the probabilities of each individual previous state that res
 \subsection{The Earth Mover's Distance }
 In the context of this document, we calculate the distance between two probability distributions $p1$ and $p1$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD).
 
-To use this distance, we require the existence of another metric which measures the distance between any pair of states. Here we use the Hamming distance for this purpose, that is the number of individual bytes which disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
+To use this distance, we require the existence of another metric which measures the distance between any pair of states. For this we use the Hamming distance (see \cite{hill1986first} for more details) which is the number of individual bytes that disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
 
 In simple terms, if we think of each distribution as piles of dirt on top of each given state. The earth mover's distance is the product of how much dirt needs to moved by how far this dirt needs to go. 
 
 \begin{description}
-	\item[EMD between Probability Distributions] Let $S$ be a set of $n$ states, $\mathbf{D} = \left[ D_{ij}\right]$ where $D_{ij}$ is the distance between $s_i$ and $s_j$, $P$ and $Q$ be two probability distributions over $S$ such that $P(X = s_i) = p_i$ and $Q(X=s_j) = q_j$, $\forall i,j$. 
+	\item[EMD] Let $S$ be a set of $n$ states, $s_i, s_j \in S$, $\mathbf{D} = \left[ D_{ij}\right]$ where $D_{ij}$ is the distance between $s_i$ and $s_j$, $P$ and $Q$ be two probability distributions over $S$ such that $P(X = s_i) = p_i$ and $Q(X=s_j) = q_j$, $\forall s_i, s_j \in S$. 
 	
-	Calculate $\mathbf{F} = \left[F_{ij}\right]$ matrix which optimises the following problem:
+	Calculate the $n\times n$ matrix $\mathbf{F}$ which solves the following optimization problem:
 	
 	\begin{align}
 	\label{eq:EMD1}
@@ -267,7 +269,7 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 	\sum \limits_{i=1}^n &F_{ij} = q_j,\quad 1 \leq j \leq n
 	\end{align}
 	
-	Finally, we say: 
+	Finally, we say that the distance between $p$ and $q$ is: 
 	
 	\begin{equation}
 	\label{def:EMD}
@@ -275,7 +277,7 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 	\end{equation}
 \end{description}
 
-From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance instead of bothering with $\text{EMD}(P,Q)$ each time.
+From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance.
 
 \subsection{Calculations for Mechanisms}\label{sec:little_phi}
 When making a computation for a mechanism, we must be sure to treat each type of node appropriately. Let $G$ be the set of all nodes present, $Z$ be the system of nodes which we are considering, and $W$ the mechanism within the system. For an illustration of this, consider figure \ref{fig:IIT_illustration1}.
