@@ -2,7 +2,7 @@
 
 
 \section{Introduction}
-Within any organisation, no matter what the type, communication must be present. If members of a company do not communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may damage productivity, as well as giving rise to redundant communication. We seek a way to model this phenomenon, and hence improve the efficiency of an organisation.
+Within any organisation, no matter what the type, communication must be present. If members of a company do not communicate, then there is no way for a worker to know what they should be doing, or if what they are doing is actually important to the company. At the same time, if all members of an organisation are talking to each other there this may damage productivity, as well as giving rise to redundant communication. We investigate models of organisational structures that maximise productivity and flexibility.
 
 This problem is an specific example from the wider context of social network theory. Zhang and van der Schaar \cite{zhang2015reputational} looked at a similar problem,  creating a model where each agent in their network decides which connections are of value to it based on limited information of their value, and how this affects the welfare of both the individual agent, and the network as a whole. This approach would be applicable to the problem, when thinking of the value of a connection between agents, as the importance of them communicating.
 
@@ -32,18 +32,31 @@ Let $Z_t$ be a discrete time multivariate stochastic process which takes values 
 \end{definition}
 
 \begin{definition}
+	\label{def:element}
 	An \textit{elementary mechanism} doubly refers to a node in the graph $Z$, as well as a Bernoulli random variable. It has two states: \textit{off}, which corresponds to when the random variable takes the value 0, and \textit{on}, which corresponds to when the random variable takes the value 1. We denote an \textit{elementary mechanism} by $z^i$, and refer to its state at time $t$ by $z^i_t$.
 \end{definition}
 	
 \begin{definition}
-	A $m$th order \textit{mechanism} is a set of $m$ distinct \textit{elementary mechanisms}. As such, it also has the double meaning referring both to a subset of nodes in the graph $Z$, as well as the corresponding random variables. The state of a mechanism is given by the states of all \textit{elementary mechanisms} within it. Hencea $m$th order \textit{mechanism} has $2^m$ distinct states. We denote the state of $W$ at time $t$ as $W_t$.
+	\label{def:mech}
+	A $m$-th order \textit{mechanism} is a set of $m$ distinct \textit{elementary mechanisms}. As such, it also has the double meaning referring both to a subset of nodes in the graph $Z$, as well as the corresponding random variables. The state of a mechanism is given by the states of all \textit{elementary mechanisms} within it. Hence a $m$th order \textit{mechanism} has $2^m$ distinct states. We denote the state of $W$ at time $t$ as $W_t$.
 \end{definition}
 
 \begin{definition}
+	\label{def:system}
 	A \textit{system} is the combination of a directed graph $Z$ with $n$ nodes, and the stochastic process $Z_t$. Therefore, all \textit{mechanisms} are contained within the \textit{system}.
 \end{definition}
 	
 The graph $Z$ is directed and has edges, so what do these mean in the context of the stochastic process? We join $z^i$ to $z^j$ with a directed edge if the $z^i_{t+1}$ depends in some way on $z^j_t$. 
+
+\begin{definition}
+	\label{def:distributions}
+	Let $A$ and $B$ be $i$-th and $j$-th order \textit{mechanisms}, $\mathbf{s} \in \mathbb{S}(A)$ and $\mathbf{r} \in \mathbb{S}(B)$. Then we define the
+	\begin{enumerate}
+		\item \textit{Forward Distribution}, $p(A_{t+1}|B_t = r)$ to be the probability distribution that each state of $A$ occurs. This distribution contains $2^i$ values.
+		\item \textit{Backward Distribution}, $p(A_{t}=\mathbf{s}|\mathbf{B}_{t-1})$ to be the probability of each previous state of $B$ leading to $A_t = \mathbf{s}$. This distribution contains $2^j$ values.
+	\end{enumerate}
+\end{definition}
+
 
 \begin{definition}
 	{Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge. We write it as $p_e(Z_{t+1}|W_t=X)$. Similarly the \textit{cause repertoire} of the state $W_t = X$ is the conditional probability distribution for past states of $Z$ given our current knowledge. We write it as $p_c(Z_{t-1}|W_t = X)$.}
@@ -54,7 +67,7 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 \end{remark}
 
 \begin{tabularx}{\textwidth}{ll X}
-	Term & Notation & Explanation \\
+	Term & Usual Notation & Notes \\
 	\hline
 	\endfirsthead
 	\hline
@@ -65,23 +78,23 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 			%\addcontentsline{lot}{table}{\numberline{}Common abbreviations} % For use with fancy header package. 
 	\label{tab:defs}
 	\endlastfoot
-	\textit{system} & $Z$ & A system is a set of nodes. We denote this set by $Z$. If we subscript the set $Z_t$, we are referring to the \textit{state} of the set $Z$ at time $t$. We take there to be $n$ nodes in the system: $|Z|=n$.\\ 
+	\textit{System} & $Z$ & A system is a set of \textit{elementary mechanisms}. We usually take the size to be $n$. For details see \ref{def:system}.\\
 		\hline
-	\textit{mechanism} & $W$ & A \textit{mechanism} is a set of nodes. However, a \textit{mechanism} only exists as a subset of a $\textit{system}$: $W \subset Z$. We denote by $W_t$ the state of the \textit{mechanism} at time $t$. By $Z \setminus W$ we refer to the mechanism which consists of all the nodes found in $Z$, but not in $W$. \\
+	\textit{Mechanism} & $W$ & A $m$-order \textit{mechanism} is a size $m$  subset of a system $Z$. We usually take the size to be $m$. For details, see Definition \ref{def:mech}. \\
 		\hline
-	\textit{elementary mechanism} & $w^i$ & An \textit{elementary mechanism} consists of a single node. We write a mechanism this way only when we now for certain that it is elementary. We abuse notation by listing all elementary elements of $W$ as $w^i$ for $i = 1, 2, \ldots, |W|$, as if $W$ was a vector. We denote the state of $z^i$ at time $t$ by $z^i_t$.\\
+	\textit{Elementary Mechanism} & $w^i$ & An \textit{elementary mechanism} consists of a single node, random variable pair. For details see \ref{def:element}.\\
 		\hline
-	power set & $\mathbb{P}(W)$ & The power set of a \textit{mechanism} (or \textit{system}) is the set of all subsets of that \textit{mechanism}.\\
+	\textit{Null Mechanism} & $\emptyset$ & The \textit{null mechanism} exists for the purpose of saying that nothing is known.\\
 		\hline
-	forward distribution & $p(W_{t+1}|V_t=X)$ & Let $W, V \subset Z$ be \textit{mechanisms}. We denote $p(W_{t+1}|V_t= X)$ as the probability distribution of possible future states of $W$ given that the current state $V$ is $X$. $p$ returns the probability of each possible future state occurring There are $2^{|W|}$ such states, and hence this is the size of the forward distribution.\\
+	\textit{State Set} & $\mathbb{S}(W)$ & A $m$-th order \textit{mechanisms} \textit{state set} is the set of all possible \textit{states} of that \textit{mechanism}. \\
 		\hline
-	backward distribution & $p(W_{}=X|V_{t-1})$ & Let $W, V \subset Z$ be \textit{mechanisms}. We denote$p(W_{t+1}=X|V_t)$ as the probability distribution of possible past states of $V$ given that the current state $W$ is $X$. Similarly to above, the size of the backward distribution is $2^{|V|}$\\
+	\textit{State} & $\mathbf{s}$ & We usually write the state of a \textit{mechanism} as $\mathbf{s}$.\\
 		\hline
-	\textit{null mechanism} & $\emptyset$ & We label the \textit{null mechanism} as the empty set in order to write: $p(W_{t+1}|\emptyset)$. This refers to the distribution of future states of $W$ given no knowledge of the present. \\
-	\hline
-	\textit{state} & $\mathbf{s}$ & Let $W$ be a $m$th order mechanism. We write a possible \textit{state} of $W$ as a row vector $\mathbf{s} \in [0,1]^m$.\\
-	\hline
-	\textit{state set} & $\mathbb{S}(W)$ & A $m$th order \textit{mechanisms} \textit{state set} is the set of all possible \textit{states} of that \textit{mechanism}. This size of this set is $2^m$.
+	Power Set & $\mathbb{P}(W)$ & The set of all subsets of a \textit{mechanism}.\\
+		\hline
+	Forward Distribution & $p(W_{t+1}|V_t=\mathbf{s})$ &The distribution of future states of $W$ given present knowledge of $V$. See Definition \ref{def:distributions}. \\
+		\hline
+	Backward Distribution & $p(W_{t}=\mathbf{s}|V_{t-1})$ & The distribution of past states of $V$ given present knowledge of $W$. See Definition \ref{def:distributions}.\\
 \end{tabularx}
 
 
@@ -112,18 +125,18 @@ In this section, we construct each of the previously defined repertoires from $\
 
 \subsubsection{Conditional Independence}
 \label{sec:conditional_independence}
-In order to simplify all computations, IIT assumes the following theorem to hold.
+In order to simplify all computations, IIT \cite{oizumi2014phenomenology} assumes the following theorem to hold.
 
-\begin{theorem}
+\begin{assumption}
 	\label{thm:cond_independence}
 	Let $Z$ be a \textit{system}. Then it holds that:
 	\begin{equation}
 	\label{eq:cond_independence}
-	p(Z_{t+1}|Z_t = X) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=X)
+	p(Z_{t+1}|Z_t = \mathbf{s}) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=\mathbf{s})
 	\end{equation}
 	
 	where we have reduced the probability distribution for future states of $Z$ to the products of the distributions for each of its \textit{elementary mechanisms}. 
-\end{theorem}
+\end{assumption}
 
 Theorem \ref{thm:cond_independence} motivates the following definition.
 
@@ -162,8 +175,6 @@ Theorem \ref{thm:bijection} enables us to condense $\mathbf{M}$ by converting ea
 \mathbf{T}_{i} := \mathbf{q}(Z_{t+1} = j| Z_t = i) , \quad \forall i \in \mathbb{S}(Z).
 \end{equation}
 
-We can convert $\mathbf{T}$ back to $\mathbf{M}$ if needed because $\mathbf{M} = p(Z_{t+1} = j| Z_t = i)$, due the the bijection between distributions and \textit{generators}
-
 We demonstrate transforming the transition probability matrix into the \textit{condensed matrix} in equation \ref{eq:matrix_tranform_demo}. In practice this is done by multiplying $\mathbf{M}$ to the $2^n \times n$ matrix whose rows are the elements of $\mathbb{S}(Z)$ appearing in chosen ordering:
 
 
@@ -191,56 +202,55 @@ We demonstrate transforming the transition probability matrix into the \textit{c
 
 \subsubsection{Effect repertoire}
 
-Let $Z$ be a mechanism, and suppose that the state of the subset $W \subset X$ is known: $W_t = X$. Then we first define the \textit{effect repertoire} to have the property of factorisation, that is:
+Let $Z$ a \textit{system} and $W$ a $m$-th order mechanism, and suppose that the state of $W \subset Z$ is known, $W_t = \mathbf{s}$. Then the  \textit{effect repertoire} is defined by IIT \cite{oizumi2014phenomenology} to have the property of factorisation, that is:
 
 \begin{equation}
 \label{def:controversial}
-p_e(Z_{t+1}|W_t = X) = \prod \limits_{i= 1}^n p(z^i_{t+1}|W_t = X)
+p_e(Z_{t+1}|W_t = \mathbf{s}) = \prod \limits_{i= 1}^n p(z^i_{t+1}|W_t = \mathbf{s}).
 \end{equation}
 
-It is important to note that this factorisation does not follow generally from equation \ref{eq:cond_independence}, as it was only assumed that future state of each node was conditionally independent with respect to the current states of the entire system, as opposed to with respect to all possible subsets of this system as well.
+It is important to note that this factorisation does not follow generally from equation \ref{eq:cond_independence}, as it is much stronger. It was only assumed that future state of each node was conditionally independent with respect to the current states of the entire system, as opposed to with respect to all possible subsets of this system as well.
 
-This is justified by Oizumi et all \cite{oizumi2014phenomenology} in their supplementary methods document on the grounds that they are interested in how $W_t=X$ affects each $z^i_{t+1}$ individually and thus factorise as above in order to remove correlations.
+This is justified by Oizumi et al \cite{oizumi2014phenomenology} in their supplementary methods document on the grounds that they are interested in how $W_t=X$ affects each $z^i_{t+1}$ individually and thus factorise as above in order to remove correlations.
 
 
-Finally, let $W$ be a subset of $Z$ which is known, and let $z^{i_0}$ be a particular node in $Z$. Then we have:
+Finally, let $W$ be a $m$-th order \textit{mechanism} of the \textit{system} $Z$, the current state of which is known, and let $z^{i_0}$ be a particular node in $Z$. The mathematical definition \cite{krohn2016computing} of $p_e$ is
 \begin{equation}
 \label{def:effect_repertoire}
-p_e(z_{t+1}^{i_0}|W_t = X) = 2^{-|Z\setminus W|}\sum \limits_{Z\setminus W} p(z_{t+1}^{i_0}|W_t = X, Z\setminus W)
+p_e(z_{t+1}^{i_0}|W_t = \mathbf{s}) = 2^{-|n-m|}\sum \limits_{\mathbf{r} \in \mathbb{S}(Z\setminus W)} p(z_{t+1}^{i_0}|W_t = X, (Z\setminus W)_t = \mathbf{r}).
 \end{equation}
 
-This is equivalent to averaging over all rows of the TPM which corresponds to states of $Z_t$ such that $Z_t \supset W_t = X$.
+This is equivalent to averaging over all rows of the TPM which corresponds to states of $Z_t$ such that $ W_t = \mathbf{s} $.
 
-Hence, the generator \textit{unconstrained effect repertoire} $p(Z_t | \emptyset)$ is s
 
 \subsubsection{Cause repertoire}
 
-Just as the effect repertoire is broken into a smaller problem in equation \ref{def:controversial}, there exists an equivalent simplification for computing the cause repertoire. Let the state of $W \subset Z$ be known,$m:=|W|$, and $V$ be any other subset of $Z$. Then 
+Just as the effect repertoire is broken into a smaller problem in equation \ref{def:controversial}, there exists an equivalent simplification for computing the cause repertoire. Let the state of the $m$-order \textit{mechanism} $W \subset Z$ be known, and $V$ be another $k$-th order \textit{mechanism}. Then the mathematical definition \cite{krohn2016computing} of $p_c$ is
 
 \begin{equation}
 \label{def:cause_rep1}
-p_c(V_{t-1} | W_t=X) = \prod \limits_{i = 1}^{m} p_c(V_{t-1}|w^i_{t} = x^i)
+p_c(V_{t-1} | W_t=\mathbf{s}) = \prod \limits_{i = 1}^{m} p_c(V_{t-1}|w^i_{t} = s_i).
 \end{equation}
 
-We then complete the computation as follows:
+We define $p_c$ given knowledge of a single \textit{elementary mechanism}
 
 \begin{equation}
 \label{def:cause_rep2}
-p_c(V_{t-1}| w_t = x) = \frac{\sum \limits_{Z\setminus V} p_e(w_t = x| V_{t-1}, Z \setminus V)}{p(w_t = x)}
+p_c(V_{t-1}| w_t = x) = \frac{\sum \limits_{\mathbf{r} \in \mathbb{S}(Z\setminus V)} p_e(w_t = x| V_{t-1}, (Z \setminus V)_t = \mathbf{r})}{p(w_t = x)}.
 \end{equation}
 
-In short, we add up the probabilities of each individual previous state resulting in our current information ($w_t = x)$, and then scale by the overall probability that we observe $w_t = x$ in the first place. Note that equation \ref{def:cause_rep2} features the effect repertoire $p_e$ on the right hand side, not $p_c$.
+In short, we add up the probabilities of each individual previous state that results in our current information ($w_t = x)$, and then scale by the overall probability that we observe $w_t = x$ in the first place. Note that equation \ref{def:cause_rep2} features the effect repertoire $p_e$ on the right hand side, not $p_c$.
 
 \begin{remark}
-	Equation \ref{def:cause_rep1} does not make an additional assumption, but rather follows as a consequence from equation \ref{def:controversial}.
+	Equation \ref{def:cause_rep1} does not require additional assumption, because it is a consequence from equation \ref{def:controversial}.
 \end{remark}
 
 
 
-\subsection{The Earth Mover's Distance (EMD)}
-In the context of this document, we will frequently calculate the distance between two probability distributions $p1$ and $p1$. For this we will use the mathematical notation $D(p1,p2)$, where $D$ is referring to the earth mover's distance.
+\subsection{The Earth Mover's Distance }
+In the context of this document, we calculate the distance between two probability distributions $p1$ and $p1$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD).
 
-To use this distance measure, we require the existence of another metric which measures the distance between any pair of states. Here we use the Hamming distance for this purpose, that is the number of individual bytes which disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
+To use this distance, we require the existence of another metric which measures the distance between any pair of states. Here we use the Hamming distance for this purpose, that is the number of individual bytes which disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
 
 In simple terms, if we think of each distribution as piles of dirt on top of each given state. The earth mover's distance is the product of how much dirt needs to moved by how far this dirt needs to go. 
 
