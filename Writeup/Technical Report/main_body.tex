@@ -49,6 +49,9 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 	{Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge. We write it as $p_e(Z_{t+1}|W_t=X)$. Similarly the \textit{cause repertoire} of the state $W_t = X$ is the conditional probability distribution for past states of $Z$ given our current knowledge. We write it as $p_c(Z_{t-1}|W_t = X)$.}
 \end{definition}
 
+\begin{remark}
+	In this document, we use Krohn and Ostwalds  \cite{krohn2016computing} notation: $W_{t-1}, W_t, W_{t+1}$ to denote the past, present, and future states of a \textit{mechanism}. In \cite{oizumi2014phenomenology} however, these are denoted by $W^p, W^c$ and $W^f$ respectively.
+\end{remark}
 
 \begin{tabularx}{\textwidth}{ll X}
 	Term & Notation & Explanation \\
@@ -91,7 +94,7 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 
 \subsection{Computation of Repertoires}
 \label{sec:cost}
-In this section, we construct each of the previously defined repertoires from the TPM. For later use, we define the product of probability distributions.
+In this section, we construct each of the previously defined repertoires from $\mathbf{M}$, the transition probability matrix. For later use, we define the product of probability distributions.
 
 %{First however, we need to introduce both the \textit{perturb function}, and the assumption of conditional independence, as all future definitions rely on these.
 
@@ -104,37 +107,66 @@ In this section, we construct each of the previously defined repertoires from th
 \begin{definition}
 	Let $A, B \subset Z$ such that $A$ and $B$ are disjoint. Then we define the \textit{distribution product} of $A$ and $B$ by:
 	\[p(A_{t+1}|Z_t)p(B_{t+1}|Z_t):=p(A_{t+1} \cup B_{t+1}|Z_t).\]
-	In other words the product of the distributions is the distribution for 
+	In other words the product of the distributions is the distribution for the union of the sets $A$ and $B$.
 \end{definition} 
 
 \subsubsection{Conditional Independence}
 \label{sec:conditional_independence}
-In order to simplify all computations, IIT makes a large mathematical assumption. Specifically it assumes that the probability distributions for the future states of each node are conditionally independent with respect to the previous state of the system. i.e. for the \textit{system} $Z$ which contains $n$ \textit{elementary mechanisms}:
+In order to simplify all computations, IIT assumes the following theorem to hold.
 
-\begin{equation}
-\label{eq:cond_independence}
-p(Z_{t+1}|Z_t = X) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=X)
-\end{equation}
-where we have reduced the probability distribution for future states of $Z$ to the products of the distributions for each \textit{elementary mechanism} in $Z$. Now, we use the fact that $p(z^i_{t+1}=1|Z_t=X)+p(z^i_{t+1} =0|Z_t=X) =1$ to conclude that if we know $p(z^i_{t+1}=1|Z_t=X)$ for all $i$, then we have all the information required to compute $p(Z_{t+1}|Z_t = X)$
+\begin{theorem}
+	\label{thm:cond_independence}
+	Let $Z$ be a \textit{system}. Then it holds that:
+	\begin{equation}
+	\label{eq:cond_independence}
+	p(Z_{t+1}|Z_t = X) = \prod \limits_{i=1}^{n} p(z^i_{t+1}|Z_t=X)
+	\end{equation}
+	
+	where we have reduced the probability distribution for future states of $Z$ to the products of the distributions for each of its \textit{elementary mechanisms}. 
+\end{theorem}
+
+Theorem \ref{thm:cond_independence} motivates the following definition.
 
 \begin{definition}
+	\label{thm:bijection}
 	Let $p(Z_{t+1}|Z_t = X)$ be a probability distribution. We define the row vector $\mathbf{q}(Z_{t+1}|Z_t = X)$ such that $q_i = p(z^i_{t+1}=1|Z_t=X), \quad \forall i \in 1, 2, \ldots, n$. We call $\mathbf{q}$ the \textit{distribution generator}.
 \end{definition}
 
-The motivation behind \textit{distribution generators} is that they contain the same information as in the distribution itself, while occupying logarithmically less space. Specifically, a distribution of length $2^n$ will reduce to a \textit{distribution generator} of length $n$.
+Now we present following key theorem which reduces the storage space required for future computations:
 
-Consider the transition probability matrix $\mathbf{M}$. As is $M_{ij} = p(Z_{t+1} = j| Z_t = i), \forall i,j \in \mathbb{S}(Z)$, this implies that each row of $\mathbf{M}$ is $\mathbf{M}_i = p(Z_{t+1}|Z_t=i)$ matches our definition of probability distribution. However, we have just shown how such a distribution can be reduced to its generator, which takes up much less space. Thus we condense the matrix $\mathbf{M}$ into the \textit{condensed matrix} $\mathbf{T}$.
+\begin{theorem}
+	Let $A$ be the set of distributions for the system $Z$, and $B$ be the set of \textit{distribution generators} for the same system. Then there exists a bijection between between $A$ and $B$.
+\end{theorem}
+
+\begin{proof}
+	We prove this bijection by construction the function which converts a distribution into its \textit{generator}, and its inverse.
+	
+	Let $p$ be a probability distribution of length $2^n$ that applies to the system $Z$, such that $p_i$ is the probability of $i \in \mathbb{S}(Z)$ occurring. We order the \textit{states} of $\mathbb{S}(Z)$ in order to write $p$ as a vector, which we now write as $\mathbf{p}$. 
+	
+	Next we construct the $2^n \times n$ state matrix $\mathbf{S}$. Each row of this matrix is a state of the \textit{system}, which in turn is a row vector. To map from $\mathbf{p}$ to its generator $\mathbf{q}$, we simply write: $\mathbf{q} = \mathbf{p} \mathbf{S}$. We demonstrate this transformation in equation \ref{eq:matrix_tranform_demo}. Naturally, $\mathbf{q}$ is dependent on the ordering of states.
+	
+	To go back, we write:
+	
+	\begin{equation}
+	\label{eq:map_inv}
+	p_i := \prod \limits_{j=1}^{n} q_j^{S_{ij}} (1-q_j)^{1-S_{ij}}\quad \forall i \in \mathbb{S}(Z)
+	\end{equation}
+	
+	where  $S_{ij}$  indexes the state matrix and specifically says whether the $j$th node in the $i$ state is \textit{on} or \textit{off}. Hence we can compute $\mathbf{p}$ from $\mathbf{q}$, and go back. Thus this is a bijection.
+\end{proof}
+
+Theorem \ref{thm:bijection} enables us to condense $\mathbf{M}$ by converting each of its rows into the corresponding \textit{distribution generator}. We define the condensed matrix:
 
 \begin{equation}
 \label{def:generators}
 \mathbf{T}_{i} := \mathbf{q}(Z_{t+1} = j| Z_t = i) , \quad \forall i \in \mathbb{S}(Z).
 \end{equation}
 
-We demonstrate transforming the transition probability matrix into the \textit{condensed matrix} in equation \ref{eq:matrix_tranform_demo}. In practice this is done by multiplying $\mathbf{M}$ to the $2^n \times n$ matrix whose rows are the elements of $\mathbb{S}(Z)$ appearing in the same order that they apply in $\mathbf{M}$.
+We can convert $\mathbf{T}$ back to $\mathbf{M}$ if needed because $\mathbf{M} = p(Z_{t+1} = j| Z_t = i)$, due the the bijection between distributions and \textit{generators}
 
-\begin{remark}
-	In IIT 3.0 \cite{oizumi2014phenomenology}, the \textit{condensed matrix} $\mathbf{T}$ is incorrectly referred to a transition probability matrix. This name is incorrect as $\mathbf{T}$ is not a stochastic matrix. Hence we rename it for the purpose of mathematical consistency.
-\end{remark}
+We demonstrate transforming the transition probability matrix into the \textit{condensed matrix} in equation \ref{eq:matrix_tranform_demo}. In practice this is done by multiplying $\mathbf{M}$ to the $2^n \times n$ matrix whose rows are the elements of $\mathbb{S}(Z)$ appearing in chosen ordering:
+
+
 
 \begin{equation}
 \label{eq:matrix_tranform_demo}
@@ -152,6 +184,10 @@ We demonstrate transforming the transition probability matrix into the \textit{c
 											0&.9\\
 											1&.4 \end{array} \right).
 \end{equation}
+
+\begin{remark}
+	In IIT 3.0 \cite{oizumi2014phenomenology}, the \textit{condensed matrix} $\mathbf{T}$ is incorrectly referred to a transition probability matrix. This name is incorrect as $\mathbf{T}$ is not a stochastic matrix. Hence we rename it for the purpose of mathematical consistency.
+\end{remark}
 
 \subsubsection{Effect repertoire}
 
