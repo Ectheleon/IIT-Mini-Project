@@ -17,8 +17,6 @@ While IIT has developed from version 1.0 to 3.0 by its inventor Giulio Tononi, a
 Our focus is to investigate whether the computation of $\Phi$ for a network model of an organisation might give any insight into the efficiency of communication within the organisation. As $\Phi$ is expensive to compute (as will be discussed in greater detail in section \ref{sec:cost}), we restrict our attention to a small scale toy model which we derive for the purpose of capturing the effects of poor communication within an organisation. Despite the greater cost of using IIT 3.0 than 2.0, we choose to use the most up-to-date version, as we wish to avoid the flaws which have previously been identified in older editions.
 
 
-\section{Glossary of Terms}
-
 \section{Integrated Information Theory}
 \label{sec:iit}
 
@@ -297,10 +295,42 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 
 From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance.
 
+\begin{tabularx}{\textwidth}{ll X}
+	Term & Usual Notation & Notes \\
+	\hline
+	\endfirsthead
+	\hline
+	\endhead
+	\endfoot
+	\hline
+	\caption{Key Definitions and Notation} 
+	%\addcontentsline{lot}{table}{\numberline{}Common abbreviations} % For use with fancy header package. 
+	\label{tab:defs2}
+	\endlastfoot
+	\textit{Minimum Information Partition} & MIP & The pair of sets $M$, $N$ which minimise the value of $\varphi_{cause}^{M,N}(W_t=\mathbf{s}, V)$.\\
+	\hline
+	\textit{Core Cause, Effect} & $C, E$ & The sets $C$ and $E$ which minimise $\varphi^{\text{MIP}}_{\text{cause}}(W_t = \mathbf{s}, C)$ and $\varphi^{\text{MIP}}_{\text{effect}}(W_t = \mathbf{s}, E)$ respectively . \\
+	\hline
+	\textit{Concept} & - & A \textit{mechanism} $W$ for which $\varphi^{\text{Max}}(W_t =\mathbf{s})>0$ is called a \textit{concept} .\\
+	\hline
+	\textit{MICE} & - & The MICE of a \textit{mechanism} is the combination of the \textit{cause repertoire} and \textit{effect repertoire} over the \textit{core cause} and \textit{core effect} respectively. \\
+	\hline
+	\textit{Candidate Set} & $Y$ & A subset of $Z$. All nodes outside of $Y$ are considered to be background conditions.\\
+	\hline
+	\textit{Complex} & - & The \textit{candidate set} $Y$ which maximises $\Phi^{\text{MIP}} (Y_t = \mathbf{s})$.\\
+	\hline
+\end{tabularx}
+
 \subsection{Calculations for Mechanisms}\label{sec:little_phi}
 There are 3 functions which operate over mechanisms: cei, $\varphi^{\text{MIP}}$ and $\varphi^{\text{Max}}$. When applying these functions to a \textit{mechanism} $W$ within the system \textit{system} $Z$, they treat nodes differently depending on whether the nodes are found within the \textit{mechanism} itself, the \textit{consideration set} but not the \textit{mechanism}, or the \textit{system} but not the \textit{consideration set}.
 
 We have not yet defined the \textit{consideration set}, and will not do so rigorously until section \ref{sec:systems}, as they are not important until then. For now, we merely define a consideration set $Y$ as a subset of the \textit{system} $Z$ such that $W \subset Y$, where $W$ is the $m$-th order mechanism. Figure \ref{fig:IIT_illustration1} illustrates this.
+
+
+When we compute cei, $\varphi^{\text{MIP}}$ or $\varphi^{\text{Max}}$, we are computing the effect of knowing the state of the \textit{mechanism}, $W_t = \mathbf{s}$. However, we do not know the state of the nodes in $Y\setminus W$, and we thus assume they could be \textit{on} or \textit{off} with equal probability. Finally all nodes in $Z \setminus Y$ are considered as background conditions. These calculations require that the past and present states of such nodes are known. 
+
+In summary, cei, $\varphi^{\text{MIP}}$ and $\varphi^{\text{Max}}$ measure an effect that knowing the state of $W$ has on the \textit{consideration set}, given the background conditions of external inputs/outputs.
+
 
 \begin{SCfigure}
 	\centering
@@ -308,14 +338,6 @@ We have not yet defined the \textit{consideration set}, and will not do so rigor
 	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The \textit{consideration set} is similarly circled in green. Finally, all remaining nodes of the system which lie outside of the \textit{consideration set} are external inputs/outputs.}
 	\label{fig:IIT_illustration1}
 \end{SCfigure}
-
-
-
-
-
-When we compute cei, $\varphi^{\text{MIP}}$ or $\varphi^{\text{Max}}$, we are computing the effect of knowing the state of the \textit{mechanism}, $W_t = \mathbf{s}$. However, we do not know the state of the nodes in $Y\setminus W$, and we thus assume they could be \textit{on} or \textit{off} with equal probability. Finally all nodes in $Z \setminus Y$ are considered as background conditions. These calculations require that the past and present states of such nodes are known. 
-
-In summary, cei, $\varphi^{\text{MIP}}$ and $\varphi^{\text{Max}}$ measure an effect that knowing the state of $W$ has on the \textit{consideration set}, given the background conditions of external inputs/outputs.
 
 \subsubsection{Cause-Effect Information}
 \label{sec:cei}
@@ -467,7 +489,7 @@ As before we seek the minimum information partition (MIP) which is given by
 
 \begin{equation}
 \label{def:Phi_integration2}
-\Phi^{\text{MIP}} (Z_t = X) = \min \limits_{P} \Phi^P(Z_t = X).
+\Phi^{\text{MIP}} (Z_t = \mathbf{s}) = \min \limits_{P} \Phi^P(Z_t = \mathbf{s}).
 \end{equation}
 
 \begin{remark}
@@ -489,7 +511,7 @@ Intuitively we understand that the conclusion: `adding a single extra neuron to 
 
 \begin{equation}
 \label{def:Phimax}
-\Phi^{\text{Max}}(Z_t = X) := \max \limits_{Y \in \mathbb{P}(Z)}\Phi^{\text{MIP}} (Y_t = X).
+\Phi^{\text{Max}}(Z_t = \mathbf{s}) := \max \limits_{Y \in \mathbb{P}(Z)}\Phi^{\text{MIP}} (Y_t = \mathbf{s}).
 \end{equation}
 
 In equation \ref{def:Phimax}, when we take $Y \in \mathbb{P}(Z)$, we are not referring to a \textit{mechanism} with the \textit{system} $\mathbf{Z}$, but rather to a \textit{candidate set}.
@@ -796,23 +818,12 @@ where $\mathbf{v}$ is the same vector function defined in section \ref{sec:3node
 
 When comparing $\mathbb{E}[Cost]$ to $\mathbb{E}[\Phi]$, we first need to decide the context in which we are doing do. The approach we took was to keep the parameters $k_i, p_i$ and $W_i$ all fixed, and instead to vary the connectivity matrix. We justify this choice on grounds that: in an existing organisation, these values would be difficult to change. What could change more easily is who talks to whom. Thus we view that choosing the connectivity matrix to be our variable is more relevant to the problem.
 
-However, we still need to be more specific as there are exactly $2^{64}$ $8\times 8$ connectivity matrices. Thus we restrict our attention to connectivity matrices which have exactly 10 directed edges. There are still a vast number of such matrices, roughly 180,000. Therefore, due to computational time restrictions, we randomly select 200 of these matrices and plot the results in figure \ref{fig:model_costvsphi}.
 
-\begin{SCfigure}
-	\centering
-	\includegraphics[scale = 0.4]{maxvscost_random.pdf}
-	\caption{We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for 200 randomly selected connectivity matrices with precisely 10 directed edges.}
-	\label{fig:model_costvsphi}
-\end{SCfigure}
-
-Having plotted $\mathbb{E}[Cost]$ as a function of $\mathbb{E}[\Phi]$, we see a linear correlation. Even more importantly though, we observe that maximising $\mathbb{E}[\Phi]$ also results in minimizing $\mathbb{E}[Cost]$. This looks ideal, but we must remind ourselves that a sample of size 200 out of 180,000 is by no means conclusive. Unfortunately, the time required to compute each data point prevents us from repeating this experiment. 
-
-
-Therefore, we set up a smaller problem which can be solved exhaustively. Instead of starting with an empty connectivity matrix, and adding 10 directed edges to it, now we start with a developed matrix. Specifically, we consider the matrix which applies to figure \ref{fig:diagram2}, in that the nodes $A$, $B$ and $C$ are completely connected to each other, which being entirely disconnected from $D$ and $E$. This matrix is a $5\times 5$ block diagonal matrix consisting of a $3 \times 3$ and $2 \times 2$ matrix of 1's along the diagonal. Next we introduce an addition 4 directed edges with which we want to join these 2 clusters.
+We set up a small problem which can be solved exhaustively. Specifically, we consider the matrix which applies to figure \ref{fig:diagram2}, in that the nodes $A$, $B$ and $C$ are completely connected to each other, which being entirely disconnected from $D$ and $E$. This matrix is a $5\times 5$ block diagonal matrix consisting of a $3 \times 3$ and $2 \times 2$ matrix of 1's along the diagonal. Next we introduce an addition 4 directed edges with which we want to join these 2 clusters.
 
 Intuitively, this problem can be though of as forcing two distinct department to talk to each other, and searching for the best way that this can be accomplished. In this setup, there are only 495 different connectivity matrices, and hence an exhaustive search is achievable.
 
-We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the result in figure \ref{fig:maxvscost_small}.
+
 
 \begin{SCfigure}
 	\centering
@@ -821,8 +832,7 @@ We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the
 	\label{fig:maxvscost_small}
 \end{SCfigure}
 
-
-We see in figure \ref{fig:maxvscost_small} that $\mathbb{E}[Cost]$ correlates with $\mathbb{E}[\Phi]$ similarly to figure \ref{fig:model_costvsphi}. The shape is not linear, but there is a trend that increasing $\mathbb{E}[\Phi]$ will reduce \ref{fig:model_costvsphi}.
+We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the result in figure \ref{fig:maxvscost_small}. We see that $\mathbb{E}[Cost]$ correlates with $\mathbb{E}[\Phi]$ similarly to figure \ref{fig:model_costvsphi}. The shape is not linear, but there is a trend that increasing $\mathbb{E}[\Phi]$ will reduce \ref{fig:model_costvsphi}.
 
 \begin{SCfigure}
 	\centering
@@ -830,6 +840,9 @@ We see in figure \ref{fig:maxvscost_small} that $\mathbb{E}[Cost]$ correlates wi
 	\caption{We show the network which generated both the smallest $\mathbb{E}[Cost]$, and the largest $\mathbb{E}[\Phi]$. The two way link between $B$ and $D$ allows the network to have one combination of teams which can complete the project requiring all skills. The other one way links from $D$ affect results by minimizing duplication of work.}
 	\label{fig:opt_network}
 \end{SCfigure}
+
+In figure \ref{fig:opt_network} we show the network which both maximised $\mathbb{E}[\Phi]$ and minimized $\mathbb{E}[Cost]$. What is interesting is that of the connections added, we see both unidirectional edges, and a two-way edge. This makes sense when we consider that two-way edges reduce waste due to missed opportunities, as only these connections allow two teams to collectively complete a project which on their own would not be possible. Unidirectional edges on the other hand are equally effective at reducing duplication of labour, and are more efficient at doing so. We conclude that the relative importance that the company places on avoiding duplication of work, and missing opportunities needlessly will affect how many two-way edges exist in the optimal network.
+
 
 \section{IIT revisited}
 In section \ref{sec:iit}, we presented the definitions of Integrated Information Theory as defined by Oizumi et al \cite{oizumi2014phenomenology}, while using a modification of the notation presented by \cite{krohn2016computing}. In this section, we will critique the mathematical implementation of IIT, and consider whether it is indeed applicable to the problem of consideration: communication within an organisation.
