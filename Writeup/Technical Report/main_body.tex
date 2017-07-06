@@ -84,7 +84,7 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 	\endlastfoot
 	\textit{System} & $Z$ & A system is a set of \textit{elementary mechanisms}. We usually take the size to be $n$. For details see \ref{def:system}.\\
 		\hline
-	\textit{Mechanism} & $W$ & A $m$-order \textit{mechanism} is a size $m$  subset of a system $Z$. We usually take the size to be $m$. For details, see Definition \ref{def:mech}. \\
+	\textit{Mechanism} & $W$ & A $m$-th order \textit{mechanism} is a size $m$  subset of a system $Z$. We usually take the size to be $m$. For details, see Definition \ref{def:mech}. \\
 		\hline
 	\textit{Elementary Mechanism} & $w^i$ & An \textit{elementary mechanism} consists of a single node, random variable pair. For details see \ref{def:element}.\\
 		\hline
@@ -210,7 +210,7 @@ The notion of \textit{generators} enables us to generalise definition \ref{def:d
 
 \begin{definition}
 	\label{def:dist_prod_gen}
-	Let $A, B \subset Z$ such that $A$ and $B$ are disjoint, and $W,V$ be mechanisms in $Z$. Define $\mathbf{Q}$ as the concatenation of $\mathbf{q}(A_{t+1}|W_t = \mathbf{s})$ and 	$\mathbf{q}(B_{t+1}|V_t = \mathbf{s})$. Then we define the general \textit{distribution product} to be:
+	Let $A, B \subset Z$ such that $A$ and $B$ are disjoint, and $W,V$ be mechanisms in $Z$. Define $\mathbf{Q}$ as the concatenation of $\mathbf{q}(A_{t+1}|W_t = \mathbf{s})$ and 	$\mathbf{q}(B_{t+1}|V_t = \mathbf{r})$. Then we define the general \textit{distribution product} to be:
 	
 	\[p(A_{t+1}|Z_t)p(B_{t+1}|Z_t):=R(\mathbf{Q}).\]
 	
@@ -242,7 +242,7 @@ This is equivalent to averaging over all rows of the TPM which corresponds to st
 
 \subsubsection{Cause repertoire}
 
-Just as the effect repertoire is broken into a smaller problem in equation \ref{def:controversial}, there exists an equivalent simplification for computing the cause repertoire. Let the state of the $m$-order \textit{mechanism} $W \subset Z$ be known, and $V$ be another $k$-th order \textit{mechanism}. Then the mathematical definition \cite{krohn2016computing} of $p_c$ is
+Just as the effect repertoire is broken into a smaller problem in equation \ref{def:controversial}, there exists an equivalent simplification for computing the cause repertoire. Let the state of the $m$-th order \textit{mechanism} $W \subset Z$ be known, and $V$ be another $k$-th order \textit{mechanism}. Then the mathematical definition \cite{krohn2016computing} of $p_c$ is
 
 \begin{equation}
 \label{def:cause_rep1}
@@ -267,7 +267,7 @@ In short, we add up the probabilities of each individual previous state that res
 \subsection{The Earth Mover's Distance }
 In the context of this document, we calculate the distance between two probability distributions $p1$ and $p2$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD) \cite{rubner1998metric}.
 
-To use this distance, we require the existence of another metric which measures the distance between any pair of states. For this we use the Hamming distance (see \cite{hill1986first} for more details) which is the number of individual bytes that disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
+To use this distance, we require the existence of another metric which measures the distance between any pair of states. For this we use the Hamming distance (see \cite{hill1986first} for more details) which is the number of individual bytes that disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement which is the first digit)
 
 In simple terms, if we think of each distribution as piles of dirt on top of each given state. The earth mover's distance is the product of how much dirt needs to moved by how far this dirt needs to go. 
 
@@ -347,7 +347,7 @@ Let $W$ and $V$ be $m$-th and $k$-th order \textit{mechanisms} respectively such
 
 \begin{equation}
 \label{def:ci}
-\text{ci}(W_{t} = X, V) = D\left(p_c(V_{t-1}|W_{t} = X),p_c(V_{t-1}|\emptyset)\right)
+\text{ci}(W_{t} = \mathbf{s}, V) = D\left(p_c(V_{t-1}|W_{t} = \mathbf{s}),p_c(V_{t-1}|\emptyset)\right)
 \end{equation}
 
 What we do is compare using the earth mover's distance the probability distribution of future states of the  $V $ given knowledge of the present, to the distribution of future states given no knowledge of the present. The bigger this difference is, the more information is generated. 
@@ -676,7 +676,7 @@ When solving for this model, we will employ two methods: IIT and a classical app
 \subsubsection{Classical Solution}
 Currently in our model a project will definitely be completed, the question is how long it will take. Thus we don't have to worry about the cost of failed projects. Instead, we concern ourselves with the value of missed projects: those which arrive when there is no suitable team or combination of team available to be assigned to it. Define $W_A$, $W_B$ and $W_C$ to be the waste incurred when a project requiring skills $\alpha$, $\beta$ and both  is missed respectively.
 
-When does this waste happen? Look back at table \ref{mat:model1}. In the defined allocation process, the only states at which waste can occur are: $10110$, $11110$, $01101$, $11101$, $10111$, $01111$ and $11111$. If the last two digits of the state is $10$, then a project requiring skill $\alpha$ is lost, resulting in waste of $W_A$. If the digits are $01$, a project needing skill $\beta$ is lost, resulting in waste of $W_C$. The rest refer to a project needing both skills, for which the waste is $W_C$. In short, waste results from exactly 7 different states, and can be either $W_A$, $W_B$ or $W_C$.
+When does this waste happen? Look back at table \ref{mat:simple_system}. In the defined allocation process, the only states at which waste can occur are: $10110$, $11110$, $01101$, $11101$, $10111$, $01111$ and $11111$. If the last two digits of the state is $10$, then a project requiring skill $\alpha$ is lost, resulting in waste of $W_A$. If the digits are $01$, a project needing skill $\beta$ is lost, resulting in waste of $W_C$. The rest refer to a project needing both skills, for which the waste is $W_C$. In short, waste results from exactly 7 different states, and can be either $W_A$, $W_B$ or $W_C$.
 
 So we know how much money we expect to waste for each state. Now the question is: how often do we expect to be at each state? We can take two approaches: either we can simulate the system and compute waste from the time series, or else we can compute the expected waste per iteration by finding the stationary distribution of the system. We take the latter approach.
 
@@ -832,7 +832,7 @@ Intuitively, this problem can be though of as forcing two distinct department to
 	\label{fig:maxvscost_small}
 \end{SCfigure}
 
-We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the result in figure \ref{fig:maxvscost_small}. We see that $\mathbb{E}[Cost]$ correlates with $\mathbb{E}[\Phi]$ similarly to figure \ref{fig:model_costvsphi}. The shape is not linear, but there is a trend that increasing $\mathbb{E}[\Phi]$ will reduce \ref{fig:model_costvsphi}.
+We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the result in figure \ref{fig:maxvscost_small}. We see that $\mathbb{E}[Cost]$ correlates with $\mathbb{E}[\Phi]$. The shape is not linear, but there is a trend that increasing $\mathbb{E}[\Phi]$ will reduce $\mathbb{E}[Cost]$.
 
 \begin{SCfigure}
 	\centering
@@ -926,7 +926,7 @@ Finally, within the context of a \textit{system}, it is unclear why IIT does not
 \section{Conclusions}
 In summary, the first focus of this project was to investigate whether or not $\Phi^\text{Max}$ related to information flow within an organisation. We constructed a model to measure the cost of wasted opportunities due to poor communication. The cost of this waste as we defined it does correlate with $\Phi^\text{Max}$. This correlation is rough, but it does exist, which justifies the theory that $\Phi^\text{Max}$ does relate to communication within a company. 
 
-We proved that the $\Phi^\text{Max}$ is too computationally expensive to use in practice, even on systems containing as few as 9 nodes. This computational expense is caused to iterating over the power set of the \textit{system} multiple times, in addition to searching all possible partitions repeatedly. However, as the steps in computing $\Phi^\text{Max}$ are repetitive, we expect that further mathematical scrutiny may result in reducing the size of the computation by locating and removing irrelevant steps. In section \ref{sec:speedup} we identified one such inefficiency, and suggested an alternative method which reduced the expense of a particular step from $O(n^3 2^{3n})$ to $O(n)$. 
+We proved that the $\Phi^\text{Max}$ is too computationally expensive to use in practice, even on systems containing as few as 9 nodes. This computational expense is caused to iterating over the power set of the \textit{system} multiple times, in addition to searching all possible partitions repeatedly. However, as the steps in computing $\Phi^\text{Max}$ are repetitive, we expect that further mathematical scrutiny may result in reducing the size of the computation by locating and removing irrelevant steps. In section \ref{sec:speedup} we identified one such inefficiency, and suggested an alternative method which reduced the expense of a particular step from $O(n^3 2^{3n})$ to $O(n)$. We show a illustration of the magnitude of this change in figure \ref{fig:speedup_demo}.
 
 If an  method could be found to approximate the minimum information partition (MIP), this would speed up the process considerably. Alternatively, it might be possible to determine what types of networks generate large $\Phi^\text{Max}$, and design a recipe to construct them directly. However until either of these are accomplished and speed up is achieved, IIT is far too expensive to be used on models containing a realistic number of workers. Hence, while $\Phi^\text{Max}$ correlates with effectiveness of the network, it doesn't provide any practical help in optimizing communication while in its current state.
 
