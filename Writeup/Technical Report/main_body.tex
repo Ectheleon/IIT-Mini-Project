@@ -52,8 +52,9 @@ The graph $Z$ is directed and has edges, so what do these mean in the context of
 	\label{def:distributions}
 	Let $A$ and $B$ be $i$-th and $j$-th order \textit{mechanisms}, $\mathbf{s} \in \mathbb{S}(A)$ and $\mathbf{r} \in \mathbb{S}(B)$. Then we define the
 	\begin{enumerate}
-		\item \textit{Forward Distribution}, $p(A_{t+1}|B_t = r)$ to be the probability distribution that each state of $A$ occurs. This distribution contains $2^i$ values.
+		\item \textit{Forward Distribution}, $p(A_{t+1}|B_t = \mathbf{r})$ to be the probability distribution that each state of $A$ occurs. This distribution contains $2^i$ values.
 		\item \textit{Backward Distribution}, $p(A_{t}=\mathbf{s}|\mathbf{B}_{t-1})$ to be the probability of each previous state of $B$ leading to $A_t = \mathbf{s}$. This distribution contains $2^j$ values.
+		\item When we specify both the event, and the condition, then $p(A_t = \mathbb{s}|B_t = \mathbf{r})$ refers to a number between 0 and 1, the probability of the event occurring given the condition.
 	\end{enumerate}
 \end{definition}
 
@@ -120,6 +121,7 @@ In this section, we construct each of the previously defined repertoires from $\
 %\end{definition} 
 
 \begin{definition}
+	\label{def:dist_prod}
 	Let $A, B \subset Z$ such that $A$ and $B$ are disjoint. Then we define the \textit{distribution product} of $A$ and $B$ by:
 	\[p(A_{t+1}|Z_t)p(B_{t+1}|Z_t):=p(A_{t+1} \cup B_{t+1}|Z_t).\]
 	In other words the product of the distributions is the distribution for the union of the sets $A$ and $B$.
@@ -140,16 +142,17 @@ In order to simplify all computations, IIT \cite{oizumi2014phenomenology} assume
 	where we have reduced the probability distribution for future states of $Z$ to the products of the distributions for each of its \textit{elementary mechanisms}. 
 \end{assumption}
 
-Theorem \ref{thm:cond_independence} motivates the following definition.
+Assumption \ref{asmp:cond_independence} motivates the following definition.
 
 \begin{definition}
-	\label{thm:bijection}
+	\label{def:generator}
 	Let $p(Z_{t+1}|Z_t = X)$ be a probability distribution. We define the row vector $\mathbf{q}(Z_{t+1}|Z_t = X)$ such that $q_i = p(z^i_{t+1}=1|Z_t=X), \quad \forall i \in 1, 2, \ldots, n$. We call $\mathbf{q}$ the \textit{distribution generator}.
 \end{definition}
 
 Now we present following key theorem which reduces the storage space required for future computations:
 
 \begin{theorem}
+	\label{thm:bijection}
 	Let $A$ be the set of distributions for the system $Z$, and $B$ be the set of \textit{distribution generators} for the same system. Then there exists a bijection between between $A$ and $B$.
 \end{theorem}
 
@@ -164,10 +167,10 @@ Now we present following key theorem which reduces the storage space required fo
 	
 	\begin{equation}
 	\label{eq:map_inv}
-	p_i := \prod \limits_{j=1}^{n} q_j^{S_{ij}} (1-q_j)^{1-S_{ij}}\quad \forall i \in \mathbb{S}(Z)
+	p_i = R(\mathbf{q}) := \prod \limits_{j=1}^{n} q_j^{S_{ij}} (1-q_j)^{1-S_{ij}}\quad \forall i \in \mathbb{S}(Z)
 	\end{equation}
 	
-	where  $S_{ij}$  indexes the state matrix and specifically says whether the $j$th node in the $i$ state is \textit{on} or \textit{off}. Hence we can compute $\mathbf{p}$ from $\mathbf{q}$, and go back. Thus this is a bijection.
+	where  $S_{ij}$  indexes the state matrix and specifically says whether the $j$th node in the $i$ state is \textit{on} or \textit{off}. We name the function which converts a generator into its disribution $R$. Hence we can compute $\mathbf{p}$ from $\mathbf{q}$, and go back. Thus this is a bijection.
 \end{proof}
 
 Theorem \ref{thm:bijection} enables us to condense $\mathbf{M}$ by converting each of its rows into the corresponding \textit{distribution generator}. We define the condensed matrix:
@@ -201,6 +204,17 @@ We demonstrate transforming the transition probability matrix into the \textit{c
 \begin{remark}
 	In IIT 3.0 \cite{oizumi2014phenomenology}, the \textit{condensed matrix} $\mathbf{T}$ is incorrectly referred to a transition probability matrix. This name is incorrect as $\mathbf{T}$ is not a stochastic matrix. Hence we rename it for the purpose of mathematical consistency.
 \end{remark}
+
+The notion of \textit{generators} enables us to generalise definition \ref{def:dist_prod}. 
+
+\begin{definition}
+	\label{def:dist_prod_gen}
+	Let $A, B \subset Z$ such that $A$ and $B$ are disjoint, and $W,V$ be mechanisms in $Z$. Define $\mathbf{Q}$ as the concatenation of $\mathbf{q}(A_{t+1}|W_t = \mathbf{s})$ and 	$\mathbf{q}(B_{t+1}|V_t = \mathbf{s})$. Then we define the general \textit{distribution product} to be:
+	
+	\[p(A_{t+1}|Z_t)p(B_{t+1}|Z_t):=R(\mathbf{Q}).\]
+	
+	This is consistent with definition \ref{def:dist_prod}, and now includes the case where $W \neq V$.
+\end{definition}
 
 \subsubsection{Effect repertoire}
 
@@ -250,14 +264,15 @@ In short, we add up the probabilities of each individual previous state that res
 
 
 \subsection{The Earth Mover's Distance }
-In the context of this document, we calculate the distance between two probability distributions $p1$ and $p1$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD) \cite{rubner1998metric}.
+In the context of this document, we calculate the distance between two probability distributions $p1$ and $p2$ using $D(p1,p2)$, where $D$ is referring to the Earth Mover's Distance (EMD) \cite{rubner1998metric}.
 
 To use this distance, we require the existence of another metric which measures the distance between any pair of states. For this we use the Hamming distance (see \cite{hill1986first} for more details) which is the number of individual bytes that disagree when comparing two states. (i.e. the hamming distance between 001 and 101 is 1, as the have 1 disagreement in the first digit)
 
 In simple terms, if we think of each distribution as piles of dirt on top of each given state. The earth mover's distance is the product of how much dirt needs to moved by how far this dirt needs to go. 
 
-\begin{description}
-	\item[EMD] Let $S$ be a set of $n$ states, $s_i, s_j \in S$, $\mathbf{D} = \left[ D_{ij}\right]$ where $D_{ij}$ is the distance between $s_i$ and $s_j$, $P$ and $Q$ be two probability distributions over $S$ such that $P(X = s_i) = p_i$ and $Q(X=s_j) = q_j$, $\forall s_i, s_j \in S$. 
+\begin{definition}
+	\label{def:emd}
+	 Let $S$ be a set of $n$ states, $s_i, s_j \in S$, $\mathbf{D} = \left[ D_{ij}\right]$ where $D_{ij}$ is the distance between $s_i$ and $s_j$, $P$ and $Q$ be two probability distributions over $S$ such that $P(X = s_i) = p_i$ and $Q(X=s_j) = q_j$, $\forall s_i, s_j \in S$. 
 	
 	Calculate the $n\times n$ matrix $\mathbf{F}$ which solves the following optimization problem:
 	
@@ -269,13 +284,13 @@ In simple terms, if we think of each distribution as piles of dirt on top of eac
 	\sum \limits_{i=1}^n &F_{ij} = q_j,\quad 1 \leq j \leq n
 	\end{align}
 	
-	Finally, we say that the distance between $p$ and $q$ is: 
+	Finally, we define distance between $p$ and $q$ as: 
 	
 	\begin{equation}
 	\label{def:EMD}
 	\text{EMD}(P, Q) = \sum \limits_{i,j=1}^{n} F_{ij} D_{ij}
 	\end{equation}
-\end{description}
+\end{definition}
 
 From now on, we'll use the notation $D(P,Q)$ to denote the earth mover's distance.
 
@@ -284,13 +299,16 @@ There are 3 functions which operate over mechanisms: cei, $\varphi^{\text{MIP}}$
 
 We have not yet defined the \textit{consideration set}, and will not do so rigorously until section \ref{sec:systems}, as they are not important until then. For now, we merely define a consideration set $Y$ as a subset of the \textit{system} $Z$ such that $W \subset Y$, where $W$ is the $m$-th order mechanism. Figure \ref{fig:IIT_illustration1} illustrates this.
 
-\begin{figure}[ht]
+\begin{SCfigure}
 	\centering
-	
-	\includegraphics[scale = 0.12]{IITexplanationdiagram1.png}
+	\includegraphics[scale = 0.1]{IITexplanationdiagram1.png}
 	\caption{In this illustration, we identify the mechanism $CD$ by circling it in red. The \textit{consideration set} is similarly circled in green. Finally, all remaining nodes of the system which lie outside of the \textit{consideration set} are external inputs/outputs.}
 	\label{fig:IIT_illustration1}
-\end{figure}
+\end{SCfigure}
+
+
+
+
 
 When we compute cei, $\varphi^{\text{MIP}}$ or $\varphi^{\text{Max}}$, we are computing the effect of knowing the state of the \textit{mechanism}, $W_t = \mathbf{s}$. However, we do not know the state of the nodes in $Y\setminus W$, and we thus assume they could be \textit{on} or \textit{off} with equal probability. Finally all nodes in $Z \setminus Y$ are considered as background conditions. These calculations require that the past and present states of such nodes are known. 
 
@@ -367,7 +385,7 @@ To compute the analogous MIP for effects and $\varphi^{\text{MIP}}_{effect}$, We
 It is useful to recognise the relation between $\varphi^{\text{MIP}}$ and $cei$. Specifically we have following result which was established by Marshall et all \cite{marshall2016integrated}:
 \begin{equation}
 \label{eq:bound_phi_cei}
-\varphi^{\text{MIP}}(W_t=\mathbf{s}, V) \leq cei(W_t=\mathbf{s},V) 
+\varphi^{\text{MIP}}(W_t=\mathbf{s}, V) \leq cei(W_t=\mathbf{s},V) .
 \end{equation}
 
 This implies that the biggest difference we can make to $\varphi^{\text{MIP}}$ by partitioning a mechanism occurs when the partitioned repertoire is precisely the unconstrained repertoire. 
@@ -395,7 +413,7 @@ As with $\varphi^{\text{MIP}}$ we bound $\varphi^{\text{Max}}$ \cite{marshall201
 If we find that $\varphi^{\text{Max}}(W_t =\mathbf{s})>0$, then we call the combination of $\varphi^{\text{Max}}(W_t = \mathbf{s})$ with its core cause and effect a \textit{concept}. This allows us to define a \textit{maximally integrated cause effect repertoire}.
 
 \begin{definition}
-	{The \textit{maximally integrated cause effect repertoire} of a piece of information, or MICE, refers to the combination of the cause repertoire $p_c(C_{t-1}|W_t = \mathbf{s})$, where $C$ is the core cause of $W_t=\mathbf{s}$ along with the effect repertoire $p_e(E_{t+1}|W_t = \mathbf{s})$, where $E$ is the core effect of $W_t = \mathbf{s}$.}
+	{The \textit{maximally integrated cause effect repertoire} of a piece of information, or MICE, is the combination of the cause repertoire $p_c(C_{t-1}|W_t = \mathbf{s})$, where $C$ is the core cause of $W_t=\mathbf{s}$ along with the effect repertoire $p_e(E_{t+1}|W_t = \mathbf{s})$, where $E$ is the core effect of $W_t = \mathbf{s}$.}
 \end{definition}
 
 \subsection{Calculations for Systems of Mechanisms}
@@ -406,80 +424,106 @@ Now we focus our attention on computing integrated information in a system of me
 
 \subsubsection{Conceptual Information}
 \label{sec:CI}
-The Conceptual Information (CI) extends the notion of cause-effect information to a system of nodes. Before we computed the distance between the repertoire specified by some information and the unconstrained repertoire. Now, instead of computing the distance between repertoires, we add up the distances between concepts.
+The \textit{Conceptual Information} (CI)\cite{oizumi2014phenomenology}  extends the notion of \textit{cause-effect information} to the entire \textit{system} of nodes. Before we computed the distance between the repertoire specified by some information and the unconstrained repertoire. Now, instead of computing the distance between repertoires, we add up the distances between concepts.
 
-The Conceptual Information is simply weighted sum of the distance between the MICE of each of its concepts, and the unconstrained MICE. We compute it below:
+The Conceptual Information is the sum of the distance between the MICE of each of its concepts, and the unconstrained MICE, weighted by the $. We compute it below:
+\varphi^{\textit{Max}}$ corresponding to each \textit{concept}.
 
 \begin{equation}
 \label{def:CI}
-CI(Z_t = X) = \sum \limits_{S \in \mathbb{P}(Z)} \varphi^{\text{Max}}(S_t=X) D(M^S, M^{uc})
+CI(Z_t = \mathbf{s}) = \sum \limits_{S \in \mathbb{P}(Z)} \varphi^{\text{Max}}(S_t=\mathbf{s}) D(M^S, M^{uc}).
 \end{equation}
 
-where $M^S$ refers to the MICE of the concept $S$, and $M^{uc}$ is the unconstrained MICE, which is just the unconstrained cause and effect repertoires. We measure the distance between $M^S$ and $M^{uc}$ by adding the distances between the two cause, and effect repertoires.
+where $M^S$ is the MICE of the concept $S$, and $M^{uc}$ is the unconstrained MICE, which is the unconstrained cause and effect repertoires. We measure the distance between $M^S$ and $M^{uc}$ by adding the distances between the two cause, and effect repertoires \cite{oizumi2014phenomenology}.
 
 \begin{remark}
-	Equation \ref{def:CI} uses Oizumi et all's \cite{oizumi2014phenomenology} definition of $CI$. However, it was pointed out by Krohn and Ostwald \cite{krohn2016computing} that this definition is not well defined. The MICE is defined as the set of cause and effect repertoires that maximize $\phi^{MIP}$. However, there may be two such MICE's: $M_1$ and $M_2$, which yield the same value for $\phi^{Max}$, and yet affect equation \ref{def:CI} differently. We show equation \ref{def:CI} as we used the software provided by Mayner et all \cite{pyphi} which follows the flawed definition. Krohn and Ostwald propose a simpler definition which fixes this issue, where they merely add up the values of $\varphi^{\text{Max}}$, and ignore the MICE.
+	Equation \ref{def:CI} uses Oizumi et al's \cite{oizumi2014phenomenology} definition of $CI$. However, it was pointed out by Krohn and Ostwald \cite{krohn2016computing} that this definition is not well defined. The MICE is defined as the set of cause and effect repertoires that maximize $\varphi^{MIP}$. However, there may be two such MICE's: $M_1$ and $M_2$, that produce the same value for $\phi^{Max}$, and yet affect Equation \ref{def:CI} differently. We show equation \ref{def:CI} as we used the software provided by Mayner et all \cite{pyphi} which follows the above definition. Krohn and Ostwald propose a simpler definition which fixes this issue, where they merely add up the values of $\varphi^{\text{Max}}$, and ignore the MICE.
 \end{remark}
 
 \subsubsection{Integrated Conceptual Information}
-Now we measure the integration of a piece of information on the level of a system of mechanisms. Here it is useful to define the term \textit{constellation}.
+We measure the integration of a piece of information on the level of a system of mechanisms. For this task it is useful to define the term \textit{constellation}.
 
 \begin{definition}
-	{A \textit{constellation} refers to the set of all concepts within a system, each concept equipped with its' MICE.}
+	A \textit{constellation} refers to the set of all concepts within a system, each concept equipped with its' MICE. That is, all of the mechanisms $W$ within the system such that $\varphi^{\text{Max}}>0$, each equipped with their \textit{effect repertoire} on the \textit{core effect}, and their \textit{cause repertoire} on their \textit{core cause}.
 \end{definition}
 
-As before, we consider all ways to partition the system $Z$. However, on this occasions, each partition is a one directional cut. Hence there exist twice as many possible partitions as in section \ref{sec:mech_integration}. We compute the constellation for the partitioned system, labelling it as $M^p$. For this partitioned system, some of the concepts from the while system will remain intact, but others will have been destroyed by the partition.
+As before, we consider all ways to apply a one directional cut to the system $Z$. This means that I divide all \textit{elementary mechanisms} into two sets, pick one of them, and remove all edge pointing to that set from the other. This contrasts the partition from section \ref{sec:mech_integration} where we removed all edges between the sets.
 
-Let the function $C(P)$ refer to the set of concepts, given the partition $P$. Then we define:
+We compute the constellation for the partitioned system. For this partitioned system, some of the concepts from the while system will remain intact, but others may be  destroyed by the partition.
+
+Let the function $C(P)$ give the set of concepts for the partition $P$. Then we define the \textit{Partitioned Conceptual Informaiton}
 
 \begin{equation}
 \label{def:Phi_integration1}
-\Phi^P(Z_t = X) = \sum \limits_{S \in (Z \setminus C(p))} \varphi^{\text{Max}}(S_t = X)D(M^S, M^{uc})
+\Phi^P(Z_t = \mathbf{s}) = \sum \limits_{K \in (\mathbb{P}(Z) \setminus C(p))} \varphi^{\text{Max}}(K_t = \mathbf{s})D(M^S, M^{uc}).
 \end{equation}
 
 The difference between $\Phi^P$ and $CI$ is that while in $CI$ we sum over all concepts, in $\Phi^P$ we only sum over the concepts which have been destroyed by the partition.
 
-As before we seek the minimum information partition (MIP). This time we define it as:
+As before we seek the minimum information partition (MIP) which is given by
 
 \begin{equation}
 \label{def:Phi_integration2}
-\Phi^{\text{MIP}} (Z_t = X) = \min \limits_{P} \Phi^P(Z_t = X)
+\Phi^{\text{MIP}} (Z_t = X) = \min \limits_{P} \Phi^P(Z_t = X).
 \end{equation}
 
 \begin{remark}
-	As in section \ref{sec:CI}, the value specified in equation \ref{def:Phi_integration2} is not defined, for the same reason as previously. Krohn and Ostwald present the same solution as before: they remove the $D(M^S, M^{uc})$ term from the equation, leaving only the $\varphi^{\text{Max}}$ terms.
+	As in section \ref{sec:CI}, the value specified in equation \ref{def:Phi_integration2} is not well defined, for the same reason as previously. Krohn and Ostwald solve this inconsistency  as before: they remove the $D(M^S, M^{uc})$ term from the equation, leaving only the corresponding $\varphi^{\text{Max}}$ terms.
 \end{remark}
 
 \subsubsection{Maximally Irreducible Conceptual Structure}
 
-Thus far in how $\Phi$ is defined, there exists an intuitive example which breaks the definition. Consider a network consisting of a dense cluster of nodes which has a large value of $\Phi$. Next, add a single node to this cluster, which we connect to the cluster with a single edge. If we compute $\Phi$ now, find a partition which makes almost no difference at all (when we eliminate the single node), which results in the new system having a small $\Phi$ value. 
+The definition of $\Phi^{\text{MIP}}$ in equation \ref{def:Phi_integration2} leaves an intuitive example which breaks the definition. We show this example in figure \ref{fig:phimax}. 
 
-Intuitively we understand that the conclusion: `adding a single extra neuron to the brain destroys all consciousness' is ridiculous. Hence we need the value $\Phi^{\text{Max}}$ to finish our definition of Integrated Information Theory. We define:
+\begin{SCfigure}
+	\centering
+	\includegraphics[scale = 0.13]{Phimaxillustration.jpg}
+	\caption{We show a dense cluster of nodes which if taken to be the \textit{system} generates a large $\Phi^{\text{MIP}}$ in the shaded background. Now we add an extra node to this system. Given how this new node is sparsely linked to the original system, the MIP will simply be cutting off this node, resulting in a small change. The result of this is that $\Phi^{\text{MIP}}$ for the new system would be very small.}
+	\label{fig:phimax}
+\end{SCfigure}
+
+Intuitively we understand that the conclusion: `adding a single extra neuron to the brain destroys all consciousness' is clearly not true. Hence we need the value $\Phi^{\text{Max}}$ to finish our definition of Integrated Information. We define:
 
 \begin{equation}
 \label{def:Phimax}
-\Phi^{\text{Max}}(Z_t = X) := \max \limits_{W \in \mathbb{P}(Z)}\Phi^{\text{MIP}} (W_t = X)
+\Phi^{\text{Max}}(Z_t = X) := \max \limits_{Y \in \mathbb{P}(Z)}\Phi^{\text{MIP}} (Y_t = X).
 \end{equation}
 
-\begin{remark}
-	When we compute $\Phi^{\text{MIP}} $ for all subsets $W$ of $Z$, we are not computing it over the \textit{mechanism} $W$ but rather over the \textit{system} $W$. This means that all nodes in $Z \setminus W$ are now treated as external inputs/outputs, instead of unknown nodes in system.
-\end{remark}
+In equation \ref{def:Phimax}, when we take $Y \in \mathbb{P}(Z)$, we are not referring to a \textit{mechanism} with the \textit{system} $\mathbf{Z}$, but rather to a \textit{candidate set}.
+
+\begin{definition}
+	A \textit{candidate set} \cite{oizumi2014phenomenology} is a subset of the \textit{system}. It has the property that all nodes outside of it cease to be random variables, and are instead view to be fixed.  
+\end{definition}
+
+\begin{definition}
+	We call the \textit{candidate set} which gives the largest value computing $\Phi^{\text{Max}}$ a \textit{complex} \cite{oizumi2014phenomenology}.
+\end{definition}
+
+When using IIT to compute the integrated information of a \textit{system}, what we actually do is identify the \textit{complex}, and then compute $\Phi^{\text{MIP}}$ for this specific \textit{candidate set}.
 
 \subsection{Computational Cost}
 We now ask how expensive is the computation of $\Phi^{Max}$. Let $Z$ refer to a system of nodes such that $|Z| = n$.
 
+\begin{theorem}
+	Let $Z$ refer to a system of $n$ nodes. Then computing $\Phi^{Max}$ scales with order $O(n^3 2^{8n})$.
+\end{theorem}
+
+\begin{proof}
+To prove this theorem, we go through the required calculations step by step.
+
 \begin{enumerate}
-	\item To compute $\Phi^{\text{Max}}$, we must calculate $\Phi$ for possible subsets of our system. There are at most $2^n$ such subsets, and hence we must compute $\Phi$ this many times.
-	\item For a particular subset of consideration, we must determine the Minimum information partition of one directional cuts. If the subset is of size $m$, then there at most $2^{m+1}$ ways to do this (if the connectivity matrix is sparse, then there are considerably less). $m$ itself is bounded by $n$, so we say that this step must occur at most $2^{n+1}$ times.
-	\item Each computation of $\Phi$ for a particular partition requires the calculation of all values of $\varphi^{\text{Max}}$. As each element of the power set may have a positive value of such, we must carry out this computation up to $2^n$ times.
-	\item Each computation of $\varphi^{\text{Max}}$ requires both the core cause and core effect to be identified. This involves calculation $\varphi^{\text{MIP}}_{cause}$ and $\varphi^{\text{MIP}}_{effect}$ each over the entire power set, resulting in a further $2^{n+1}$ computations.  
-	\item To compute $\phi_{cause}^{\text{MIP}}$, we must search over all possible partitions. There are $2^n$ of these.
-	\item Finally, when measuring the difference made by a partition, we must measure the distance between probability distributions. This is done using the Earth Mover's Distance, which scales $O(N^3 \log N)$, where $N$ is the number of states found in the distributions the distance is being measured between. As there are $2^n$ of these, this step scales with $O(2^{3n} (\log n)^3)$
+	
+	\item To compute $\Phi^{\text{Max}}$, we must calculate $\Phi^{\text{MIP}}$ for \textit{candidate sets} of our system. There are at most $2^n$ such subsets, and hence we must compute $\Phi^{\text{MIP}}$ this many times.
+	\item For a particular \textit{candidate set}, we must determine the MIP of one directional cuts. If the subset is of size $m$, then there at most $2^{m+1}$ ways to do this (if the connectivity matrix is sparse, then there are considerably less). We bound $m$  by $n$, so we say that this step must occur at most $2^{n+1}$ times.
+	\item Each computation of $\Phi^{\text{MIP}}$ for a particular partition requires us to calculate  $\varphi^{\text{Max}}$ for all \textit{mechanisms} in the \textit{candidate set}. Thus we must carry out this computation up to $2^n$ times.
+	\item Each computation of $\varphi^{\text{Max}}$ requires both the \textit{core cause} and \textit{core effect} to be identified. This involves calculation $\varphi^{\text{MIP}}_{cause}$ and $\varphi^{\text{MIP}}_{effect}$ each over the entire power set of the \textit{candidate set}, resulting in a further $2^{n+1}$ computations.  
+	\item To compute $\varphi_{cause}^{\text{MIP}}$, we must search over all possible partitions. There are $2^n$ of these.
+	\item Finally, when measuring the difference made by a partition, we must measure the distance between probability distributions. This is done using the Earth Mover's Distance, which scales $O(k^3 \log k)$, where $k$ is the number of states found in the distributions the distance is being measured between. In this case $k = 2^n$ so this step scales with $O(2^{3n} n^3)$
 \end{enumerate}
 
-When we put this all together, we conclude that the calculation of $\Phi^{Max}$ scales with $O(n^3 2^{8n})$.
+We multiply all these steps together to conclude that  $\Phi^{Max}$ scales with $O(n^3 2^{8n})$.
 
-
+\end{proof}
 \section{Modelling an Organisation}
 
 In this section, we seek to model communication flow within an organisation. To do this, the first step is to specify the type of organisation that we're referring to. 
@@ -511,7 +555,7 @@ With this structure defined, we now need to consider how to build dynamics into 
 
 \subsection{The Small 3-node Model}
 \label{sec:3nodemodel}
-In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. We decide arbitrarily that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
+In this model, we consider there to be 3 teams, and 2 skill types. We label the teams as $A$, $B$ and $C$, and the skill types as $\alpha$ and $\beta$. Assume that teams $A$ and $C$ have skill $\alpha$, while teams $B$ and $C$ have skill $\beta$. This arrangement is illustrated in figure \ref{fig:diagram1}.
 
 \begin{figure}[ht]
 	\centering
@@ -528,7 +572,7 @@ With the teams, skills and assignment of these defined, we specify the details o
 	\item \textbf{Arrival of projects}\\
 	Earlier we stated that this process was based on a multivariate Bernoulli distribution. Specifically we use the 2-dimensional version, as we are working with 2 types of skills. We specify the vector of probabilities: $\mathbf{p} = (p_\alpha, p_\beta)$ such that an incoming project requires skill $\alpha$ with probability $p_\alpha$ and similarly for skill $\beta$.
 	
-	We create 2 `incoming project alert' nodes which we label as $P_\alpha$ and $P_\beta$. The state of these nodes is determined only by the previously mentioned probability distribution. Hence these nodes transition states independently of any other node. 
+	We create two `incoming project alert' nodes which we label as $P_\alpha$ and $P_\beta$. The state of these nodes is determined only by the previously mentioned probability distribution. Hence these nodes transition states independently of any other node. 
 	
 	\item \textbf{Assignment of projects}\\
 	First are the 3 simple cases. If a project which requires skill $\alpha$ but not $\beta$ arrives, and team $A$ is idle, then the project is assigned to $A$, resulting in team $A$ turning on. Similarly teams $B$ and $C$ will turn on if a project arrives tailored to their abilities while they are not already active.	
@@ -536,7 +580,7 @@ With the teams, skills and assignment of these defined, we specify the details o
 	2 more cases exist: If a project suitable for team $A$ arrives while $A$ is busy and $C$ is idle, then $C$ will be assigned $A$'s task. The same will apply if $B$ is busy when such a project arrives. Finally, if a project requiring both skills arrives while $C$ is busy while $A$ and $B$ are both idle, then $A$ and $B$ will be assigned the project, resulting in both of them transitioning to a state of `on'.
 	
 	\item \textbf{Completion of projects}\\
-	We already stated the time required to complete a project to be modelled by th exponential distribution. This was so we could use a simple Bernoulli process to determine when a project is completed. This means that the probability of completing a project is constant w.r.t. time. However, to make this process more realistic, we decide that the probability of completing a project will not be independent of active working connections.
+	We already stated the time required to complete a project to be modelled by th exponential distribution. This was so we could use a simple Bernoulli process to determine when a project is completed. This means that the probability of completing a project is constant with respect to time. However, to make this process more realistic, we decide that the probability of completing a project will not be independent of active working connections.
 	
 	We define the parameters $k_A$, $k_B$ and $k_C$ to represent the effectiveness of each team. If $A$ is active, then it will complete its task with probability $k_A$ after each time-step, and so on. 
 	
@@ -594,20 +638,20 @@ where $Z$ refers to the entire network with $z^j$ standing for $A$, $B$, and $C$
 		111 11                      & 1-k_A - k_C          & 1-k_B-k_C            & 1-k_A-k_B-k_C       & p_\alpha                      & p_\beta                      \\ \cline{1-1}
 	\end{array}
 	$
-	\caption{Above is the Transition Probability Matrix for the small 3-node model. We represent each state of the system as a length 5 binary string, where the 1's and 0's refer to `on' and `off' respectively. We list nodes in the order: $A, B, C, P_\alpha, P_\beta$. Hence, 10010 means that nodes $A$ and $P_\alpha$ are active, while the rest are idle.}
+	\caption{Above is the Transition Probability Matrix for the small 3-node model. We represent each state of the system as a length 5 binary string, where the 1s and 0s refer to `on' and `off' respectively. We list nodes in the order: $A, B, C, P_\alpha, P_\beta$. Hence, 10010 means that nodes $A$ and $P_\alpha$ are active, while the rest are idle.}
 	\label{mat:simple_system}
 \end{table}
 
 
 
-Finally, for this model to be interesting, we need to have some control over the parameters. For this, we think of $k_A$, $k_B$ and $k_C$ of being directly related to the funding invested in each team. Hence we assume $k_A+k_B+k_C = K$, where $K$ is a constant which refers to the total amount of funding at the organisations disposal. $k_i$'s refer to how we allocate that funding.
+Finally, for this model to be interesting, we need to have some control over the parameters. For this, we think of $k_A$, $k_B$ and $k_C$ of being directly related to the funding invested in each team. Hence we assume $k_A+k_B+k_C = K$, where $K$ is a constant which refers to the total amount of funding at the organisations disposal. $k_A$, $k_B$ and $k_C$ refer to how we allocate that funding.
 
 When solving for this model, we will employ two methods: IIT and a classical approach. For IIT, we will compute the value of $\Phi$, while for the classical approach, we instead will introduce the notion of costs, and from this compute the economic performance with respect to the parameters $k_A$, $k_B$ and $k_C$. 
 
 \subsubsection{Classical Solution}
 Currently in our model a project will definitely be completed, the question is how long it will take. Thus we don't have to worry about the cost of failed projects. Instead, we concern ourselves with the value of missed projects: those which arrive when there is no suitable team or combination of team available to be assigned to it. Define $W_A$, $W_B$ and $W_C$ to be the waste incurred when a project requiring skills $\alpha$, $\beta$ and both  is missed respectively.
 
-When does this waste happen? Look back at table \ref{mat:model1}. Based on how we've define the allocation process, the only states at which waste can occur are: $10110$, $11110$, $01101$, $11101$, $10111$, $01111$ and $11111$. If the last two digits of the state is $10$, then a project requiring skill $\alpha$ is lost, resulting in waste of $W_A$. $01$ means that a project needing skill $\beta$ is lost, resulting in waste of $W_C$. The rest refer to a project needing both skills, for which the waste is $W_C$. In short, waste results from exactly 7 different states, and can be either $W_A$, $W_B$ or $W_C$.
+When does this waste happen? Look back at table \ref{mat:model1}. In the defined allocation process, the only states at which waste can occur are: $10110$, $11110$, $01101$, $11101$, $10111$, $01111$ and $11111$. If the last two digits of the state is $10$, then a project requiring skill $\alpha$ is lost, resulting in waste of $W_A$. If the digits are $01$, a project needing skill $\beta$ is lost, resulting in waste of $W_C$. The rest refer to a project needing both skills, for which the waste is $W_C$. In short, waste results from exactly 7 different states, and can be either $W_A$, $W_B$ or $W_C$.
 
 So we know how much money we expect to waste for each state. Now the question is: how often do we expect to be at each state? We can take two approaches: either we can simulate the system and compute waste from the time series, or else we can compute the expected waste per iteration by finding the stationary distribution of the system. We take the latter approach.
 
@@ -620,6 +664,10 @@ f(k_A, k_B, k_C) = \mathbf{q}(W_A, W_B, W_C) \cdot \mathbf{v}(k_A, k_B, k_C, p_\
 \end{equation}
 
 where $\mathbf{v}$ is the stationary distribution of the system, which depends on $k_A$, $k_B$, $k_C$, $p_\alpha$ and $p_\beta$ while $\mathbf{q}$ is a vector which contains the cost of each state hence depending on $W_A$, $W_B$ and $W_C$. In short, given the 5 constants: $p_\alpha$, $p_\beta$, $W_A$, $W_B$ and $W_C$, we can express cost as a function of $k_A$, $k_B$ and $k_C$. 
+
+\begin{remark}
+	In equation \ref{eq:simple_model_cost_function} we assume that $\mathbf{v}$, the stationary distribution of the TPM exists. In practice for the model derived this is a valid assumption. For every computation, we first checked that -1 is not an eigenvalue of $\mathbf{M}$, and that the eigenvalue 1 has geometric multiplicity of 1. This was always the case.
+\end{remark}
 
 \subsubsection{IIT Comparison}
 
@@ -668,23 +716,23 @@ We extend the previous model as follows:
 	
 	\item As implied in the section title, we increase the size of the organization from 3 to 5 nodes. The first 3 nodes: $A$, $B$ and $C$ possess the same skills as in section \ref{sec:3nodemodel}. The two additional nodes $D$ and $E$ possess the skills $\alpha, \gamma$ and $\beta, \gamma$ respectively. We illustrate this in figure \ref{fig:diagram2}.
 	
-	\item We change our definition of waste to focus on errors due to miscommunication, as opposed to merely projects which can't be attempted.
+	\item We change our definition of waste to focus on errors due to miscommunication, as opposed to merely projects which cannot be attempted.
 	
 	\item We adjust the project allocation procedure to be dependent on the connectivity matrix.
 \end{enumerate}
 
-\begin{figure}[ht]
+\begin{SCfigure}
 	\centering	
 	\includegraphics[]{Model2Diagram.png}
-	\caption{We have 3 types of nodes: skill types ($\alpha$, $\beta$, and $\gamma$), teams ($A$, $B$, $C$, $D$ and $E$), and incoming project alerts ($P_\alpha$, $P_\beta$ and $P_\gamma$). If a team node is joined to a skill node by an edge, then the team possesses that skill. The teams receive inputs from the incoming project alert nodes, but the dependence is strictly one directional.
+	\caption{We have 3 types of nodes: skill types ($\alpha$, $\beta$, and $\gamma$), teams ($A$, $B$, $C$, $D$, and $E$), and incoming project alerts ($P_\alpha$, $P_\beta$ and $P_\gamma$). If a team node is joined to a skill node by an edge, then the team possesses that skill. The teams receive inputs from the incoming project alert nodes, but the dependence is strictly one directional.
 		Certain teams are connected, indicating that they are actively communicating with each other so to distribute work efficiently. Note that in this figure, we have 2 disconnected clusters of teams. This will give rise to waste.}
 	\label{fig:diagram2}
-\end{figure}
+\end{SCfigure}
 
 The increased size of this model allows us more realistic scenarios in which waste occurs due to miscommunication. The main question is: will $\Phi$ have a more obvious relation to this form of waste. Now we must define in detail: how allocate incoming projects, and how to define waste.
 
 
-In the previous model, we allocated projects from a global perspective. We knew for any given project was the the best arrangement would be, and then chose this to happen. Since all the teams involved were in communication, this made sense. However, what happens if teams are not all communicating?. For this model, we establish the following localised decision making policy to determine whether or not a team decides to take on a project. In decreasing order of importance, each team should aim to:
+In the previous model, we allocated projects from a global perspective. We knew for any given project was the the best arrangement would be, and then chose this to happen. Since all the teams involved were in communication, this made sense. However, what happens if teams are not all communicating? For this model, we establish the following localised decision making policy to determine whether or not a team decides to take on a project. In decreasing order of importance, each team should aim to:
 
 
 \begin{enumerate}
@@ -697,14 +745,14 @@ When applying this policy, each individual team acts as if any team which it is 
 
 Similarly, if a pair of strongly connected teams see a project which they are overqualified for, and can both see another pair of teams which can complete the project with less excess skills, then the first team will ignore the project. However, while the first pair of teams observed that the second pair were both idle, it couldn't observe whether the 2nd two were strongly connected. If the second team are not strongly connected, then the project will be missed entirely, due to lack of communication. We illustrate this phenomenon in figure \ref{fig:waste1demo1}.
 
-\begin{figure}[ht]
+\begin{SCfigure}
 	\centering	
-	\includegraphics[scale=0.13]{Waste1demo1.png}
+	\includegraphics[scale=0.09]{Waste1demo1.png}
 	\caption{In this example we have an incoming project which requires both skills $\alpha$ and $\beta$. Teams $D$ and $E$ would possess these skills if they collaborate which they can do as they are connected, even though they have 2 $\gamma$ skills in excess. However, both $D$ and $E$ can see that the collaboration of $A$ and $B$ can complete the project more efficiently. Thus $D$ and $E$ do not take on the project as they do not know that $A$ and $B$ are not collaborating, and thus won't take the project either. Due to this lack of communication, even though there were plenty of ways that the project might have been done, the project is wasted.}
 	\label{fig:waste1demo1}
-\end{figure}
+\end{SCfigure}
 
-Ultimately, this procedure precisely determines a $2^8 \times 8$ transition probability matrix, which for obvious reasons is not presented here. Next we turn our attention exclusively to the classical solution, which is where we will redefine the notion of waste.
+ Next we turn our attention exclusively to the classical solution, where we redefine the notion of waste.
 
 \subsubsection{Classical Solution}
 
@@ -739,7 +787,6 @@ By applying this definition of waste to all states of the system, we construct t
 \label{eq:cost_function}
 Cost(k_A, k_B, k_C) = \mathbf{q}(W_A, W_B, W_C) \cdot \mathbf{v}(k_A, k_B, k_C,k_E, k_F, p_\alpha, p_\beta, p_\gamma)
 \end{equation}
-
 where $\mathbf{v}$ is the same vector function defined in section \ref{sec:3nodemodel} appropriately adjusted for the additional nodes and skill type.
 
 \subsubsection{IIT Comparison}
@@ -779,52 +826,63 @@ I will also show what the best network in these setup is
 In section \ref{sec:iit}, we presented the definitions of Integrated Information Theory as defined by Oizumi et al \cite{oizumi2014phenomenology}, while using a modification of the notation presented by \cite{krohn2016computing}. In this section, we will critique the mathematical implementation of IIT, and consider whether it is indeed applicable to the problem of consideration: communication within an organisation.
 
 \subsection{Distance Between Repertoires}
-In this section, we examine the process of computing distances between effect repertoires. In particular, let $Z$ be a system of mechanisms, and $W$ a particular mechanism. Consider the computation of: $\varphi^{M,N}_{cause}(W_t = X, Z)$. This value is equal to the distance between two repertoires: $p_e(Z_{t+1}|W_t = X)$ and $p_e(N_{t+1}|N_t = X)p_e(Z\setminus N_{t+1}|W \setminus M _t = X)$.
+In this section, we examine the process of computing distances between \textit{effect repertoires}. Let $Y$ be a \textit{consideration set}, and $W$ a $m$-th order mechanism. Consider the computation of: $\varphi^{M,N}_{cause}(W_t = \mathbf{s}, Y)$. This value is equal to the distance between two repertoires: $p_e(Y_{t+1}|W_t = \mathbf{s})$ and $p_e^{M,N}(Y_{t+1}|W_t = \mathbf{s})$. We call these distributions $\mathbf{p}^1$ and $\mathbf{p}^2$ for convenience.
 
-We can break down the first of these repertoires using conditional independence:
+In practice, we always compute the \textit{generators} before constructing the distributions. Call the \textit{generators} of these two functions $\mathbf{q}^1$ and $\mathbf{q}^2$. Then:
 
 \begin{equation}
-\label{eq:dist_argument_1}
-p_e(Z_{t+1}|W_t = X)=\prod \limits_{i=1}^{n} p(z^i_{t+1}|W_t=X)
+\label{eq:demonstrating_idea1}
+\text{EMD}(\mathbf{p}^1, \mathbf{p}^2) =\text{EMD}(R(\mathbf{q}^1), R(\mathbf{q}^2))
 \end{equation}
 
-Denote by $\mathbf{x}(Z_{t+1}|W_t = X)$ the vector function such that:
-$x_i(Z_{t+1}|W_t = X) = p(z^i_{t+1}|W_t=X)$ for $i = 1, 2, \ldots, n$.
+Computing this first involves applying $R$, which scales with $2^n$, and then using the $EMD$ which scales with $n^3 2^{3n}$. In order to skip this step, we propose the following theorem:
 
-Next we break down the second repertoire in a similar fashion:
-
-\begin{align}
-\label{eq:dist_argument_2}
-p_e(N_{t+1}|M_t = X)&=\prod \limits_{i\in N} p(z^i_{t+1}|M_t=X)\\
-p_e(Z\setminus N_{t+1}|W \setminus M_t = X)&=\prod \limits_{i\in Z \setminus N} p(z^i_{t+1}|Z \setminus M_t=X)
-\end{align}
-
-Denote by $\mathbf{y}(Z_{t+1}|W_t = X, M,N)$ the vector function such that $y_i(Z_{t+1}|W_t = X, M,N) = p(z^i_{t+1}|M_t=X)$ if $i \in N$ and otherwise is $p(z^i_{t+1}|Z \setminus M_t=X)$. For convenience we now refer to these vectors merely as $\mathbf{x}$ and $\mathbf{y}$.
-
-When computing a repertoire in practice, one first compute the generating vector, of which $\mathbf{x}$ and $\mathbf{y}$ are examples. If the system has $n$ nodes, then these vectors are of length $n$. Next we consider all possible states of the system. We compute the probabilities of each of these states occurring by multiplying values of $x_i$ and $1-x_i$ together. For example, if we wanted to compute the probability that the future state of a 3 node mechanism would be $101$, we would obtain this by computing $x_1 (1-x_2)x_3$.
-
-This procedure is in essence a function: $R: [0,1]^n \rightarrow [0,1]^{2^n}$ which converts the generating vectors into the actual effect repertoires. The last step in computing  $\varphi^{M,N}_{cause}(W_t = X, Z)$ is to use the earth mover's distance to find $\text{EMD}(R(\mathbf{x}), R(\mathbf{y}))$.
-
-Is this entire process really necessary? First we compute $\mathbf{x}$ and $\mathbf{y}$, next convert to $R(\mathbf{x})$ and $R(\mathbf{y})$, and finally compute the distances between these. The step where $R$ is applied scales with $O(2^n)$, and the EMD scales with the size of the vectors its comparing, which is in this case $O(n^3 2^{3n})$. What if instead we used a different distance measurement, and used it on $\mathbf{x}$ and $\mathbf{y}$ directly instead of bothering to apply $R$?
-
-\begin{prop}
-	\label{prop:alternative}
-	Let $p_1$ and $p_2$ be multivariate Bernoulli distributions equipped with vectors $\mathbf{x}$ and $\mathbf{y}$ such that $p_1(z^i=1) = x_i$ and $p_2(z^i = 1) = y_i$ for $y = 1, 2, \ldots, n$. We further assume that $p_k(z^i, z^j = 1,1) = p_k(z^i = 1) p_k(z^j=1)$ for all $i,j,k$. Then:
+\begin{theorem}
+	\label{thm:speedup}
+	Let $\mathbf{p}^1$, $\mathbf{p}^2$, $\mathbf{q}^1$, and $\mathbf{q}^1$ be defined as above. Then:
+	
 	\begin{equation}
-	\text{EMD}(p_1, p_2) = ||\mathbf{x} - \mathbf{y}||_1
+	\label{eq:theorem_statement}
+	\text{EMD}(\mathbf{p}^1, \mathbf{p}^2)= ||\mathbf{q}^1 - \mathbf{q}^2||_1
 	\end{equation}
-	where the earth mover's distance operates by using the Hamming distance to measure distance between states.
+\end{theorem}
+
+\begin{proof}
+	From theorem \ref{thm:bijection} we know $\mathbf{p}^i = \mathbf{q}^i \mathbf{S} \quad i = 1,2$, where $S$ is the \textit{state matrix}. 
 	
+	Let the matrix $\mathbf{F}$, and $\mathbf{D}$ be the matrices from definition \ref{def:emd}. Then
+	\begin{equation}
+	\label{proof1}
+	\text{EMD}(\mathbf{p}^1, \mathbf{p}^2) = \sum \limits_{i,j = 1}^n F_{ij} D_{ij}.
+	\end{equation}
 	
-\end{prop}
+	Furthermore, we know from definition \ref{def:emd} that $\sum \limits_{j=1}^n F_{ij} = \mathbf{p}^1_i$ and $\sum \limits_{i=1}^n F_{ij} = \mathbf{p}^2_j$.
+	
+	We insert these values into equation \ref{eq:theorem_statement} to get:
+	
+	\begin{equation}
+	\label{proof2}
+	\sum \limits_{i,j = 1}^n F_{ij} D_{ij} = || (\mathbf{p}^1 - \mathbf{p}^2)\mathbf{S}||_1
+	\end{equation}
+	
+	By substituting $\mathbf{p}^1_i$ and $\mathbf{p}^2_i$ for $\sum \limits_{j=1}^n F_{ij}$ and $\sum \limits_{j=1}^n F_{ji}$ respectively on the RHS and rewriting in sigma notation, we simplify this to
+	\begin{equation}
+	\label{proof3}
+	\sum \limits_{i,j = 1}^n F_{ij} D_{ij} = \sum \limits_{i,j = 1}^n F_{ij}|| S_{ki} - S_{kj}||_1
+	\end{equation}
+	
+	However, $|| S_{ik} - S_{jk}||_1$ gives precisely the Hamming Distance between the states $S_i$ and $S_j$. Therefore $|| S_{ik} - S_{jk}||_1 = D_{ij}$. Hence we have equality.
+\end{proof}
 
 \begin{remark}
-	For more information on multivariate Bernoulli distributions, see Teugels \cite{teugels1990some}.
+	Theorem \ref{thm:speedup} states that the process of computing the distance between repertoires by calculating $\text{EMD}(R(\mathbf{q}^1), R(\mathbf{q}^2))$ which scales with $O(n^3 2^n)$ gives precisely the same value as $||\mathbf{q}^1-\mathbf{q}^2||_1$ which scales with $O(n)$. This considerably reduces the required computation time.	
 \end{remark}
+	
 
-We have verified proposition \ref{prop:alternative} for multivariate distribution with up to 8 variables numerically, and have confirmed the statement to be true with 2 and 3 variable distributions analytically. However, a full proof has not yet been found. 
 
-Regardless of this, by measuring the $||\cdot||_1$ distance between $\mathbf{x} $ and $\mathbf{y}$, we use a process the cost of which scales with $O(n)$. In short, instead of computing distributions from generating vectors, and then finding the distance between these distributions, we simply find the distance between the generating vectors.
+\begin{remark}
+	For  information on multivariate Bernoulli distributions, see Teugels \cite{teugels1990some}.
+\end{remark}
 
 
 \subsection{Computation of Effect Repertoires.}

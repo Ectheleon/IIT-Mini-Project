@@ -22,6 +22,12 @@
 \usepackage{enumitem}
 \usepackage{amsthm}
 \usepackage{ltablex} % For long tables spanning multiple pages. % Must be before ARYDSHLN package!
+\usepackage{sidecap}
+
+\sidecaptionvpos{figure}{c}
+
+
+
 
 \usepackage[margin=10pt,font=small,labelfont=bf,labelsep=endash,figurewithin=section,tablewithin=section]{caption}
 % Caption figures and tables nicely. %% After cleveref.
@@ -42,7 +48,7 @@
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 \newtheorem*{remark}{Remark}
-\newtheorem{prop}{Proposition}
+\newtheorem{conjecture}{Conjecture}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{assumption}{Assumption}
