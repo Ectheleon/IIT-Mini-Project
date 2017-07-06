@@ -16,6 +16,9 @@ While IIT has developed from version 1.0 to 3.0 by its inventor Giulio Tononi, a
 
 Our focus is to investigate whether the computation of $\Phi$ for a network model of an organisation might give any insight into the efficiency of communication within the organisation. As $\Phi$ is expensive to compute (as will be discussed in greater detail in section \ref{sec:cost}), we restrict our attention to a small scale toy model which we derive for the purpose of capturing the effects of poor communication within an organisation. Despite the greater cost of using IIT 3.0 than 2.0, we choose to use the most up-to-date version, as we wish to avoid the flaws which have previously been identified in older editions.
 
+
+\section{Glossary of Terms}
+
 \section{Integrated Information Theory}
 \label{sec:iit}
 
@@ -795,12 +798,12 @@ When comparing $\mathbb{E}[Cost]$ to $\mathbb{E}[\Phi]$, we first need to decide
 
 However, we still need to be more specific as there are exactly $2^{64}$ $8\times 8$ connectivity matrices. Thus we restrict our attention to connectivity matrices which have exactly 10 directed edges. There are still a vast number of such matrices, roughly 180,000. Therefore, due to computational time restrictions, we randomly select 200 of these matrices and plot the results in figure \ref{fig:model_costvsphi}.
 
-\begin{figure}[h!]
+\begin{SCfigure}
 	\centering
-	\includegraphics[scale = 0.5]{maxvscost_random.pdf}
+	\includegraphics[scale = 0.4]{maxvscost_random.pdf}
 	\caption{We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for 200 randomly selected connectivity matrices with precisely 10 directed edges.}
 	\label{fig:model_costvsphi}
-\end{figure}
+\end{SCfigure}
 
 Having plotted $\mathbb{E}[Cost]$ as a function of $\mathbb{E}[\Phi]$, we see a linear correlation. Even more importantly though, we observe that maximising $\mathbb{E}[\Phi]$ also results in minimizing $\mathbb{E}[Cost]$. This looks ideal, but we must remind ourselves that a sample of size 200 out of 180,000 is by no means conclusive. Unfortunately, the time required to compute each data point prevents us from repeating this experiment. 
 
@@ -811,22 +814,29 @@ Intuitively, this problem can be though of as forcing two distinct department to
 
 We plot $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for this case, showing the result in figure \ref{fig:maxvscost_small}.
 
-\begin{figure}
+\begin{SCfigure}
 	\centering
-	\includegraphics[scale=0.5]{maxvscost_small.pdf}
+	\includegraphics[scale=0.4]{maxvscost_small.pdf}
 	\caption{We plot  $\mathbb{E}[Cost]$ against $\mathbb{E}[\Phi]$ for connectivity matrices where we add 4 directed edges to the network shown in figure \ref{fig:diagram2}}
 	\label{fig:maxvscost_small}
-\end{figure}
+\end{SCfigure}
 
-Now I discuss the content of the figure which I have not yet generated as I don't have all of the data yet.
 
-I will also show what the best network in these setup is
+We see in figure \ref{fig:maxvscost_small} that $\mathbb{E}[Cost]$ correlates with $\mathbb{E}[\Phi]$ similarly to figure \ref{fig:model_costvsphi}. The shape is not linear, but there is a trend that increasing $\mathbb{E}[\Phi]$ will reduce \ref{fig:model_costvsphi}.
+
+\begin{SCfigure}
+	\centering
+	\includegraphics[scale = 0.13]{Best_option.png}
+	\caption{We show the network which generated both the smallest $\mathbb{E}[Cost]$, and the largest $\mathbb{E}[\Phi]$. The two way link between $B$ and $D$ allows the network to have one combination of teams which can complete the project requiring all skills. The other one way links from $D$ affect results by minimizing duplication of work.}
+	\label{fig:opt_network}
+\end{SCfigure}
 
 \section{IIT revisited}
 In section \ref{sec:iit}, we presented the definitions of Integrated Information Theory as defined by Oizumi et al \cite{oizumi2014phenomenology}, while using a modification of the notation presented by \cite{krohn2016computing}. In this section, we will critique the mathematical implementation of IIT, and consider whether it is indeed applicable to the problem of consideration: communication within an organisation.
 
 \subsection{Distance Between Repertoires}
-In this section, we examine the process of computing distances between \textit{effect repertoires}. Let $Y$ be a \textit{consideration set}, and $W$ a $m$-th order mechanism. Consider the computation of: $\varphi^{M,N}_{cause}(W_t = \mathbf{s}, Y)$. This value is equal to the distance between two repertoires: $p_e(Y_{t+1}|W_t = \mathbf{s})$ and $p_e^{M,N}(Y_{t+1}|W_t = \mathbf{s})$. We call these distributions $\mathbf{p}^1$ and $\mathbf{p}^2$ for convenience.
+\label{sec:speedup}
+We examine the process of computing distances between \textit{effect repertoires}. Let $Y$ be a \textit{consideration set}, and $W$ a $m$-th order mechanism. Consider the computation of: $\varphi^{M,N}_{cause}(W_t = \mathbf{s}, Y)$. This value is equal to the distance between two repertoires: $p_e(Y_{t+1}|W_t = \mathbf{s})$ and $p_e^{M,N}(Y_{t+1}|W_t = \mathbf{s})$. We call these distributions $\mathbf{p}^1$ and $\mathbf{p}^2$ for convenience.
 
 In practice, we always compute the \textit{generators} before constructing the distributions. Call the \textit{generators} of these two functions $\mathbf{q}^1$ and $\mathbf{q}^2$. Then:
 
@@ -835,7 +845,7 @@ In practice, we always compute the \textit{generators} before constructing the d
 \text{EMD}(\mathbf{p}^1, \mathbf{p}^2) =\text{EMD}(R(\mathbf{q}^1), R(\mathbf{q}^2))
 \end{equation}
 
-Computing this first involves applying $R$, which scales with $2^n$, and then using the $EMD$ which scales with $n^3 2^{3n}$. In order to skip this step, we propose the following theorem:
+Computing eqation \ref{eq:demonstrating_idea1} first involves applying $R$, which scales with $2^n$, and then using the $EMD$ which scales with $n^3 2^{3n}$. In order to skip this step, we propose the following theorem:
 
 \begin{theorem}
 	\label{thm:speedup}
@@ -857,64 +867,54 @@ Computing this first involves applying $R$, which scales with $2^n$, and then us
 	\end{equation}
 	
 	Furthermore, we know from definition \ref{def:emd} that $\sum \limits_{j=1}^n F_{ij} = \mathbf{p}^1_i$ and $\sum \limits_{i=1}^n F_{ij} = \mathbf{p}^2_j$.
-	
 	We insert these values into equation \ref{eq:theorem_statement} to get:
 	
 	\begin{equation}
 	\label{proof2}
-	\sum \limits_{i,j = 1}^n F_{ij} D_{ij} = || (\mathbf{p}^1 - \mathbf{p}^2)\mathbf{S}||_1
+	\sum \limits_{i,j = 1}^n F_{ij} D_{ij} = || (\mathbf{p}^1 - \mathbf{p}^2)\mathbf{S}||_1.
 	\end{equation}
 	
 	By substituting $\mathbf{p}^1_i$ and $\mathbf{p}^2_i$ for $\sum \limits_{j=1}^n F_{ij}$ and $\sum \limits_{j=1}^n F_{ji}$ respectively on the RHS and rewriting in sigma notation, we simplify this to
 	\begin{equation}
 	\label{proof3}
-	\sum \limits_{i,j = 1}^n F_{ij} D_{ij} = \sum \limits_{i,j = 1}^n F_{ij}|| S_{ki} - S_{kj}||_1
+	\sum \limits_{i,j = 1}^n F_{ij} D_{ij} = \sum \limits_{i,j = 1}^n F_{ij}|| S_{ki} - S_{kj}||_1.
 	\end{equation}
 	
 	However, $|| S_{ik} - S_{jk}||_1$ gives precisely the Hamming Distance between the states $S_i$ and $S_j$. Therefore $|| S_{ik} - S_{jk}||_1 = D_{ij}$. Hence we have equality.
 \end{proof}
 
 \begin{remark}
-	Theorem \ref{thm:speedup} states that the process of computing the distance between repertoires by calculating $\text{EMD}(R(\mathbf{q}^1), R(\mathbf{q}^2))$ which scales with $O(n^3 2^n)$ gives precisely the same value as $||\mathbf{q}^1-\mathbf{q}^2||_1$ which scales with $O(n)$. This considerably reduces the required computation time.	
+	Theorem \ref{thm:speedup} states that the process of computing the distance between repertoires by calculating $\text{EMD}(R(\mathbf{q}^1), R(\mathbf{q}^2))$ which scales with $O(n^3 2^n)$ gives precisely the same value as $||\mathbf{q}^1-\mathbf{q}^2||_1$ which scales with $O(n)$. We illustrate the reduction in computation time in figure
 \end{remark}
 	
+\begin{SCfigure}
+	\centering
+	\includegraphics[scale = 0.37]{speedup_demo.pdf}
+	\caption{We compare the cost of measuring distance using the Earth Movers Distance between distributions against using the 1-norm on \textit{distributio generators} by plotting how they scale on a loglog plot.}
+	\label{fig:speedup_demo}
+\end{SCfigure}	
+	
+\subsection{Mathematical Assumptions of IIT}
+
+In this section, we return to certain assumptions/definitions of IIT and question their necessity for the communication flow problem. However, we do not comment on the necessity of these assumptions for defining \textit{consciousness}, since the argument that $\Phi^{\text{Max}}$ is \textit{consciousness} is entirely philosophical. We discus the following points:
+\begin{enumerate}
+	\item Necessity of \textit{cause}.
+	\item Assumption of Conditional Independence.
+	\item Use of a Causal Network setting instead of Bayesian.
+\end{enumerate}
+
+First of all, when computing the importance of some information in section \ref{sec:little_phi}, we make the computation looking both into the past and future. In the context of communication within an organisation, there is no reason why this should be important, given that the past is known anyway. A company would rather know how a decision would affect results in the future, than worrying about what it says about the past. Removal of this feature would immediately reduce the computational time by a factor of at least 2.
+
+In \cite{oizumi2014phenomenology}, all of the computations rely on the assumption of conditionally independence. The fact that this is assumed is not stated in the paper, but only in the supplementary text. When stated, no justification is given for why this assumption is made. Therefore we do not know whether it is meant to simplify computations, or is based on some measurable property of the brain.
 
 
-\begin{remark}
-	For  information on multivariate Bernoulli distributions, see Teugels \cite{teugels1990some}.
-\end{remark}
-
-
-\subsection{Computation of Effect Repertoires.}
-
-In this section, we will examine exactly how the effect repertoire $p_e$ is defined, and how it differs from true conditional probability. Recall the definition of the effect repertoire:
-
-\begin{definition}
-Let $Z$ be a mechanism with $W\subset Z$, and suppose that the current state of $W$ is known, that is: $W_t = X$. Then the \textit{effect repertoire} of the state $W_t = X$ is the conditional probability distribution for the future states of $Z$ given our current knowledge.
-\end{definition}
-
-Based on the description, we should expect $p_e(Z_t|W_t = X)$ the repertoire to be exactly the same as $p(Z_t|W_t = X)$, the probability. 
-
-In section \ref{sec:conditional_independence} we state the assumption of conditional independence with respect to the system. With this states, we should now expect $p_e$ to be the same as $p$ given that conditional independence holds.
-
-...paused here. I had a thought that might explain this. Emailed the makers to IIT3 to check...
-
-
-\subsection{Alternative $\Phi$'s}
-We have already mentioned how there exist multiple alternative definitions of $\Phi$. Here we take a closer look at them, and comment on their potential effectiveness beyond that of $\Phi$ as we've defined here.
-Discuss the work of \cite{tegmark2016improved} and mention other options of $\Phi$. Explain why $IIT3$ was used.
+Finally, within the context of a \textit{system}, it is unclear why IIT does not make use of Bayesian methods. In particular, the property that the \textit{cause repertoire} is given in equation \ref{def:controversial} 
 
 \section{Conclusions}
-In summary, the first focus of this project was to investigate whether or not IIT has any tangible meaning in the context of communication flow within an organisation. We approached the problem by construction a model for the purpose of measuring the cost of wasted opportunities due to poor communication. The cost of this waste as we defined it does correlate with $\Phi$. This correlation is rough, but it does exist, which justifies the theory that $\Phi$ does relate to communication within a company. 
+In summary, the first focus of this project was to investigate whether or not $\Phi^\text{Max}$ related to information flow within an organisation. We constructed a model to measure the cost of wasted opportunities due to poor communication. The cost of this waste as we defined it does correlate with $\Phi^\text{Max}$. This correlation is rough, but it does exist, which justifies the theory that $\Phi^\text{Max}$ does relate to communication within a company. 
 
-However, while $\Phi$ does correlate with waste, the computational cost of $\Phi$ is large to the extent that it is not feasible to use, even which systems containing as few as 9 nodes. This computational expense is caused to iterating over the power set of nodes multiple times, in addition to searching all possible partitions repeatedly. Given how each of the steps in computing $\Phi$ seem to be quite similar, we expect that further mathematical scrutiny may result in reducing the size of the computation by locating and removing irrelevant steps. 
+We proved that the $\Phi^\text{Max}$ is too computationally expensive to use in practice, even on systems containing as few as 9 nodes. This computational expense is caused to iterating over the power set of the \textit{system} multiple times, in addition to searching all possible partitions repeatedly. However, as the steps in computing $\Phi^\text{Max}$ are repetitive, we expect that further mathematical scrutiny may result in reducing the size of the computation by locating and removing irrelevant steps. In section \ref{sec:speedup} we identified one such inefficiency, and suggested an alternative method which reduced the expense of a particular step from $O(n^3 2^{3n})$ to $O(n)$. 
 
-In particular, if an appropriate method could be found which made a good estimate as to the minimum information partition (MIP), this would speed up the process considerably. Furthermore, it might be possible to determine what types of networks generate large $\Phi$, and construct them directly.
+If an  method could be found to approximate the minimum information partition (MIP), this would speed up the process considerably. Alternatively, it might be possible to determine what types of networks generate large $\Phi^\text{Max}$, and design a recipe to construct them directly. However until either of these are accomplished and speed up is achieved, IIT is far too expensive to be used on models containing a realistic number of workers. Hence, while $\Phi^\text{Max}$ correlates with effectiveness of the network, it doesn't provide any practical help in optimizing communication while in its current state.
 
-However until either of these are accomplished and speed up is achieved, IIT is far too expensive to be used on models containing a realistic number of workers. Hence, while $\Phi$ correlates with effectiveness of the network, it doesn't provide any practical help in optimizing communication.
 
-Does $\Phi$ need to be so computationally expensive? Unfortunately, we cannot answer this question. While certain phenomena observed in the brain are consistent with simple conclusions of IIT, the reality is that the computation of $\Phi$ is justified entirely with philosophical arguments, 
-
-4. IIT is justified philosophically, hence we are restricted to what the philosophers consider the most up to date version.
-
-conclude that until progress has been made on 2., there is no hope for practical application of IIT
